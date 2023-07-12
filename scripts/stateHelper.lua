@@ -2,21 +2,20 @@ StateHelper = class("StateHelper")
 
 function StateHelper:LoadJournal(pid, stateObject)
 
-    if stateObject.data.journal == nil then
+    if not stateObject.data.journal then
         stateObject.data.journal = {}
     end
 
     tes3mp.ClearJournalChanges(pid)
 
-    for index, journalItem in pairs(stateObject.data.journal) do
-
+    for _, journalItem in pairs(stateObject.data.journal) do
         if journalItem.type == enumerations.journal.ENTRY then
 
-            if journalItem.actorRefId == nil then
+            if not journalItem.actorRefId then
                 journalItem.actorRefId = "player"
             end
 
-            if journalItem.timestamp ~= nil then
+            if journalItem.timestamp then
                 tes3mp.AddJournalEntryWithTimestamp(pid, journalItem.quest, journalItem.index, journalItem.actorRefId,
                     journalItem.timestamp.daysPassed, journalItem.timestamp.month, journalItem.timestamp.day)
             else
@@ -32,7 +31,7 @@ end
 
 function StateHelper:LoadFactionRanks(pid, stateObject)
 
-    if stateObject.data.factionRanks == nil then
+    if not stateObject.data.factionRanks then
         stateObject.data.factionRanks = {}
     end
 
@@ -40,7 +39,6 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
     tes3mp.SetFactionChangesAction(pid, enumerations.faction.RANK)
 
     for factionId, rank in pairs(stateObject.data.factionRanks) do
-
         tes3mp.SetFactionId(factionId)
         tes3mp.SetFactionRank(rank)
         tes3mp.AddFaction(pid)
@@ -51,7 +49,7 @@ end
 
 function StateHelper:LoadFactionExpulsion(pid, stateObject)
 
-    if stateObject.data.factionExpulsion == nil then
+    if not stateObject.data.factionExpulsion then
         stateObject.data.factionExpulsion = {}
     end
 
@@ -59,7 +57,6 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
     tes3mp.SetFactionChangesAction(pid, enumerations.faction.EXPULSION)
 
     for factionId, state in pairs(stateObject.data.factionExpulsion) do
-
         tes3mp.SetFactionId(factionId)
         tes3mp.SetFactionExpulsionState(state)
         tes3mp.AddFaction(pid)
@@ -69,8 +66,7 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
 end
 
 function StateHelper:LoadFactionReputation(pid, stateObject)
-
-    if stateObject.data.factionReputation == nil then
+    if not stateObject.data.factionReputation then
         stateObject.data.factionReputation = {}
     end
 
@@ -78,7 +74,6 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
     tes3mp.SetFactionChangesAction(pid, enumerations.faction.REPUTATION)
 
     for factionId, reputation in pairs(stateObject.data.factionReputation) do
-
         tes3mp.SetFactionId(factionId)
         tes3mp.SetFactionReputation(reputation)
         tes3mp.AddFaction(pid)
@@ -89,13 +84,13 @@ end
 
 function StateHelper:LoadTopics(pid, stateObject)
 
-    if stateObject.data.topics == nil then
+    if not stateObject.data.topics then
         stateObject.data.topics = {}
     end
 
     tes3mp.ClearTopicChanges(pid)
 
-    for index, topicId in pairs(stateObject.data.topics) do
+    for _, topicId in pairs(stateObject.data.topics) do
 
         tes3mp.AddTopic(pid, topicId)
     end
@@ -105,14 +100,14 @@ end
 
 function StateHelper:LoadBounty(pid, stateObject)
 
-    if stateObject.data.fame == nil then
+    if not stateObject.data.fame then
         stateObject.data.fame = { bounty = 0, reputation = 0 }
-    elseif stateObject.data.fame.bounty == nil then
+    elseif not stateObject.data.fame.bounty then
         stateObject.data.fame.bounty = 0
     end
 
     -- Update old player files to the new format
-    if stateObject.data.stats ~= nil and stateObject.data.stats.bounty ~= nil then
+    if stateObject.data.stats and stateObject.data.stats.bounty then
         stateObject.data.fame.bounty = stateObject.data.stats.bounty
         stateObject.data.stats.bounty = nil
     end
@@ -123,9 +118,9 @@ end
 
 function StateHelper:LoadReputation(pid, stateObject)
 
-    if stateObject.data.fame == nil then
+    if not stateObject.data.fame then
         stateObject.data.fame = { bounty = 0, reputation = 0 }
-    elseif stateObject.data.fame.reputation == nil then
+    elseif not stateObject.data.fame.reputation then
         stateObject.data.fame.reputation = 0
     end
 
@@ -135,11 +130,11 @@ end
 
 function StateHelper:LoadClientScriptVariables(pid, stateObject)
 
-    if stateObject.data.clientVariables == nil then
+    if not stateObject.data.clientVariables then
         stateObject.data.clientVariables = {}
     end
 
-    if stateObject.data.clientVariables.globals == nil then
+    if not stateObject.data.clientVariables.globals then
         stateObject.data.clientVariables.globals = {}
     end
 
@@ -148,7 +143,6 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
     tes3mp.ClearClientGlobals()
 
     for variableId, variableTable in pairs(stateObject.data.clientVariables.globals) do
-
         if type(variableTable) == "table" then
 
             if variableTable.variableType == enumerations.variableType.SHORT then
@@ -170,7 +164,7 @@ end
 
 function StateHelper:LoadDestinationOverrides(pid, stateObject)
 
-    if stateObject.data.destinationOverrides == nil then
+    if not stateObject.data.destinationOverrides then
         stateObject.data.destinationOverrides = {}
     end
 
@@ -191,7 +185,7 @@ end
 
 function StateHelper:LoadMap(pid, stateObject)
 
-    if stateObject.data.mapExplored == nil then
+    if not stateObject.data.mapExplored then
         stateObject.data.mapExplored = {}
     end
 
@@ -223,16 +217,15 @@ end
 
 function StateHelper:SaveJournal(stateObject, playerPacket)
 
-    if stateObject.data.journal == nil then
+    if not stateObject.data.journal then
         stateObject.data.journal = {}
     end
 
-    if stateObject.data.customVariables == nil then
+    if not stateObject.data.customVariables then
         stateObject.data.customVariables = {}
     end
 
     for _, journalItem in ipairs(playerPacket.journal) do
-
         table.insert(stateObject.data.journal, journalItem)
 
         if journalItem.quest == "a1_1_findspymaster" and journalItem.index >= 14 then
@@ -244,8 +237,7 @@ function StateHelper:SaveJournal(stateObject, playerPacket)
 end
 
 function StateHelper:SaveFactionRanks(pid, stateObject)
-
-    if stateObject.data.factionRanks == nil then
+    if not stateObject.data.factionRanks then
         stateObject.data.factionRanks = {}
     end
 
@@ -260,7 +252,7 @@ end
 
 function StateHelper:SaveFactionExpulsion(pid, stateObject)
 
-    if stateObject.data.factionExpulsion == nil then
+    if not stateObject.data.factionExpulsion then
         stateObject.data.factionExpulsion = {}
     end
 
@@ -275,12 +267,11 @@ end
 
 function StateHelper:SaveFactionReputation(pid, stateObject)
 
-    if stateObject.data.factionReputation == nil then
+    if not stateObject.data.factionReputation then
         stateObject.data.factionReputation = {}
     end
 
     for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-
         local factionId = tes3mp.GetFactionId(pid, i)
         stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
     end
@@ -290,12 +281,11 @@ end
 
 function StateHelper:SaveTopics(pid, stateObject)
 
-    if stateObject.data.topics == nil then
+    if not stateObject.data.topics then
         stateObject.data.topics = {}
     end
 
     for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
-
         local topicId = tes3mp.GetTopicId(pid, i)
 
         if not tableHelper.containsValue(stateObject.data.topics, topicId) then
@@ -308,7 +298,7 @@ end
 
 function StateHelper:SaveBounty(pid, stateObject)
 
-    if stateObject.data.fame == nil then
+    if not stateObject.data.fame then
         stateObject.data.fame = {}
     end
 
@@ -319,7 +309,7 @@ end
 
 function StateHelper:SaveReputation(pid, stateObject)
 
-    if stateObject.data.fame == nil then
+    if not stateObject.data.fame then
         stateObject.data.fame = {}
     end
 
@@ -330,11 +320,11 @@ end
 
 function StateHelper:SaveClientScriptGlobal(stateObject, variables)
 
-    if stateObject.data.clientVariables == nil then
+    if not stateObject.data.clientVariables then
         stateObject.data.clientVariables = {}
     end
 
-    if stateObject.data.clientVariables.globals == nil then
+    if not stateObject.data.clientVariables.globals then
         stateObject.data.clientVariables.globals = {}
     end
 

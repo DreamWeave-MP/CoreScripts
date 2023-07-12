@@ -8,7 +8,7 @@ local speechTypesToFilePrefixes = { attack = "Atk", flee = "Fle", follower = "Fl
 
 function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechType, speechIndex, gender)
 
-    if speechCollectionTable == nil or speechTypesToFilePrefixes[speechType] == nil then
+    if not (speechCollectionTable or speechTypesToFilePrefixes[speechType]) then
         return nil
     end
 
@@ -19,12 +19,12 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
 
     local speechTypeTable = speechCollectionTable[genderTableName][speechType]
 
-    if speechTypeTable == nil then
+    if not speechTypeTable then
         return nil
     else
         if speechIndex > speechTypeTable.count then
             return nil
-        elseif speechTypeTable.skip ~= nil and tableHelper.containsValue(speechTypeTable.skip, speechIndex) then
+        elseif speechTypeTable.skip and tableHelper.containsValue(speechTypeTable.skip, speechIndex) then
             return nil
         end
     end
@@ -33,7 +33,7 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
 
     -- Assume there are only going to be subfolders for different genders if there are actually
     -- speech files for both genders
-    if speechCollectionTable.maleFiles ~= nil and speechCollectionTable.femaleFiles ~= nil then
+    if speechCollectionTable.maleFiles and speechCollectionTable.femaleFiles then
         if gender == 0 then
             speechPath = speechPath .. "f\\"
         else
@@ -43,7 +43,7 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
 
     local filePrefix
 
-    if speechTypeTable.filePrefixOverride ~= nil then
+    if speechTypeTable.filePrefixOverride then
         filePrefix = speechTypeTable.filePrefixOverride
     else
         filePrefix = speechTypesToFilePrefixes[speechType]
@@ -51,7 +51,7 @@ function speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechT
 
     local indexPrefix
 
-    if speechTypeTable.indexPrefixOverride ~= nil then
+    if speechTypeTable.indexPrefixOverride then
         indexPrefix = speechTypeTable.indexPrefixOverride
     elseif gender == 0 then
         indexPrefix = speechCollectionTable.femalePrefix
@@ -73,7 +73,7 @@ function speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
     -- get the speechCollectionKey from it
     local underscoreIndex = string.find(speechInput, "_")
 
-    if underscoreIndex ~= nil and underscoreIndex > 1 then
+    if underscoreIndex and underscoreIndex > 1 then
         speechCollectionKey = string.sub(speechInput, 1, underscoreIndex - 1)
         speechType = string.sub(speechInput, underscoreIndex + 1)
     else
@@ -84,18 +84,13 @@ function speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
     local race = string.lower(Players[pid].data.character.race)
     local speechCollectionTable = speechCollections[race][speechCollectionKey]
 
-    if speechCollectionTable ~= nil then
-
-        local gender = Players[pid].data.character.gender
-
-        return speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechType, speechIndex, gender)
-    else
-        return nil
-    end
+    if speechCollectionTable then return nil end
+    
+    local gender = Players[pid].data.character.gender
+    return speechHelper.GetSpeechPathFromCollection(speechCollectionTable, speechType, speechIndex, gender)
 end
 
 function speechHelper.GetPrintableValidListForSpeechCollection(speechCollectionTable, gender, collectionPrefix)
-
     local validList = {}
     local genderTableName
 
@@ -105,23 +100,23 @@ function speechHelper.GetPrintableValidListForSpeechCollection(speechCollectionT
         genderTableName = "maleFiles"
     end
     
-    if speechCollectionTable[genderTableName] ~= nil then
-        for speechType, typeDetails in pairs(speechCollectionTable[genderTableName]) do
-            local validInput = ""
+    if not speechCollectionTable[genderTableName] then return validList end
+    
+    for speechType, typeDetails in pairs(speechCollectionTable[genderTableName]) do
+        local validInput = ""
 
-            if collectionPrefix then
-                validInput = collectionPrefix
-            end
-
-            validInput = validInput .. speechType .. " 1-" .. typeDetails.count
-
-            if typeDetails.skip ~= nil then
-                validInput = validInput .. " (except "
-                validInput = validInput .. tableHelper.concatenateFromIndex(typeDetails.skip, 1, ", ") .. ")"
-            end
-
-            table.insert(validList, validInput)
+        if collectionPrefix then
+            validInput = collectionPrefix
         end
+
+        validInput = validInput .. speechType .. " 1-" .. typeDetails.count
+
+        if typeDetails.skip then
+            validInput = validInput .. " (except "
+            validInput = validInput .. tableHelper.concatenateFromIndex(typeDetails.skip, 1, ", ") .. ")"
+        end
+
+        table.insert(validList, validInput)
     end
 
     return validList
@@ -135,7 +130,7 @@ function speechHelper.GetPrintableValidListForPid(pid)
     local gender = Players[pid].data.character.gender
 
     -- Print the default speech options first
-    if speechCollections[race].default ~= nil then
+    if speechCollections[race].default then
         validList = speechHelper.GetPrintableValidListForSpeechCollection(speechCollections[race].default, gender)
     end
 
@@ -152,7 +147,7 @@ function speechHelper.PlaySpeech(pid, speechInput, speechIndex)
 
     local speechPath = speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
 
-    if speechPath ~= nil then
+    if speechPath then
         tes3mp.PlaySpeech(pid, speechPath)
         return true
     end
