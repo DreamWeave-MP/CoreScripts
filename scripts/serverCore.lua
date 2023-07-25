@@ -16,6 +16,7 @@ require("color")
 require("config")
 require("time")
 
+vec3 = require("vectors")
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
 logicHandler = require("logicHandler")
@@ -26,6 +27,7 @@ speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
 require("defaultCommands")
 require("customScripts")
+
 
 Database = nil
 Player = nil
