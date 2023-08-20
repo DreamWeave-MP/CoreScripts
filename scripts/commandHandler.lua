@@ -1311,6 +1311,20 @@ function commandHandler.CreateRecord(pid, cmd)
                 "following required settings: " .. tableHelper.concatenateArrayValues(missingSettings, 1, ", ") .. "\n")
             return
         end
+    else
+        if logicHandler.IsGeneratedRecord(storedTable.baseId) then
+            local baseRecordType = logicHandler.GetRecordTypeByRecordId(storedTable.baseId)
+
+            if baseRecordType and RecordStores[baseRecordType].data.generatedRecords[storedTable.baseId] then
+                local baseGeneratedRecord = RecordStores[baseRecordType].data.generatedRecords[storedTable.baseId]
+
+                storedTable.baseId = nil
+                
+                for k, v in pairs(baseGeneratedRecord) do
+                    storedTable[k] = storedTable[k] or v
+                end
+            end
+        end
     end
 
     if inputType == "enchantment" and (storedTable.effects == nil or tableHelper.isEmpty(storedTable.effects)) then
