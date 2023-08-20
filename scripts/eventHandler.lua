@@ -1747,10 +1747,9 @@ eventHandler.OnRecordDynamic = function(pid)
                 -- Special handling when using a generated record as baseId
                 if record.baseId and logicHandler.IsGeneratedRecord(record.baseId) then
                     local baseGeneratedRecord = recordStore.data.generatedRecords[record.baseId]
+                    record.baseId = nil
                     for k, v in pairs(baseGeneratedRecord) do
-                        if record[k] == nil or k == "baseId" then
-                            record[k] = v
-                        end
+                        record[k] = record[k] or v
                     end
                 end
 
