@@ -112,6 +112,14 @@ function BaseRecordStore:HasLinks(recordId)
                 return true
             end
         end
+    -- Do the same for body parts
+    elseif self.storeType == "bodypart" then
+        for _, bodyPartType in pairs(config.bodyPartRecordTypes) do
+            if recordLinks[recordId].records ~= nil and recordLinks[recordId].records[bodyPartType] ~= nil and not
+                tableHelper.isEmpty(recordLinks[recordId].records[bodyPartType]) then
+                return true
+            end
+        end
     end
 
     return false
