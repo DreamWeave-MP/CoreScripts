@@ -1744,6 +1744,15 @@ eventHandler.OnRecordDynamic = function(pid)
                     recordId = recordStore:GenerateRecordId()
                 end
 
+                -- Special handling when using a generated record as baseId
+                if record.baseId and logicHandler.IsGeneratedRecord(record.baseId) then
+                    local baseGeneratedRecord = recordStore.data.generatedRecords[record.baseId]
+                    record.baseId = nil
+                    for k, v in pairs(baseGeneratedRecord) do
+                        record[k] = record[k] or v
+                    end
+                end
+
                 if storeType == "enchantment" then
                     -- We need to store this enchantment's original client-generated id
                     -- on this player so we can match it with its server-generated correct
