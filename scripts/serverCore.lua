@@ -315,7 +315,7 @@ function LoadDataFileList(filename)
     for listIndex, pluginEntry in ipairs(jsonDataFileList) do
         for entryIndex, checksumStringArray in pairs(pluginEntry) do
             dataFileList[listIndex] = {}
-            dataFileList[listIndex].name = entryInde
+            dataFileList[listIndex].name = entryIndex
             local checksums = {}
             local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
 
