@@ -166,9 +166,9 @@ do
             end
             customEventHooks.triggerHandlers("OnGameHour", eventStatus, {})
         end
-    end
 
-    tes3mp.RestartTimer(updateTimerId, time.seconds(1))
+        tes3mp.RestartTimer(updateTimerId, time.seconds(1))
+    end
 end
 
 function OnServerInit()
