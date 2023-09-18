@@ -287,6 +287,12 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
             packetBuilder.AddRecordByType(recordId, record, self.storeType)
             recordCount = recordCount + 1
         end
+        if recordCount >= 3000 then
+            tes3mp.SendRecordDynamic(pid, forEveryone, false)	
+            tes3mp.ClearRecords()
+            tes3mp.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
+            recordCount = 0				
+        end        
     end
 
     if recordCount > 0 then
