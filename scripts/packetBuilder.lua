@@ -469,6 +469,21 @@ packetBuilder.AddCellRecord = function(id, record)
 
     tes3mp.SetRecordName(id)
     if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    if record.hasAmbient ~= nil then tes3mp.SetRecordHasAmbient(record.hasAmbient) end
+    if record.ambient ~= nil then
+        tes3mp.SetRecordAmbientColor(record.ambient.red, record.ambient.green, record.ambient.blue)
+    end
+    if record.sunlight ~= nil then
+        tes3mp.SetRecordSunlightColor(record.sunlight.red, record.sunlight.green, record.sunlight.blue)
+    end
+    if record.fog ~= nil then
+        tes3mp.SetRecordFog(record.fog.red, record.fog.green, record.fog.blue, record.fog.density)
+    end
+    if record.hasWater ~= nil then tes3mp.SetRecordHasWater(record.hasWater) end
+    if record.waterLevel ~= nil then tes3mp.SetRecordWaterLevel(record.waterLevel) end
+    if record.noSleep ~= nil then tes3mp.SetRecordNoSleep(record.noSleep) end
+    if record.quasiEx ~= nil then tes3mp.SetRecordQuasiEx(record.quasiEx) end
+    if record.region ~= nil then tes3mp.SetRecordRegion(record.region) end
 
     tes3mp.AddRecord()
 end
