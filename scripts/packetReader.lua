@@ -336,6 +336,45 @@ packetReader.GetActorPacketTables = function(packetType)
                 actor.killer.uniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
                     "-" .. tes3mp.GetActorKillerMpNum(packetIndex)
             end
+        elseif packetType == "ActorAI" then
+            actor.ai = {}
+
+            local action = tes3mp.GetActorAIAction(packetIndex)
+            actor.ai.action = action
+
+            if action == enumerations.ai.ACTIVATE or action == enumerations.ai.COMBAT or action == enumerations.ai.ESCORT then
+                actor.ai.target = {}
+                local doesActorAIHavePlayerTarget = tes3mp.DoesActorAIHavePlayerTarget(packetIndex)
+
+                if doesActorAIHavePlayerTarget then
+                    actor.ai.target.pid = tes3mp.GetActorAITargetPid(packetIndex)
+    
+                    if Players[actor.ai.target.pid] ~= nil then
+                        actor.ai.target.playerName = Players[actor.ai.target.pid].accountName
+                    end
+                else
+                    actor.ai.target.refId = tes3mp.GetActorAITargetRefId(packetIndex)
+                    actor.ai.target.name = tes3mp.GetActorAITargetName(packetIndex)
+                    actor.ai.target.uniqueIndex = tes3mp.GetActorAITargetRefNum(packetIndex) ..
+                        "-" .. tes3mp.GetActorAITargetMpNum(packetIndex)
+                end
+            end
+
+            if action == enumerations.ai.TRAVEL or action == enumerations.ai.ESCORT then
+                actor.ai.destination = {}
+                actor.ai.destination.posX = tes3mp.GetActorAICoordinateX(packetIndex)
+                actor.ai.destination.posY = tes3mp.GetActorAICoordinateY(packetIndex)
+                actor.ai.destination.posZ = tes3mp.GetActorAICoordinateZ(packetIndex)
+            end
+
+            if action == enumerations.ai.WANDER then
+                actor.ai.distance = tes3mp.GetActorAIDistance(packetIndex)
+                actor.ai.repetition = tes3mp.GetActorAIRepetition(packetIndex)
+            end
+
+            if action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW or action == enumerations.ai.WANDER then
+                actor.ai.duration = tes3mp.GetActorAIDuration(packetIndex)
+            end
         end
 
         packetTables.actors[uniqueIndex] = actor
