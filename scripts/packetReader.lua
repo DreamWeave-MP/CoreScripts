@@ -342,7 +342,7 @@ packetReader.GetActorPacketTables = function(packetType)
             local action = tes3mp.GetActorAIAction(packetIndex)
             actor.ai.action = action
 
-            if action == enumerations.ai.ACTIVATE or action == enumerations.ai.COMBAT or action == enumerations.ai.ESCORT then
+            if action == enumerations.ai.ACTIVATE or action == enumerations.ai.COMBAT or action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW then
                 actor.ai.target = {}
                 local doesActorAIHavePlayerTarget = tes3mp.DoesActorAIHavePlayerTarget(packetIndex)
 
