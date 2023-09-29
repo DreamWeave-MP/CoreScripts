@@ -1279,9 +1279,12 @@ end
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            local eventStatus = customEventHooks.triggerValidators("OnActorAI", {pid, cellDescription})
+            tes3mp.ReadReceivedActorList()
+            local actors = packetReader.GetActorPacketTables("ActorAI").actors
+
+            local eventStatus = customEventHooks.triggerValidators("OnActorAI", {pid, cellDescription, actors})
+
             if eventStatus.validDefaultHandler then
-                tes3mp.ReadReceivedActorList()
                 tes3mp.CopyReceivedActorListToStore()
 
                 -- Actor AI packages are currently enabled unilaterally on the client
@@ -1290,7 +1293,7 @@ eventHandler.OnActorAI = function(pid, cellDescription)
                 -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is true
                 tes3mp.SendActorAI(true, true)
             end
-            customEventHooks.triggerHandlers("OnActorAI", eventStatus, {pid, cellDescription})
+            customEventHooks.triggerHandlers("OnActorAI", eventStatus, {pid, cellDescription, actors})
             
         else
             tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
