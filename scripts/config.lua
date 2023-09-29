@@ -360,7 +360,8 @@ config.validRecordSettings = {
     bodypart = { "baseId", "id", "subtype", "part", "model", "race", "vampireState", "flags" },
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "text", "weight", "value", "scrollState", "skillId" },
-    cell = { "baseId", "id" },
+    cell = { "baseId", "id", "noSleep", "hasAmbient", "ambient", "sunlight", "hasWater",
+             "waterLevel", "quasiEx", "region" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
     container = { "baseId", "id", "name", "model", "script", "weight", "flags" },
@@ -423,23 +424,23 @@ config.requiredRecordSettings = {
 -- The record type settings that are mutually exclusive with each other and remove each other when one of
 -- them is set
 config.mutuallyExclusiveRecordSettings = {
-    gamesetting = { "intVar", "floatVar", "stringVar" }
+    gamesetting = { "intVar", "floatVar", "stringVar" , "fog", "sunlight", "ambient"}
 }
 
 -- The record type settings whose input should be converted to numerical values when using /storerecord
 config.numericalRecordSettings = { "subtype", "charge", "cost", "value", "weight", "quality", "uses",
     "time", "radius", "health", "armorRating", "speed", "reach", "scale", "part", "bloodType", "level",
     "magicka", "fatigue", "soulValue", "aiFight", "aiFlee", "aiAlarm", "aiServices", "autoCalc", "gender",
-    "flags", "enchantmentCharge", "intVar", "floatVar" }
+    "flags", "enchantmentCharge", "intVar", "floatVar" , "waterLevel" }
 
 -- The record type settings whose input should be converted to booleans when using /storerecord
-config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" }
+config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" , "hasWater", "hasAmbient", "noSleep", "quiasiEx"}
 
 -- The record type settings whose input should be converted to tables with a min and a max numerical value
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }
 
 -- The record type settings whose input should be converted to tables with 3 color values
-config.rgbRecordSettings = { "color" }
+config.rgbRecordSettings = { "color" , "sunlight", "ambient"}
 
 -- The types of object and actor packets stored in cell data
 config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", "state", "miscellaneous",
