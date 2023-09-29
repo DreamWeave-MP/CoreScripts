@@ -360,7 +360,7 @@ packetReader.GetActorPacketTables = function(packetType)
                 end
             end
 
-            if action == enumerations.ai.TRAVEL or action == enumerations.ai.ESCORT then
+            if action == enumerations.ai.TRAVEL or action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW then
                 actor.ai.destination = {}
                 actor.ai.destination.posX = tes3mp.GetActorAICoordinateX(packetIndex)
                 actor.ai.destination.posY = tes3mp.GetActorAICoordinateY(packetIndex)
