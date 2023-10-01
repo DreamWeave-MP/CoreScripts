@@ -98,6 +98,27 @@ function BaseCell:EnsurePacketValidity()
     end
 end
 
+function BaseCell:EnsureSendPacket(pid, sendType, packetType, forEveryone, action)
+
+    if action and packetType == "object" then
+        tes3mp.SetObjectListAction(0)
+    elseif action and packetType == "actor" then
+		tes3mp.SetActorListAction(0)
+	end
+	
+    if packetType == "object" then
+        tes3mp[sendType](forEveryone)	
+        tes3mp.ClearObjectList()
+        tes3mp.SetObjectListPid(pid)
+        tes3mp.SetObjectListCell(self.description)
+    elseif packetType == "actor" then
+        tes3mp[sendType](forEveryone)   
+        tes3mp.ClearActorList()
+        tes3mp.SetActorListPid(pid)
+        tes3mp.SetActorListCell(self.description)      
+    end
+end
+
 -- Adding record links to cells is special because we'll keep track of the uniqueIndex
 -- of every object that uses a particular generated record
 function BaseCell:AddLinkToRecord(storeType, recordId, uniqueIndex)
@@ -1241,6 +1262,10 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEvery
 
         packetBuilder.AddObjectDelete(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectDelete", "object", forEveryone, false)
+			objectCount = 0		
+		end		
     end
 
     if objectCount > 0 then
@@ -1269,21 +1294,21 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
 
                 packetBuilder.AddObjectPlace(uniqueIndex, objectData[uniqueIndex])
                 objectCount = objectCount + 1
+				if objectData[uniqueIndex].scale then
+					tableHelper.insertValueIfMissing(self.data.packets.scale, uniqueIndex)
+				end				
             else
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
             end
-
-            -- If we're about to exceed the maximum number of objects in a single packet,
-            -- start a new packet
-            if objectCount >= 3000 then
-                tes3mp.SendObjectPlace()    
-                tes3mp.ClearObjectList()
-                tes3mp.SetObjectListPid(pid)
-                tes3mp.SetObjectListCell(self.description)
-                objectCount = 0
-            end
         end
+		-- If we're about to exceed the maximum number of objects in a single packet,
+		-- start a new packet
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectPlace", "object", forEveryone, false)	
+			self:EnsureSendPacket(pid, "SendObjectRotate", "object", forEveryone, false)				
+			objectCount = 0
+		end			
     end
 
     if objectCount > 0 then
@@ -1344,6 +1369,10 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
                 tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
             end
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectSpawn", "object", forEveryone, false)
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1369,6 +1398,10 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectLock", "object", forEveryone, false)	
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1402,6 +1435,10 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectMiscellaneous", "object", forEveryone, false)		
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1425,6 +1462,10 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectTrap", "object", forEveryone, false)	
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1450,6 +1491,10 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectScale", "object", forEveryone, false)
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1475,6 +1520,10 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendObjectState", "object", forEveryone, false)
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1498,6 +1547,10 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
         else
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendDoorState", "object", forEveryone, false)
+			objectCount = 0
+		end	       
     end
 
     if objectCount > 0 then
@@ -1515,6 +1568,10 @@ function BaseCell:LoadDoorDestinations(pid, objectData, uniqueIndexArray, forEve
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddDoorDestination(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendDoorDestination", "object", forEveryone, false)
+			objectCount = 0
+		end	         
     end
 
     if objectCount > 0 then
@@ -1533,6 +1590,10 @@ function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forE
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddClientScriptLocal(uniqueIndex, objectData[uniqueIndex])
         objectCount = objectCount + 1
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendClientScriptLocal", "object", forEveryone, false)
+			objectCount = 0
+		end        
     end
 
     if objectCount > 0 then
@@ -1584,6 +1645,10 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if objectCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendContainer", "object", true, true)
+			objectCount = 0
+		end	        
     end
 
     if objectCount > 0 then
@@ -1643,6 +1708,10 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorList", "actor", true, true)	
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -1696,6 +1765,10 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorPosition", "actor", true, false)	
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -1738,6 +1811,10 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorStatsDynamic", "actor", true, false)
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -1786,6 +1863,10 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorEquipment", "actor", true, false)
+			actorCount = 0
+		end        
     end
 
     if actorCount > 0 then
@@ -1818,6 +1899,10 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorSpellsActiveChanges", "actor", true, false)
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -1856,6 +1941,10 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorDeath", "actor", true, false)
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -1922,6 +2011,10 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorAI", "actor", false, false)
+			actorCount = 0
+		end	        
     end
 
     -- Send the packets meant for just this new visitor
@@ -2004,6 +2097,10 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
                 ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
         end
+		if actorCount >= 3000 then
+			self:EnsureSendPacket(pid, "SendActorCellChange", "actor", true, false)
+			actorCount = 0
+		end	        
     end
 
     if actorCount > 0 then
@@ -2066,6 +2163,10 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
                 actorCount = actorCount + 1
             end
+			if actorCount >= 3000 then
+				self:EnsureSendPacket(pid, "SendActorCellChange", "actor", true, false)	
+				actorCount = 0
+			end	            
         end
 
         if actorCount > 0 then
