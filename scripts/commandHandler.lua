@@ -740,11 +740,14 @@ function commandHandler.ProcessCommand(pid, cmd)
         if scriptID == nil then
             Players[pid]:Message("Use /unloadbyid <scriptID>\n")
         else
-            -- Trigger the OnScriptUnload handler with scriptID
-            customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
+            -- Trigger OnScriptUnload event
+            local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
 
+            if eventStatus.validDefaultHandler then
             customEventHooks.unregisterAllByScriptID(scriptID)
             Players[pid]:Message(scriptID .. " was unloaded." .. "\n")
+            end
+            customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
         end
         
     elseif cmd[1] == "resetkills" and moderator and config.shareKills == true then
