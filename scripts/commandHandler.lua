@@ -682,27 +682,25 @@ function commandHandler.ProcessCommand(pid, cmd)
     elseif cmd[1] == "load" and admin then
 
         local scriptName = cmd[2]
-
+        
         if scriptName == nil then
             Players[pid]:Message("Use /load <scriptName>\n")
         else
             local wasLoaded = false
-
+    
             if package.loaded[scriptName] then
-                
                 if type(package.loaded[scriptName]) ~= "table" then
-		    Players[pid]:Message(scriptName .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n")
-		    return
-		end
-                
+                    Players[pid]:Message(scriptName .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n")
+                    return
+                end
+    
                 Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
                 wasLoaded = true
             end
-
+    
             local result
-
+    
             if wasLoaded then
-
                 -- Local objects that use functions from the script we are reloading
                 -- will keep their references to the old versions of those functions if
                 -- we do this:
@@ -716,20 +714,20 @@ function commandHandler.ProcessCommand(pid, cmd)
                 --
                 local scriptPath = package.searchpath(scriptName, package.path)
                 result = dofile(scriptPath)
-
+    
                 for key, value in pairs(package.loaded[scriptName]) do
                     if result[key] == nil then
                         package.loaded[scriptName][key] = nil
                     end
                 end
-
+    
                 for key, value in pairs(result) do
                     package.loaded[scriptName][key] = value
                 end
             else
                 result = prequire(scriptName)
             end
-
+            
             if result then
                 Players[pid]:Message(scriptName .. " was successfully loaded.\n")
             else
@@ -737,6 +735,18 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
         end
 
+    elseif cmd[1] == "unloadbyid" and admin then
+        local scriptID = cmd[2]
+        if scriptID == nil then
+            Players[pid]:Message("Use /unloadbyid <scriptID>\n")
+        else
+            -- Trigger the OnScriptUnload handler with scriptID
+            customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
+
+            customEventHooks.unregisterAllByScriptID(scriptID)
+            Players[pid]:Message(scriptID .. " was unloaded." .. "\n")
+        end
+        
     elseif cmd[1] == "resetkills" and moderator and config.shareKills == true then
 
         -- Set all currently recorded kills to 0 for connected players
