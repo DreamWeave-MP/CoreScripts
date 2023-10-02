@@ -13,7 +13,7 @@ function customEventHooks.generateScriptID(filePath)
 		local charCode = string.byte(filePath, i)
 		seed = seed + charCode
 	end
-	math.randomseed(os.time() + seed)
+	math.randomseed(seed)
 
     local template = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
     return template:gsub("x", function() return string.format("%x", math.random(0, 15)) end)
