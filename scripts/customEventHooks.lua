@@ -175,8 +175,6 @@ function customEventHooks.getscriptID(scriptName)
 	for ScriptID, eventLists in pairs(customEventHooks.scriptID) do
 		if ScriptID == ScriptID then
 			return ScriptID
-		else
-			return nil
 		end
 	end
 	return nil
