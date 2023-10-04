@@ -66,12 +66,12 @@ end
 function BaseRecordStore:DeleteGeneratedRecord(recordId)
 
     if self.data.generatedRecords[recordId] == nil then
-        tes3mp.LogMessage(enumerations.log.WARN, "Tried deleting " .. self.storeType .. " record " .. recordId ..
+        dreamweave.LogMessage(enumerations.log.WARN, "Tried deleting " .. self.storeType .. " record " .. recordId ..
             " which doesn't exist!")
         return
     end
 
-    tes3mp.LogMessage(enumerations.log.WARN, "Deleting generated " .. self.storeType .. " record " .. recordId)
+    dreamweave.LogMessage(enumerations.log.WARN, "Deleting generated " .. self.storeType .. " record " .. recordId)
 
     -- Is this an enchantable record? If so, we should remove any links to it
     -- from its associated generated enchantment record if there is one
@@ -276,8 +276,8 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
     if type(recordList) ~= "table" then return end
     if type(idArray) ~= "table" then return end
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
+    dreamweave.ClearRecords()
+    dreamweave.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
     local recordCount = 0
 
     for _, recordId in pairs(idArray) do
@@ -288,15 +288,15 @@ function BaseRecordStore:LoadRecords(pid, recordList, idArray, forEveryone)
             recordCount = recordCount + 1
         end
         if recordCount >= 3000 then
-            tes3mp.SendRecordDynamic(pid, forEveryone, false)	
-            tes3mp.ClearRecords()
-            tes3mp.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
+            dreamweave.SendRecordDynamic(pid, forEveryone, false)	
+            dreamweave.ClearRecords()
+            dreamweave.SetRecordType(enumerations.recordType[string.upper(self.storeType)])
             recordCount = 0				
         end        
     end
 
     if recordCount > 0 then
-        tes3mp.SendRecordDynamic(pid, forEveryone, false)
+        dreamweave.SendRecordDynamic(pid, forEveryone, false)
     end
 end
 

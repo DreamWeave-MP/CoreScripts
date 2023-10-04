@@ -94,7 +94,7 @@ function animHelper.PlayAnimation(pid, animAlias)
     local defaultAnim = animHelper.GetAnimation(pid, animAlias)
 
     if defaultAnim ~= "invalid" then
-        tes3mp.PlayAnimation(pid, defaultAnim, 0, 1, false)
+        dreamweave.PlayAnimation(pid, defaultAnim, 0, 1, false)
         return true
     end
 

@@ -138,11 +138,11 @@ end
 function BaseWorld:SetRegionAuthority(pid, regionName)
 
     self.storedRegions[regionName].authority = pid
-    tes3mp.LogMessage(enumerations.log.INFO, "Authority of region " .. regionName .. " is now " ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Authority of region " .. regionName .. " is now " ..
         logicHandler.GetChatName(pid))
 
-    tes3mp.SetAuthorityRegion(regionName)
-    tes3mp.SendWorldRegionAuthority(pid)
+    dreamweave.SetAuthorityRegion(regionName)
+    dreamweave.SendWorldRegionAuthority(pid)
 end
 
 function BaseWorld:IncrementDay()
@@ -189,7 +189,7 @@ end
 function BaseWorld:GenerateUniqueIndex()
     local mpNum = self:GetCurrentMpNum() + 1
     self:SetCurrentMpNum(mpNum)
-    tes3mp.SetCurrentMpNum(mpNum)
+    dreamweave.SetCurrentMpNum(mpNum)
     return 0 .. "-" .. mpNum
 end
 
@@ -244,14 +244,14 @@ end
 
 function BaseWorld:LoadKills(pid, forEveryone)
 
-    tes3mp.ClearKillChanges()
+    dreamweave.ClearKillChanges()
 
     for refId, killCount in pairs(self.data.kills) do
 
-        tes3mp.AddKill(refId, killCount)
+        dreamweave.AddKill(refId, killCount)
     end
 
-    tes3mp.SendWorldKillCount(pid, forEveryone)
+    dreamweave.SendWorldKillCount(pid, forEveryone)
 end
 
 function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
@@ -260,15 +260,15 @@ function BaseWorld:LoadRegionWeather(regionName, pid, forEveryone, forceState)
 
     if region.currentWeather ~= nil then
 
-        tes3mp.SetWeatherRegion(regionName)
-        tes3mp.SetWeatherCurrent(region.currentWeather)
-        tes3mp.SetWeatherNext(region.nextWeather)
-        tes3mp.SetWeatherQueued(region.queuedWeather)
-        tes3mp.SetWeatherTransitionFactor(region.transitionFactor)
-        tes3mp.SetWeatherForceState(forceState)
-        tes3mp.SendWorldWeather(pid, forEveryone)
+        dreamweave.SetWeatherRegion(regionName)
+        dreamweave.SetWeatherCurrent(region.currentWeather)
+        dreamweave.SetWeatherNext(region.nextWeather)
+        dreamweave.SetWeatherQueued(region.queuedWeather)
+        dreamweave.SetWeatherTransitionFactor(region.transitionFactor)
+        dreamweave.SetWeatherForceState(forceState)
+        dreamweave.SendWorldWeather(pid, forEveryone)
     else
-        tes3mp.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName ..
+        dreamweave.LogMessage(enumerations.log.INFO, "Could not load weather in region " .. regionName ..
             " for " .. logicHandler.GetChatName(pid) .. " because we have no weather information for it")
     end
 end
@@ -285,8 +285,8 @@ end
 
 function BaseWorld:LoadTime(pid, forEveryone)
 
-    tes3mp.SetHour(self.data.time.hour)
-    tes3mp.SetDay(self.data.time.day)
+    dreamweave.SetHour(self.data.time.hour)
+    dreamweave.SetDay(self.data.time.day)
 
     if self.data.time.month < 1 then
         self.data.time.month = 1
@@ -297,15 +297,15 @@ function BaseWorld:LoadTime(pid, forEveryone)
     -- The first month has an index of 0 in the C++ code, but
     -- table values should be intuitive and range from 1 to 12,
     -- so adjust for that by just going down by 1
-    tes3mp.SetMonth(self.data.time.month - 1)
+    dreamweave.SetMonth(self.data.time.month - 1)
 
-    tes3mp.SetYear(self.data.time.year)
+    dreamweave.SetYear(self.data.time.year)
 
-    tes3mp.SetDaysPassed(self.data.time.daysPassed)
+    dreamweave.SetDaysPassed(self.data.time.daysPassed)
 
-    tes3mp.SetTimeScale(self:GetCurrentTimeScale())
+    dreamweave.SetTimeScale(self:GetCurrentTimeScale())
 
-    tes3mp.SendWorldTime(pid, forEveryone)
+    dreamweave.SendWorldTime(pid, forEveryone)
 end
 
 function BaseWorld:SaveJournal(playerPacket)
@@ -342,12 +342,12 @@ end
 
 function BaseWorld:SaveKills(pid)
 
-    tes3mp.ReadReceivedWorldstate()
+    dreamweave.ReadReceivedWorldstate()
 
-    for index = 0, tes3mp.GetKillChangesSize() - 1 do
+    for index = 0, dreamweave.GetKillChangesSize() - 1 do
 
-        local refId = tes3mp.GetKillRefId(index)
-        local number = tes3mp.GetKillNumber(index)
+        local refId = dreamweave.GetKillRefId(index)
+        local number = dreamweave.GetKillNumber(index)
         self.data.kills[refId] = number
     end
 
@@ -357,10 +357,10 @@ end
 function BaseWorld:SaveRegionWeather(regionName)
 
     local loadedRegion = self.storedRegions[regionName]
-    loadedRegion.currentWeather = tes3mp.GetWeatherCurrent()
-    loadedRegion.nextWeather = tes3mp.GetWeatherNext()
-    loadedRegion.queuedWeather = tes3mp.GetWeatherQueued()
-    loadedRegion.transitionFactor = tes3mp.GetWeatherTransitionFactor()
+    loadedRegion.currentWeather = dreamweave.GetWeatherCurrent()
+    loadedRegion.nextWeather = dreamweave.GetWeatherNext()
+    loadedRegion.queuedWeather = dreamweave.GetWeatherQueued()
+    loadedRegion.transitionFactor = dreamweave.GetWeatherTransitionFactor()
 end
 
 function BaseWorld:SaveMapExploration(pid)
@@ -371,7 +371,7 @@ function BaseWorld:SaveMapTiles(mapTiles)
 
     for index, mapTile in ipairs(mapTiles) do
         -- We need to save the image file using the original index in the packet
-        tes3mp.SaveMapTileImageFile(index - 1, config.dataPath .. "/map/" .. mapTile.filename)
+        dreamweave.SaveMapTileImageFile(index - 1, config.dataPath .. "/map/" .. mapTile.filename)
     end
 end
 

@@ -5,18 +5,18 @@ guiHelper.names = {"LOGIN", "REGISTER", "PLAYERSLIST", "CELLSLIST"}
 guiHelper.ID = tableHelper.enum(guiHelper.names)
 
 guiHelper.ShowLogin = function(pid)
-    tes3mp.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
+    dreamweave.PasswordDialog(pid, guiHelper.ID.LOGIN, "Enter your password:", "")
 end
 
 guiHelper.ShowRegister = function(pid)
-    tes3mp.PasswordDialog(pid, guiHelper.ID.REGISTER, "Create new password:",
+    dreamweave.PasswordDialog(pid, guiHelper.ID.REGISTER, "Create new password:",
         "Warning: there is no guarantee that your password will be stored securely on any game server, so you should use " ..
         "a unique one for each server.")
 end
 
 local GetConnectedPlayerList = function()
 
-    local lastPid = tes3mp.GetLastPlayerId()
+    local lastPid = dreamweave.GetLastPlayerId()
     local list = ""
     local divider = ""
 
@@ -29,7 +29,7 @@ local GetConnectedPlayerList = function()
         if Players[playerIndex] ~= nil and Players[playerIndex]:IsLoggedIn() then
 
             list = list .. tostring(Players[playerIndex].name) .. " (pid: " .. tostring(Players[playerIndex].pid) ..
-                ", ping: " .. tostring(tes3mp.GetAvgPing(Players[playerIndex].pid)) .. ")" .. divider
+                ", ping: " .. tostring(dreamweave.GetAvgPing(Players[playerIndex].pid)) .. ")" .. divider
         end
     end
 
@@ -115,7 +115,7 @@ guiHelper.ShowPlayerList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, guiHelper.ID.PLAYERSLIST, label, GetConnectedPlayerList())
+    dreamweave.ListBox(pid, guiHelper.ID.PLAYERSLIST, label, GetConnectedPlayerList())
 end
 
 guiHelper.ShowCellList = function(pid)
@@ -127,7 +127,7 @@ guiHelper.ShowCellList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedCellList())
+    dreamweave.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedCellList())
 end
 
 guiHelper.ShowRegionList = function(pid)
@@ -139,7 +139,7 @@ guiHelper.ShowRegionList = function(pid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedRegionList())
+    dreamweave.ListBox(pid, guiHelper.ID.CELLSLIST, label, GetLoadedRegionList())
 end
 
 guiHelper.ShowInventoryList = function(menuId, pid, inventoryPid)
@@ -151,7 +151,7 @@ guiHelper.ShowInventoryList = function(menuId, pid, inventoryPid)
         label = label .. "s"
     end
 
-    tes3mp.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
+    dreamweave.ListBox(pid, menuId, label, GetPlayerInventoryList(inventoryPid))
 end
 
 return guiHelper

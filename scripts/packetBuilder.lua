@@ -7,13 +7,13 @@ packetBuilder.AddPlayerInventoryItemChange = function(pid, item)
     if item.enchantmentCharge == nil or item.enchantmentCharge < -1 then item.enchantmentCharge = -1 end
     if item.soul == nil then item.soul = "" end
 
-    tes3mp.AddItemChange(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
+    dreamweave.AddItemChange(pid, item.refId, item.count, item.charge, item.enchantmentCharge, item.soul)
 end
 
 packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
 
-    tes3mp.ClearSpellsActiveChanges(pid)
-    tes3mp.SetSpellsActiveChangesAction(pid, action)
+    dreamweave.ClearSpellsActiveChanges(pid)
+    dreamweave.SetSpellsActiveChangesAction(pid, action)
 
     for spellId, spellInstances in pairs(spellsActive) do
         for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
@@ -24,20 +24,20 @@ packetBuilder.AddPlayerSpellsActive = function(pid, spellsActive, action)
 
                     if logicHandler.IsPlayerNameLoggedIn(casterName) then
                         local casterPid = logicHandler.GetPidByName(casterName)
-                        tes3mp.SetSpellsActiveCasterPid(casterPid)
+                        dreamweave.SetSpellsActiveCasterPid(casterPid)
                     end
                 end
 
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
                     if effectTable.timeLeft > 0 then
-                        tes3mp.AddSpellActiveEffect(pid, effectTable.id, effectTable.magnitude,
+                        dreamweave.AddSpellActiveEffect(pid, effectTable.id, effectTable.magnitude,
                             effectTable.duration, effectTable.timeLeft, effectTable.arg)
                     end
                 end
             end
 
-            tes3mp.AddSpellActive(pid, spellId, spellInstanceValues.displayName,
+            dreamweave.AddSpellActive(pid, spellId, spellInstanceValues.displayName,
                 spellInstanceValues.stackingState)
         end
     end
@@ -46,18 +46,18 @@ end
 packetBuilder.AddObjectDelete = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    dreamweave.SetObjectRefId(objectData.refId)
 
     local count = objectData.count
     local charge = objectData.charge
@@ -74,142 +74,142 @@ packetBuilder.AddObjectPlace = function(uniqueIndex, objectData)
     if goldValue == nil then goldValue = 1 end
     if droppedByPlayer == nil then droppedByPlayer = false end
 
-    tes3mp.SetObjectCount(count)
-    tes3mp.SetObjectCharge(charge)
-    tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
-    tes3mp.SetObjectSoul(soul)
-    tes3mp.SetObjectGoldValue(goldValue)
-    tes3mp.SetObjectDroppedByPlayerState(droppedByPlayer)
+    dreamweave.SetObjectCount(count)
+    dreamweave.SetObjectCharge(charge)
+    dreamweave.SetObjectEnchantmentCharge(enchantmentCharge)
+    dreamweave.SetObjectSoul(soul)
+    dreamweave.SetObjectGoldValue(goldValue)
+    dreamweave.SetObjectDroppedByPlayerState(droppedByPlayer)
 
     local location = objectData.location
-    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+    dreamweave.SetObjectPosition(location.posX, location.posY, location.posZ)
+    dreamweave.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
 
-    tes3mp.AddObject()
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectSpawn = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    dreamweave.SetObjectRefId(objectData.refId)
 
     if objectData.summon ~= nil then
-        tes3mp.SetObjectSummonState(true)
-        tes3mp.SetObjectSummonEffectId(objectData.summon.effectId)
-        tes3mp.SetObjectSummonSpellId(objectData.summon.spellId)
+        dreamweave.SetObjectSummonState(true)
+        dreamweave.SetObjectSummonEffectId(objectData.summon.effectId)
+        dreamweave.SetObjectSummonSpellId(objectData.summon.spellId)
 
         local currentTime = os.time()
         local finishTime = objectData.summon.startTime + objectData.summon.duration
-        tes3mp.SetObjectSummonDuration(finishTime - currentTime)
+        dreamweave.SetObjectSummonDuration(finishTime - currentTime)
 
         if objectData.summon.summoner.playerName then
             local player = logicHandler.GetPlayerByName(objectData.summon.summoner.playerName)
-            tes3mp.SetObjectSummonerPid(player.pid)
+            dreamweave.SetObjectSummonerPid(player.pid)
         else
             local summonerSplitIndex = objectData.summon.summoner.uniqueIndex:split("-")
-            tes3mp.SetObjectSummonerRefNum(summonerSplitIndex[1])
-            tes3mp.SetObjectSummonerMpNum(summonerSplitIndex[2])
+            dreamweave.SetObjectSummonerRefNum(summonerSplitIndex[1])
+            dreamweave.SetObjectSummonerMpNum(summonerSplitIndex[2])
         end
     end
 
     local location = objectData.location
-    tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-    tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+    dreamweave.SetObjectPosition(location.posX, location.posY, location.posZ)
+    dreamweave.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
 
-    tes3mp.AddObject()
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectLock = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectLockLevel(objectData.lockLevel)
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectLockLevel(objectData.lockLevel)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectMiscellaneous = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectGoldPool(objectData.goldPool)
-    tes3mp.SetObjectLastGoldRestockHour(objectData.lastGoldRestockHour)
-    tes3mp.SetObjectLastGoldRestockDay(objectData.lastGoldRestockDay)
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectGoldPool(objectData.goldPool)
+    dreamweave.SetObjectLastGoldRestockHour(objectData.lastGoldRestockHour)
+    dreamweave.SetObjectLastGoldRestockDay(objectData.lastGoldRestockDay)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectTrap = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    if objectData.trapSpellId ~= nil then tes3mp.SetObjectTrapSpellId(objectData.trapSpellId) end
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    if objectData.trapSpellId ~= nil then dreamweave.SetObjectTrapSpellId(objectData.trapSpellId) end
     
     if objectData.trapAction ~= nil then
-        tes3mp.SetObjectTrapAction(objectData.trapAction)
+        dreamweave.SetObjectTrapAction(objectData.trapAction)
     else
-        tes3mp.SetObjectTrapAction(enumerations.trap.SET_TRAP)
+        dreamweave.SetObjectTrapAction(enumerations.trap.SET_TRAP)
     end
     
-    tes3mp.AddObject()
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectScale = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectScale(objectData.scale)
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectScale(objectData.scale)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddObjectState = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectState(objectData.state)
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectState(objectData.state)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddDoorState = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
-    tes3mp.SetObjectDoorState(objectData.doorState)
-    tes3mp.AddObject()
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectDoorState(objectData.doorState)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddDoorDestination = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectRefId(objectData.refId)
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    dreamweave.SetObjectRefId(objectData.refId)
     local destination = objectData.doorDestination
-    tes3mp.SetObjectDoorTeleportState(destination.teleport)
-    tes3mp.SetObjectDoorDestinationCell(destination.cell)
-    tes3mp.SetObjectDoorDestinationPosition(destination.posX, destination.posY, destination.posZ)
-    tes3mp.SetObjectDoorDestinationRotation(destination.rotX, destination.rotZ)
-    tes3mp.AddObject()
+    dreamweave.SetObjectDoorTeleportState(destination.teleport)
+    dreamweave.SetObjectDoorDestinationCell(destination.cell)
+    dreamweave.SetObjectDoorDestinationPosition(destination.posX, destination.posY, destination.posZ)
+    dreamweave.SetObjectDoorDestinationRotation(destination.rotX, destination.rotZ)
+    dreamweave.AddObject()
 end
 
 packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
 
     local splitIndex = uniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    if objectData.refId ~= nil then tes3mp.SetObjectRefId(objectData.refId) end
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    if objectData.refId ~= nil then dreamweave.SetObjectRefId(objectData.refId) end
 
     local variableCount = 0
 
@@ -220,11 +220,11 @@ packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
             for internalIndex, value in pairs(variableTable) do
 
                 if variableType == enumerations.variableType.SHORT then
-                    tes3mp.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.SHORT)
+                    dreamweave.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.SHORT)
                 elseif variableType == enumerations.variableType.LONG then
-                    tes3mp.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.LONG)
+                    dreamweave.AddClientLocalInteger(tonumber(internalIndex), value, enumerations.variableType.LONG)
                 elseif variableType == enumerations.variableType.FLOAT then
-                    tes3mp.AddClientLocalFloat(tonumber(internalIndex), value)
+                    dreamweave.AddClientLocalFloat(tonumber(internalIndex), value)
                 end
 
                 variableCount = variableCount + 1
@@ -233,45 +233,45 @@ packetBuilder.AddClientScriptLocal = function(uniqueIndex, objectData)
     end
 
     if variableCount > 0 then
-        tes3mp.AddObject()
+        dreamweave.AddObject()
     end
 end
 
 packetBuilder.AddAIActor = function(actorUniqueIndex, targetPid, aiData)
 
     local splitIndex = actorUniqueIndex:split("-")
-    tes3mp.SetActorRefNum(splitIndex[1])
-    tes3mp.SetActorMpNum(splitIndex[2])
+    dreamweave.SetActorRefNum(splitIndex[1])
+    dreamweave.SetActorMpNum(splitIndex[2])
 
-    tes3mp.SetActorAIAction(aiData.action)
+    dreamweave.SetActorAIAction(aiData.action)
 
     if targetPid ~= nil then
-        tes3mp.SetActorAITargetToPlayer(targetPid)
+        dreamweave.SetActorAITargetToPlayer(targetPid)
     elseif aiData.targetUniqueIndex ~= nil then
         local targetSplitIndex = aiData.targetUniqueIndex:split("-")
 
         if targetSplitIndex[2] ~= nil then
-            tes3mp.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
+            dreamweave.SetActorAITargetToObject(targetSplitIndex[1], targetSplitIndex[2])
         end
     elseif aiData.posX ~= nil and aiData.posY ~= nil and aiData.posZ ~= nil then
-        tes3mp.SetActorAICoordinates(aiData.posX, aiData.posY, aiData.posZ)
+        dreamweave.SetActorAICoordinates(aiData.posX, aiData.posY, aiData.posZ)
     elseif aiData.distance ~= nil then
-        tes3mp.SetActorAIDistance(aiData.distance)
+        dreamweave.SetActorAIDistance(aiData.distance)
     elseif aiData.duration ~= nil then
-        tes3mp.SetActorAIDuration(aiData.duration)
+        dreamweave.SetActorAIDuration(aiData.duration)
     end
 
-    tes3mp.SetActorAIRepetition(aiData.shouldRepeat)
+    dreamweave.SetActorAIRepetition(aiData.shouldRepeat)
 
-    tes3mp.AddActor()
+    dreamweave.AddActor()
 end
 
 packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, action)
 
     local splitIndex = actorUniqueIndex:split("-")
-    tes3mp.SetActorRefNum(splitIndex[1])
-    tes3mp.SetActorMpNum(splitIndex[2])
-    tes3mp.SetActorSpellsActiveAction(action)
+    dreamweave.SetActorRefNum(splitIndex[1])
+    dreamweave.SetActorMpNum(splitIndex[2])
+    dreamweave.SetActorSpellsActiveAction(action)
 
     for spellId, spellInstances in pairs(spellsActive) do
         for spellInstanceIndex, spellInstanceValues in pairs(spellInstances) do
@@ -280,49 +280,49 @@ packetBuilder.AddActorSpellsActive = function(actorUniqueIndex, spellsActive, ac
                 for effectIndex, effectTable in pairs(spellInstanceValues.effects) do
 
                     if effectTable.timeLeft > 0 then
-                        tes3mp.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
+                        dreamweave.AddActorSpellActiveEffect(effectTable.id, effectTable.magnitude,
                             effectTable.duration, effectTable.timeLeft, effectTable.arg)
                     end
                 end
             end
 
-            tes3mp.AddActorSpellActive(spellId, spellInstanceValues.displayName,
+            dreamweave.AddActorSpellActive(spellId, spellInstanceValues.displayName,
                 spellInstanceValues.stackingState)
         end
     end
 
-    tes3mp.AddActor() 
+    dreamweave.AddActor() 
 end
 
 packetBuilder.AddEffectToRecord = function(effect)
 
-    tes3mp.SetRecordEffectId(effect.id)
-    if effect.attribute ~= nil then tes3mp.SetRecordEffectAttribute(effect.attribute) end
-    if effect.skill ~= nil then tes3mp.SetRecordEffectSkill(effect.skill) end
-    if effect.rangeType ~= nil then tes3mp.SetRecordEffectRangeType(effect.rangeType) end
-    if effect.area ~= nil then tes3mp.SetRecordEffectArea(effect.area) end
-    if effect.duration ~= nil then tes3mp.SetRecordEffectDuration(effect.duration) end
-    if effect.magnitudeMin ~= nil then tes3mp.SetRecordEffectMagnitudeMin(effect.magnitudeMin) end
-    if effect.magnitudeMax ~= nil then tes3mp.SetRecordEffectMagnitudeMax(effect.magnitudeMax) end
+    dreamweave.SetRecordEffectId(effect.id)
+    if effect.attribute ~= nil then dreamweave.SetRecordEffectAttribute(effect.attribute) end
+    if effect.skill ~= nil then dreamweave.SetRecordEffectSkill(effect.skill) end
+    if effect.rangeType ~= nil then dreamweave.SetRecordEffectRangeType(effect.rangeType) end
+    if effect.area ~= nil then dreamweave.SetRecordEffectArea(effect.area) end
+    if effect.duration ~= nil then dreamweave.SetRecordEffectDuration(effect.duration) end
+    if effect.magnitudeMin ~= nil then dreamweave.SetRecordEffectMagnitudeMin(effect.magnitudeMin) end
+    if effect.magnitudeMax ~= nil then dreamweave.SetRecordEffectMagnitudeMax(effect.magnitudeMax) end
 
-    tes3mp.AddRecordEffect()
+    dreamweave.AddRecordEffect()
 end
 
 packetBuilder.AddBodyPartToRecord = function(part)
 
-    tes3mp.SetRecordBodyPartType(part.partType)
-    if part.malePart ~= nil then tes3mp.SetRecordBodyPartIdForMale(part.malePart) end
-    if part.femalePart ~= nil then tes3mp.SetRecordBodyPartIdForFemale(part.femalePart) end
+    dreamweave.SetRecordBodyPartType(part.partType)
+    if part.malePart ~= nil then dreamweave.SetRecordBodyPartIdForMale(part.malePart) end
+    if part.femalePart ~= nil then dreamweave.SetRecordBodyPartIdForFemale(part.femalePart) end
 
-    tes3mp.AddRecordBodyPart()
+    dreamweave.AddRecordBodyPart()
 end
 
 packetBuilder.AddInventoryItemToRecord = function(item)
 
-    tes3mp.SetRecordInventoryItemId(item.id)
-    if item.count ~= nil then tes3mp.SetRecordInventoryItemCount(item.count) end
+    dreamweave.SetRecordInventoryItemId(item.id)
+    if item.count ~= nil then dreamweave.SetRecordInventoryItemCount(item.count) end
 
-    tes3mp.AddRecordInventoryItem()
+    dreamweave.AddRecordInventoryItem()
 end
 
 packetBuilder.AddRecordByType = function(id, record, storeType)
@@ -382,46 +382,46 @@ end
 
 packetBuilder.AddActivatorRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddApparatusRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.quality ~= nil then dreamweave.SetRecordQuality(record.quality) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddArmorRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-    if record.armorRating ~= nil then tes3mp.SetRecordArmorRating(record.armorRating) end
-    if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-    if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.health ~= nil then dreamweave.SetRecordHealth(record.health) end
+    if record.armorRating ~= nil then dreamweave.SetRecordArmorRating(record.armorRating) end
+    if record.enchantmentId ~= nil then dreamweave.SetRecordEnchantmentId(record.enchantmentId) end
+    if record.enchantmentCharge ~= nil then dreamweave.SetRecordEnchantmentCharge(record.enchantmentCharge) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.parts) == "table" then
         for _, part in pairs(record.parts) do
@@ -429,78 +429,78 @@ packetBuilder.AddArmorRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddBodyPartRecord = function(id, record)
     
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.part ~= nil then tes3mp.SetRecordBodyPartType(record.part) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.race ~= nil then tes3mp.SetRecordRace(record.race) end
-    if record.vampireState ~= nil then tes3mp.SetRecordVampireState(record.vampireState) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.part ~= nil then dreamweave.SetRecordBodyPartType(record.part) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.race ~= nil then dreamweave.SetRecordRace(record.race) end
+    if record.vampireState ~= nil then dreamweave.SetRecordVampireState(record.vampireState) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddBookRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.text ~= nil then tes3mp.SetRecordText(record.text) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.scrollState ~= nil then tes3mp.SetRecordScrollState(record.scrollState) end
-    if record.skillId ~= nil then tes3mp.SetRecordSkillId(record.skillId) end
-    if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-    if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.text ~= nil then dreamweave.SetRecordText(record.text) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.scrollState ~= nil then dreamweave.SetRecordScrollState(record.scrollState) end
+    if record.skillId ~= nil then dreamweave.SetRecordSkillId(record.skillId) end
+    if record.enchantmentId ~= nil then dreamweave.SetRecordEnchantmentId(record.enchantmentId) end
+    if record.enchantmentCharge ~= nil then dreamweave.SetRecordEnchantmentCharge(record.enchantmentCharge) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddCellRecord = function(id, record)
 
-    tes3mp.SetRecordName(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.hasAmbient ~= nil then tes3mp.SetRecordHasAmbient(record.hasAmbient) end
+    dreamweave.SetRecordName(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.hasAmbient ~= nil then dreamweave.SetRecordHasAmbient(record.hasAmbient) end
     if record.ambient ~= nil then
-        tes3mp.SetRecordAmbientColor(record.ambient.red, record.ambient.green, record.ambient.blue)
+        dreamweave.SetRecordAmbientColor(record.ambient.red, record.ambient.green, record.ambient.blue)
     end
     if record.sunlight ~= nil then
-        tes3mp.SetRecordSunlightColor(record.sunlight.red, record.sunlight.green, record.sunlight.blue)
+        dreamweave.SetRecordSunlightColor(record.sunlight.red, record.sunlight.green, record.sunlight.blue)
     end
     if record.fog ~= nil then
-        tes3mp.SetRecordFog(record.fog.red, record.fog.green, record.fog.blue, record.fog.density)
+        dreamweave.SetRecordFog(record.fog.red, record.fog.green, record.fog.blue, record.fog.density)
     end
-    if record.hasWater ~= nil then tes3mp.SetRecordHasWater(record.hasWater) end
-    if record.waterLevel ~= nil then tes3mp.SetRecordWaterLevel(record.waterLevel) end
-    if record.noSleep ~= nil then tes3mp.SetRecordNoSleep(record.noSleep) end
-    if record.quasiEx ~= nil then tes3mp.SetRecordQuasiEx(record.quasiEx) end
-    if record.region ~= nil then tes3mp.SetRecordRegion(record.region) end
+    if record.hasWater ~= nil then dreamweave.SetRecordHasWater(record.hasWater) end
+    if record.waterLevel ~= nil then dreamweave.SetRecordWaterLevel(record.waterLevel) end
+    if record.noSleep ~= nil then dreamweave.SetRecordNoSleep(record.noSleep) end
+    if record.quasiEx ~= nil then dreamweave.SetRecordQuasiEx(record.quasiEx) end
+    if record.region ~= nil then dreamweave.SetRecordRegion(record.region) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddClothingRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-    if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.enchantmentId ~= nil then dreamweave.SetRecordEnchantmentId(record.enchantmentId) end
+    if record.enchantmentCharge ~= nil then dreamweave.SetRecordEnchantmentCharge(record.enchantmentCharge) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.parts) == "table" then
         for _, part in pairs(record.parts) do
@@ -508,18 +508,18 @@ packetBuilder.AddClothingRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddContainerRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.items) == "table" then
         for _, item in pairs(record.items) do
@@ -527,32 +527,32 @@ packetBuilder.AddContainerRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddCreatureRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.scale ~= nil then tes3mp.SetRecordScale(record.scale) end
-    if record.bloodType ~= nil then tes3mp.SetRecordBloodType(record.bloodType) end
-    if record.level ~= nil then tes3mp.SetRecordLevel(record.level) end
-    if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-    if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
-    if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
-    if record.soulValue ~= nil then tes3mp.SetRecordSoulValue(record.soulValue) end
-    if record.damageChop ~= nil then tes3mp.SetRecordDamageChop(record.damageChop.min, record.damageChop.max) end
-    if record.damageSlash ~= nil then tes3mp.SetRecordDamageSlash(record.damageSlash.min, record.damageSlash.max) end
-    if record.damageThrust ~= nil then tes3mp.SetRecordDamageThrust(record.damageThrust.min, record.damageThrust.max) end
-    if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
-    if record.aiServices ~= nil then tes3mp.SetRecordAIServices(record.aiServices) end
-    if record.aiFlee ~= nil then tes3mp.SetRecordAIFlee(record.aiFlee) end
-    if record.aiAlarm ~= nil then tes3mp.SetRecordAIAlarm(record.aiAlarm) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.scale ~= nil then dreamweave.SetRecordScale(record.scale) end
+    if record.bloodType ~= nil then dreamweave.SetRecordBloodType(record.bloodType) end
+    if record.level ~= nil then dreamweave.SetRecordLevel(record.level) end
+    if record.health ~= nil then dreamweave.SetRecordHealth(record.health) end
+    if record.magicka ~= nil then dreamweave.SetRecordMagicka(record.magicka) end
+    if record.fatigue ~= nil then dreamweave.SetRecordFatigue(record.fatigue) end
+    if record.soulValue ~= nil then dreamweave.SetRecordSoulValue(record.soulValue) end
+    if record.damageChop ~= nil then dreamweave.SetRecordDamageChop(record.damageChop.min, record.damageChop.max) end
+    if record.damageSlash ~= nil then dreamweave.SetRecordDamageSlash(record.damageSlash.min, record.damageSlash.max) end
+    if record.damageThrust ~= nil then dreamweave.SetRecordDamageThrust(record.damageThrust.min, record.damageThrust.max) end
+    if record.aiFight ~= nil then dreamweave.SetRecordAIFight(record.aiFight) end
+    if record.aiServices ~= nil then dreamweave.SetRecordAIServices(record.aiServices) end
+    if record.aiFlee ~= nil then dreamweave.SetRecordAIFlee(record.aiFlee) end
+    if record.aiAlarm ~= nil then dreamweave.SetRecordAIAlarm(record.aiAlarm) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.items) == "table" then
         for _, item in pairs(record.items) do
@@ -560,33 +560,33 @@ packetBuilder.AddCreatureRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddDoorRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.openSound ~= nil then tes3mp.SetRecordOpenSound(record.openSound) end
-    if record.closeSound ~= nil then tes3mp.SetRecordCloseSound(record.closeSound) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.openSound ~= nil then dreamweave.SetRecordOpenSound(record.openSound) end
+    if record.closeSound ~= nil then dreamweave.SetRecordCloseSound(record.closeSound) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddEnchantmentRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.cost ~= nil then tes3mp.SetRecordCost(record.cost) end
-    if record.charge ~= nil then tes3mp.SetRecordCharge(record.charge) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.cost ~= nil then dreamweave.SetRecordCost(record.cost) end
+    if record.charge ~= nil then dreamweave.SetRecordCharge(record.charge) end
 
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags)
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags)
     -- Keep this for compatibility with older data which used autoCalc
-    elseif record.autoCalc ~= nil then tes3mp.SetRecordFlags(record.autoCalc) end
+    elseif record.autoCalc ~= nil then dreamweave.SetRecordFlags(record.autoCalc) end
 
     if type(record.effects) == "table" then
         for _, effect in pairs(record.effects) do
@@ -594,31 +594,31 @@ packetBuilder.AddEnchantmentRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddGameSettingRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
 
-    if record.intVar ~= nil then tes3mp.SetRecordIntegerVariable(record.intVar)
-    elseif record.floatVar ~= nil then tes3mp.SetRecordFloatVariable(record.floatVar)
-    elseif record.stringVar ~= nil then tes3mp.SetRecordStringVariable(tostring(record.stringVar)) end
+    if record.intVar ~= nil then dreamweave.SetRecordIntegerVariable(record.intVar)
+    elseif record.floatVar ~= nil then dreamweave.SetRecordFloatVariable(record.floatVar)
+    elseif record.stringVar ~= nil then dreamweave.SetRecordStringVariable(tostring(record.stringVar)) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddIngredientRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.effects) == "table" then
         for effectIndex = 1, 4 do
@@ -632,81 +632,81 @@ packetBuilder.AddIngredientRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddLightRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.sound ~= nil then tes3mp.SetRecordSound(record.sound) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.time ~= nil then tes3mp.SetRecordTime(record.time) end
-    if record.radius ~= nil then tes3mp.SetRecordRadius(record.radius) end
-    if record.color ~= nil then tes3mp.SetRecordColor(record.color.red, record.color.green, record.color.blue) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.sound ~= nil then dreamweave.SetRecordSound(record.sound) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.time ~= nil then dreamweave.SetRecordTime(record.time) end
+    if record.radius ~= nil then dreamweave.SetRecordRadius(record.radius) end
+    if record.color ~= nil then dreamweave.SetRecordColor(record.color.red, record.color.green, record.color.blue) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddLockpickRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
-    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.quality ~= nil then dreamweave.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then dreamweave.SetRecordUses(record.uses) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddMiscellaneousRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.keyState ~= nil then tes3mp.SetRecordKeyState(record.keyState) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.keyState ~= nil then dreamweave.SetRecordKeyState(record.keyState) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddNpcRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.inventoryBaseId ~= nil then tes3mp.SetRecordInventoryBaseId(record.inventoryBaseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.gender ~= nil then tes3mp.SetRecordGender(record.gender) end
-    if record.race ~= nil then tes3mp.SetRecordRace(record.race) end
-    if record.hair ~= nil then tes3mp.SetRecordHair(record.hair) end
-    if record.head ~= nil then tes3mp.SetRecordHead(record.head) end
-    if record.class ~= nil then tes3mp.SetRecordClass(record.class) end
-    if record.level ~= nil then tes3mp.SetRecordLevel(record.level) end
-    if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-    if record.magicka ~= nil then tes3mp.SetRecordMagicka(record.magicka) end
-    if record.fatigue ~= nil then tes3mp.SetRecordFatigue(record.fatigue) end
-    if record.aiFight ~= nil then tes3mp.SetRecordAIFight(record.aiFight) end
-    if record.aiFlee ~= nil then tes3mp.SetRecordAIFlee(record.aiFlee) end
-    if record.aiAlarm ~= nil then tes3mp.SetRecordAIAlarm(record.aiAlarm) end
-    if record.aiServices ~= nil then tes3mp.SetRecordAIServices(record.aiServices) end
-    if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
-    if record.faction ~= nil then tes3mp.SetRecordFaction(record.faction) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.inventoryBaseId ~= nil then dreamweave.SetRecordInventoryBaseId(record.inventoryBaseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.gender ~= nil then dreamweave.SetRecordGender(record.gender) end
+    if record.race ~= nil then dreamweave.SetRecordRace(record.race) end
+    if record.hair ~= nil then dreamweave.SetRecordHair(record.hair) end
+    if record.head ~= nil then dreamweave.SetRecordHead(record.head) end
+    if record.class ~= nil then dreamweave.SetRecordClass(record.class) end
+    if record.level ~= nil then dreamweave.SetRecordLevel(record.level) end
+    if record.health ~= nil then dreamweave.SetRecordHealth(record.health) end
+    if record.magicka ~= nil then dreamweave.SetRecordMagicka(record.magicka) end
+    if record.fatigue ~= nil then dreamweave.SetRecordFatigue(record.fatigue) end
+    if record.aiFight ~= nil then dreamweave.SetRecordAIFight(record.aiFight) end
+    if record.aiFlee ~= nil then dreamweave.SetRecordAIFlee(record.aiFlee) end
+    if record.aiAlarm ~= nil then dreamweave.SetRecordAIAlarm(record.aiAlarm) end
+    if record.aiServices ~= nil then dreamweave.SetRecordAIServices(record.aiServices) end
+    if record.autoCalc ~= nil then dreamweave.SetRecordAutoCalc(record.autoCalc) end
+    if record.faction ~= nil then dreamweave.SetRecordFaction(record.faction) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.items) == "table" then
         for _, item in pairs(record.items) do
@@ -714,20 +714,20 @@ packetBuilder.AddNpcRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddPotionRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.autoCalc ~= nil then tes3mp.SetRecordAutoCalc(record.autoCalc) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.autoCalc ~= nil then dreamweave.SetRecordAutoCalc(record.autoCalc) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
     if type(record.effects) == "table" then
         for _, effect in pairs(record.effects) do
@@ -735,70 +735,70 @@ packetBuilder.AddPotionRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddProbeRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
-    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.quality ~= nil then dreamweave.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then dreamweave.SetRecordUses(record.uses) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddRepairRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.quality ~= nil then tes3mp.SetRecordQuality(record.quality) end
-    if record.uses ~= nil then tes3mp.SetRecordUses(record.uses) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.quality ~= nil then dreamweave.SetRecordQuality(record.quality) end
+    if record.uses ~= nil then dreamweave.SetRecordUses(record.uses) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddScriptRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.scriptText ~= nil then tes3mp.SetRecordScriptText(record.scriptText) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.scriptText ~= nil then dreamweave.SetRecordScriptText(record.scriptText) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddSoundRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.sound ~= nil then tes3mp.SetRecordSound(record.sound) end
-    if record.volume ~= nil then tes3mp.SetRecordVolume(record.volume) end
-    if record.minRange ~= nil then tes3mp.SetRecordMinRange(record.minRange) end
-    if record.maxRange ~= nil then tes3mp.SetRecordMaxRange(record.maxRange) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.sound ~= nil then dreamweave.SetRecordSound(record.sound) end
+    if record.volume ~= nil then dreamweave.SetRecordVolume(record.volume) end
+    if record.minRange ~= nil then dreamweave.SetRecordMinRange(record.minRange) end
+    if record.maxRange ~= nil then dreamweave.SetRecordMaxRange(record.maxRange) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddSpellRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.cost ~= nil then tes3mp.SetRecordCost(record.cost) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.cost ~= nil then dreamweave.SetRecordCost(record.cost) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
 
     if type(record.effects) == "table" then
         for _, effect in pairs(record.effects) do
@@ -806,40 +806,40 @@ packetBuilder.AddSpellRecord = function(id, record)
         end
     end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddStaticRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 packetBuilder.AddWeaponRecord = function(id, record)
 
-    tes3mp.SetRecordId(id)
-    if record.baseId ~= nil then tes3mp.SetRecordBaseId(record.baseId) end
-    if record.name ~= nil then tes3mp.SetRecordName(record.name) end
-    if record.model ~= nil then tes3mp.SetRecordModel(record.model) end
-    if record.icon ~= nil then tes3mp.SetRecordIcon(record.icon) end
-    if record.subtype ~= nil then tes3mp.SetRecordSubtype(record.subtype) end
-    if record.weight ~= nil then tes3mp.SetRecordWeight(record.weight) end
-    if record.value ~= nil then tes3mp.SetRecordValue(record.value) end
-    if record.health ~= nil then tes3mp.SetRecordHealth(record.health) end
-    if record.speed ~= nil then tes3mp.SetRecordSpeed(record.speed) end
-    if record.reach ~= nil then tes3mp.SetRecordReach(record.reach) end
-    if record.damageChop ~= nil then tes3mp.SetRecordDamageChop(record.damageChop.min, record.damageChop.max) end
-    if record.damageSlash ~= nil then tes3mp.SetRecordDamageSlash(record.damageSlash.min, record.damageSlash.max) end
-    if record.damageThrust ~= nil then tes3mp.SetRecordDamageThrust(record.damageThrust.min, record.damageThrust.max) end
-    if record.flags ~= nil then tes3mp.SetRecordFlags(record.flags) end
-    if record.enchantmentId ~= nil then tes3mp.SetRecordEnchantmentId(record.enchantmentId) end
-    if record.enchantmentCharge ~= nil then tes3mp.SetRecordEnchantmentCharge(record.enchantmentCharge) end
-    if record.script ~= nil then tes3mp.SetRecordScript(record.script) end
+    dreamweave.SetRecordId(id)
+    if record.baseId ~= nil then dreamweave.SetRecordBaseId(record.baseId) end
+    if record.name ~= nil then dreamweave.SetRecordName(record.name) end
+    if record.model ~= nil then dreamweave.SetRecordModel(record.model) end
+    if record.icon ~= nil then dreamweave.SetRecordIcon(record.icon) end
+    if record.subtype ~= nil then dreamweave.SetRecordSubtype(record.subtype) end
+    if record.weight ~= nil then dreamweave.SetRecordWeight(record.weight) end
+    if record.value ~= nil then dreamweave.SetRecordValue(record.value) end
+    if record.health ~= nil then dreamweave.SetRecordHealth(record.health) end
+    if record.speed ~= nil then dreamweave.SetRecordSpeed(record.speed) end
+    if record.reach ~= nil then dreamweave.SetRecordReach(record.reach) end
+    if record.damageChop ~= nil then dreamweave.SetRecordDamageChop(record.damageChop.min, record.damageChop.max) end
+    if record.damageSlash ~= nil then dreamweave.SetRecordDamageSlash(record.damageSlash.min, record.damageSlash.max) end
+    if record.damageThrust ~= nil then dreamweave.SetRecordDamageThrust(record.damageThrust.min, record.damageThrust.max) end
+    if record.flags ~= nil then dreamweave.SetRecordFlags(record.flags) end
+    if record.enchantmentId ~= nil then dreamweave.SetRecordEnchantmentId(record.enchantmentId) end
+    if record.enchantmentCharge ~= nil then dreamweave.SetRecordEnchantmentCharge(record.enchantmentCharge) end
+    if record.script ~= nil then dreamweave.SetRecordScript(record.script) end
 
-    tes3mp.AddRecord()
+    dreamweave.AddRecord()
 end
 
 return packetBuilder

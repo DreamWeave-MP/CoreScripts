@@ -30,7 +30,7 @@ logicHandler.InitializeWorld = function()
         WorldInstance:EnsureTimeDataExists()
 
         -- Get the current mpNum from the loaded world
-        tes3mp.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
+        dreamweave.SetCurrentMpNum(WorldInstance:GetCurrentMpNum())
 
         customEventHooks.triggerHandlers("OnWorldReload", customEventHooks.makeEventStatus(true, true), {})
 
@@ -53,7 +53,7 @@ logicHandler.CheckPlayerValidity = function(pid, targetPid)
 
         if sendMessage then
             local message = "Please specify the player ID.\n"
-            tes3mp.SendMessage(pid, message, false)
+            dreamweave.SendMessage(pid, message, false)
         end
 
         return false
@@ -68,7 +68,7 @@ logicHandler.CheckPlayerValidity = function(pid, targetPid)
     if not valid then
         if sendMessage then
             local message = "That player is not logged in!\n"
-            tes3mp.SendMessage(pid, message, false)
+            dreamweave.SendMessage(pid, message, false)
         end
     end
 
@@ -109,7 +109,7 @@ logicHandler.GetLowestPingPid = function(pidArray)
 
     for _, pid in pairs(pidArray) do
 
-        local currentPing = tes3mp.GetAvgPing(pid)
+        local currentPing = dreamweave.GetAvgPing(pid)
 
         if lowestPing == nil or currentPing < lowestPing then
             lowestPing = currentPing
@@ -215,17 +215,17 @@ logicHandler.BanPlayer = function(pid, targetName)
             table.insert(banList.playerNames, string.lower(accountName))
             SaveBanList()
 
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
+            dreamweave.SendMessage(pid, "All IP addresses stored for " .. targetName ..
                 " are now banned.\n", false)
 
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-                tes3mp.BanAddress(ipAddress)
+                dreamweave.BanAddress(ipAddress)
             end
         else
-            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server.\n", false)
+            dreamweave.SendMessage(pid, targetName .. " does not have an account on this server.\n", false)
         end
     else
-        tes3mp.SendMessage(pid, targetName .. " was already banned.\n", false)
+        dreamweave.SendMessage(pid, targetName .. " was already banned.\n", false)
     end
 end
 
@@ -237,18 +237,18 @@ logicHandler.UnbanPlayer = function(pid, targetName)
         local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
         if targetPlayer ~= nil then
-            tes3mp.SendMessage(pid, "All IP addresses stored for " .. targetName ..
+            dreamweave.SendMessage(pid, "All IP addresses stored for " .. targetName ..
                 " are now unbanned.\n", false)
 
             for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-                tes3mp.UnbanAddress(ipAddress)
+                dreamweave.UnbanAddress(ipAddress)
             end
         else
-            tes3mp.SendMessage(pid, targetName .. " does not have an account on this server, " ..
+            dreamweave.SendMessage(pid, targetName .. " does not have an account on this server, " ..
                 "but has been removed from the ban list.\n", false)
         end
     else
-        tes3mp.SendMessage(pid, targetName .. " is not banned.\n", false)
+        dreamweave.SendMessage(pid, targetName .. " is not banned.\n", false)
     end
 end
 
@@ -258,29 +258,29 @@ logicHandler.TeleportToPlayer = function(pid, originPid, targetPid)
         return
     elseif tonumber(originPid) == tonumber(targetPid) then
         local message = "You can't teleport to yourself.\n"
-        tes3mp.SendMessage(pid, message, false)
+        dreamweave.SendMessage(pid, message, false)
         return
     end
 
     local originPlayerName = Players[tonumber(originPid)].name
     local targetPlayerName = Players[tonumber(targetPid)].name
-    local originCell = tes3mp.GetCell(originPid)
-    local targetCell = tes3mp.GetCell(targetPid)
-    local targetPos = { tes3mp.GetPosX(targetPid), tes3mp.GetPosY(targetPid), tes3mp.GetPosZ(targetPid) }
-    local targetRot = { tes3mp.GetRotX(targetPid), tes3mp.GetRotZ(targetPid) }
+    local originCell = dreamweave.GetCell(originPid)
+    local targetCell = dreamweave.GetCell(targetPid)
+    local targetPos = { dreamweave.GetPosX(targetPid), dreamweave.GetPosY(targetPid), dreamweave.GetPosZ(targetPid) }
+    local targetRot = { dreamweave.GetRotX(targetPid), dreamweave.GetRotZ(targetPid) }
 
-    tes3mp.SetCell(originPid, targetCell)
-    tes3mp.SendCell(originPid)
+    dreamweave.SetCell(originPid, targetCell)
+    dreamweave.SendCell(originPid)
 
-    tes3mp.SetPos(originPid, targetPos[1], targetPos[2], targetPos[3])
-    tes3mp.SetRot(originPid, targetRot[1], targetRot[2])
-    tes3mp.SendPos(originPid)
+    dreamweave.SetPos(originPid, targetPos[1], targetPos[2], targetPos[3])
+    dreamweave.SetRot(originPid, targetRot[1], targetRot[2])
+    dreamweave.SendPos(originPid)
 
     local originMessage = "You have been teleported to " .. targetPlayerName ..
         "'s location. (" .. targetCell .. ")\n"
     local targetMessage = "Teleporting ".. originPlayerName .." to your location.\n"
-    tes3mp.SendMessage(originPid, originMessage, false)
-    tes3mp.SendMessage(targetPid, targetMessage, false)
+    dreamweave.SendMessage(originPid, originMessage, false)
+    dreamweave.SendMessage(targetPid, targetMessage, false)
 end
 
 logicHandler.GetConnectedPlayerCount = function()
@@ -321,12 +321,12 @@ logicHandler.PrintPlayerPosition = function(pid, targetPid)
     local message = ""
     local targetPlayerName = Players[tonumber(targetPid)].name
     local targetCell = ""
-    local targetPos = { tes3mp.GetPosX(targetPid), tes3mp.GetPosY(targetPid), tes3mp.GetPosZ(targetPid) }
-    targetCell = tes3mp.GetCell(targetPid)
+    local targetPos = { dreamweave.GetPosX(targetPid), dreamweave.GetPosY(targetPid), dreamweave.GetPosZ(targetPid) }
+    targetCell = dreamweave.GetCell(targetPid)
 
     message = targetPlayerName .. " (" .. targetPid .. ") is in " .. targetCell .. " at [" .. targetPos[1] ..
         " " .. targetPos[2] .. " " .. targetPos[3] .. "]\n"
-    tes3mp.SendMessage(pid, message, false)
+    dreamweave.SendMessage(pid, message, false)
 end
 
 logicHandler.PushPlayerList = function(pls)
@@ -342,13 +342,13 @@ logicHandler.AuthCheck = function(pid)
         local playerName = logicHandler.GetChatName(pid)
 
         local message = playerName .. " failed to log in.\n"
-        tes3mp.SendMessage(pid, message, true)
+        dreamweave.SendMessage(pid, message, true)
         Players[pid]:Kick()
 
         Players[pid] = nil
         return false
     else
-        tes3mp.LogMessage(enumerations.log.INFO, "Player with pid " .. pid .. " does not exist but auth check was called with" ..
+        dreamweave.LogMessage(enumerations.log.INFO, "Player with pid " .. pid .. " does not exist but auth check was called with" ..
             " pid.")
         return false
     end
@@ -384,8 +384,8 @@ end
 
 logicHandler.SendClientScriptDisables = function(pid, forEveryone)
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType["SCRIPT"])
+    dreamweave.ClearRecords()
+    dreamweave.SetRecordType(enumerations.recordType["SCRIPT"])
     local recordCount = 0
 
     for _, scriptId in pairs(config.disabledClientScriptIds) do
@@ -394,19 +394,19 @@ logicHandler.SendClientScriptDisables = function(pid, forEveryone)
     end
 
     if recordCount > 0 then
-        tes3mp.SendRecordDynamic(pid, forEveryone, false)
+        dreamweave.SendRecordDynamic(pid, forEveryone, false)
     end
 end
 
 logicHandler.SendClientScriptSettings = function(pid, forEveryone)
 
-    tes3mp.ClearSynchronizedClientScriptIds()
+    dreamweave.ClearSynchronizedClientScriptIds()
 
     for _, scriptId in pairs(config.synchronizedClientScriptIds) do
-        tes3mp.AddSynchronizedClientScriptId(scriptId)
+        dreamweave.AddSynchronizedClientScriptId(scriptId)
     end
 
-    tes3mp.ClearSynchronizedClientGlobalIds()
+    dreamweave.ClearSynchronizedClientGlobalIds()
 
     for _, variableCategory in pairs({"personal", "quest", "kills", "factionRanks",
         "factionExpulsion", "worldwide"}) do
@@ -414,22 +414,22 @@ logicHandler.SendClientScriptSettings = function(pid, forEveryone)
         for _, globalId in pairs(clientVariableScopes.globals[variableCategory]) do
             -- Global IDs are stored as lowercase on the client, so make sure we're
             -- making them lowercase here as well
-            tes3mp.AddSynchronizedClientGlobalId(string.lower(globalId))
+            dreamweave.AddSynchronizedClientGlobalId(string.lower(globalId))
         end
     end
 
-    tes3mp.SendClientScriptSettings(pid, forEveryone)
+    dreamweave.SendClientScriptSettings(pid, forEveryone)
 end
 
 logicHandler.SendConfigCollisionOverrides = function(pid, forEveryone)
 
-    tes3mp.ClearEnforcedCollisionRefIds()
+    dreamweave.ClearEnforcedCollisionRefIds()
 
     for _, refId in pairs(config.enforcedCollisionRefIds) do
-        tes3mp.AddEnforcedCollisionRefId(refId)
+        dreamweave.AddEnforcedCollisionRefId(refId)
     end
 
-    tes3mp.SendWorldCollisionOverride(pid, forEveryone)
+    dreamweave.SendWorldCollisionOverride(pid, forEveryone)
 end
 
 -- Create objects with newly assigned uniqueIndexes in a particular cell,
@@ -453,7 +453,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
     -- Only send a packet if there are players on the server to send it to
     if tableHelper.getCount(Players) > 0 then
         shouldSendPacket = true
-        tes3mp.ClearObjectList()
+        dreamweave.ClearObjectList()
     end
 
     for _, object in pairs(objectsToCreate) do
@@ -489,7 +489,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
                 end
             else
                 isValid = false
-                tes3mp.LogMessage(enumerations.log.ERROR, "Attempt at creating object " .. refId ..
+                dreamweave.LogMessage(enumerations.log.ERROR, "Attempt at creating object " .. refId ..
                     " based on non-existent generated record")
             end
         end
@@ -498,7 +498,7 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
 
             table.insert(uniqueIndexes, uniqueIndex)
             WorldInstance:SetCurrentMpNum(mpNum)
-            tes3mp.SetCurrentMpNum(mpNum)
+            dreamweave.SetCurrentMpNum(mpNum)
 
             cell:InitializeObjectData(uniqueIndex, refId)
             cell.data.objectData[uniqueIndex].location = location
@@ -516,22 +516,22 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
             if shouldSendPacket then
 
                 local pid = tableHelper.getAnyValue(Players).pid
-                tes3mp.SetObjectListPid(pid)
-                tes3mp.SetObjectListCell(cellDescription)
-                tes3mp.SetObjectRefId(refId)
-                tes3mp.SetObjectRefNum(0)
-                tes3mp.SetObjectMpNum(mpNum)
+                dreamweave.SetObjectListPid(pid)
+                dreamweave.SetObjectListCell(cellDescription)
+                dreamweave.SetObjectRefId(refId)
+                dreamweave.SetObjectRefNum(0)
+                dreamweave.SetObjectMpNum(mpNum)
 
                 if packetType == "place" then
-                    tes3mp.SetObjectCount(count)
-                    tes3mp.SetObjectCharge(charge)
-                    tes3mp.SetObjectEnchantmentCharge(enchantmentCharge)
-                    tes3mp.SetObjectSoul(soul)
+                    dreamweave.SetObjectCount(count)
+                    dreamweave.SetObjectCharge(charge)
+                    dreamweave.SetObjectEnchantmentCharge(enchantmentCharge)
+                    dreamweave.SetObjectSoul(soul)
                 end
 
-                tes3mp.SetObjectPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
-                tes3mp.AddObject()
+                dreamweave.SetObjectPosition(location.posX, location.posY, location.posZ)
+                dreamweave.SetObjectRotation(location.rotX, location.rotY, location.rotZ)
+                dreamweave.AddObject()
             end
         end
     end
@@ -559,9 +559,9 @@ logicHandler.CreateObjects = function(cellDescription, objectsToCreate, packetTy
         end
 
         if packetType == "place" then
-            tes3mp.SendObjectPlace(true)
+            dreamweave.SendObjectPlace(true)
         elseif packetType == "spawn" then
-            tes3mp.SendObjectSpawn(true)
+            dreamweave.SendObjectSpawn(true)
         end
     end
 
@@ -594,10 +594,10 @@ end
 
 logicHandler.CreateObjectAtPlayer = function(pid, objectData, packetType)
 
-    local cell = tes3mp.GetCell(pid)
+    local cell = dreamweave.GetCell(pid)
     local location = {
-        posX = tes3mp.GetPosX(pid), posY = tes3mp.GetPosY(pid), posZ = tes3mp.GetPosZ(pid),
-        rotX = tes3mp.GetRotX(pid), rotY = 0, rotZ = tes3mp.GetRotZ(pid)
+        posX = dreamweave.GetPosX(pid), posY = dreamweave.GetPosY(pid), posZ = dreamweave.GetPosZ(pid),
+        rotX = dreamweave.GetRotX(pid), rotY = 0, rotZ = dreamweave.GetRotZ(pid)
     }
 
     local objectUniqueIndex = logicHandler.CreateObjectAtLocation(cell, location, objectData, packetType)
@@ -606,11 +606,11 @@ end
 
 logicHandler.DeleteObject = function(pid, cellDescription, uniqueIndex, forEveryone)
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(cellDescription)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(cellDescription)
     packetBuilder.AddObjectDelete(uniqueIndex, {})
-    tes3mp.SendObjectDelete(forEveryone)
+    dreamweave.SendObjectDelete(forEveryone)
 
     if forEveryone then
         local unloadCellAtEnd = false
@@ -642,27 +642,27 @@ end
 
 logicHandler.ActivateObjectForPlayer = function(pid, objectCellDescription, objectUniqueIndex)
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(objectCellDescription)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(objectCellDescription)
 
     local splitIndex = objectUniqueIndex:split("-")
-    tes3mp.SetObjectRefNum(splitIndex[1])
-    tes3mp.SetObjectMpNum(splitIndex[2])
-    tes3mp.SetObjectActivatingPid(pid)
+    dreamweave.SetObjectRefNum(splitIndex[1])
+    dreamweave.SetObjectMpNum(splitIndex[2])
+    dreamweave.SetObjectActivatingPid(pid)
 
-    tes3mp.AddObject()
-    tes3mp.SendObjectActivate()
+    dreamweave.AddObject()
+    dreamweave.SendObjectActivate()
 end
 
 logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryone)
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(Players[pid].data.location.cell)
-    tes3mp.SetObjectListConsoleCommand(consoleCommand)
-    tes3mp.SetPlayerAsObject(pid)
-    tes3mp.AddObject()
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(Players[pid].data.location.cell)
+    dreamweave.SetObjectListConsoleCommand(consoleCommand)
+    dreamweave.SetPlayerAsObject(pid)
+    dreamweave.AddObject()
 
     -- Track the fact that these clients are allowed to process this console
     -- command at the moment
@@ -676,25 +676,25 @@ logicHandler.RunConsoleCommandOnPlayer = function(pid, consoleCommand, forEveryo
 
     -- Depending on what the console command is, you may or may not want to send it
     -- to all the players; experiment if you're not sure
-    tes3mp.SendConsoleCommand(forEveryone)
+    dreamweave.SendConsoleCommand(forEveryone)
 end
 
 logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDescription, objectUniqueIndexes, forEveryone)
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Running " .. consoleCommand .. " in cell " .. cellDescription .. " on object(s) " ..
         tableHelper.concatenateArrayValues(objectUniqueIndexes, 1, ", "))
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(cellDescription)
-    tes3mp.SetObjectListConsoleCommand(consoleCommand)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(cellDescription)
+    dreamweave.SetObjectListConsoleCommand(consoleCommand)
 
     for _, uniqueIndex in pairs(objectUniqueIndexes) do
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetObjectRefNum(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
+        dreamweave.SetObjectRefNum(splitIndex[1])
+        dreamweave.SetObjectMpNum(splitIndex[2])
 
-        tes3mp.AddObject()
+        dreamweave.AddObject()
 
         -- Track the fact that these clients are allowed to process this console
         -- command at the moment
@@ -707,7 +707,7 @@ logicHandler.RunConsoleCommandOnObjects = function(pid, consoleCommand, cellDesc
 	end
     end
 
-    tes3mp.SendConsoleCommand(forEveryone, false)
+    dreamweave.SendConsoleCommand(forEveryone, false)
 end
 
 logicHandler.RunConsoleCommandOnObject = function(pid, consoleCommand, cellDescription, objectUniqueIndex, forEveryone)
@@ -813,19 +813,19 @@ logicHandler.SetAIForActor = function(cell, actorUniqueIndex, action, targetPid,
 
         -- Initialize the packet for the current cell authority
         local pid = cell.authority
-        tes3mp.ClearActorList()
-        tes3mp.SetActorListPid(pid)
-        tes3mp.SetActorListCell(cell.description)
+        dreamweave.ClearActorList()
+        dreamweave.SetActorListPid(pid)
+        dreamweave.SetActorListCell(cell.description)
 
         packetBuilder.AddAIActor(actorUniqueIndex, targetPid, aiData)
 
         -- If the cell authority leaves, we want the new cell authority to resume
         -- this AI package, so we send the packet to all of the cell's visitors
         -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is false
-        tes3mp.SendActorAI(true, false)
+        dreamweave.SendActorAI(true, false)
 
     else
-        tes3mp.LogAppend(enumerations.log.ERROR, "Invalid input for logicHandler.SetAIForActor()!")
+        dreamweave.LogAppend(enumerations.log.ERROR, "Invalid input for logicHandler.SetAIForActor()!")
     end
 end
 
@@ -892,13 +892,13 @@ logicHandler.LoadCellForPlayer = function(pid, cellDescription)
         if LoadedCells[cellDescription].isResetting == false then
             LoadedCells[cellDescription]:SetAuthority(pid)
         else
-            tes3mp.LogAppend(enumerations.log.WARN, "- Ignoring setting of authority to " .. pid ..
+            dreamweave.LogAppend(enumerations.log.WARN, "- Ignoring setting of authority to " .. pid ..
                 " because of ongoing cell reset")
         end
     -- Otherwise, only set this new visitor as the authority if their ping is noticeably lower
     -- than that of the current authority
-    elseif tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
-        tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
+    elseif dreamweave.GetAvgPing(pid) < (dreamweave.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
+        dreamweave.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
             " took over authority from player " .. logicHandler.GetChatName(authPid) ..
             " in " .. cellDescription .. " for latency reasons")
         LoadedCells[cellDescription]:SetAuthority(pid)
@@ -946,7 +946,7 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
 
     if regionName == "" then return end
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Loading region " .. regionName .. " for " ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Loading region " .. regionName .. " for " ..
         logicHandler.GetChatName(pid))
 
     -- Record that this player has the region loaded
@@ -970,8 +970,8 @@ logicHandler.LoadRegionForPlayer = function(pid, regionName, isTeleported)
         -- Only set this new visitor as the authority if they haven't been teleported here and
         -- their ping is noticeably lower than that of the current authority
         elseif not isTeleported and
-            tes3mp.GetAvgPing(pid) < (tes3mp.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
+            dreamweave.GetAvgPing(pid) < (dreamweave.GetAvgPing(authPid) - config.pingDifferenceRequiredForAuthority) then
+            dreamweave.LogMessage(enumerations.log.WARN, "Player " .. logicHandler.GetChatName(pid) ..
                 " took over authority from player " .. logicHandler.GetChatName(authPid) ..
                 " in region " .. regionName .. " for latency reasons")
             WorldInstance:SetRegionAuthority(pid, regionName)
@@ -985,7 +985,7 @@ logicHandler.UnloadRegionForPlayer = function(pid, regionName)
 
     if WorldInstance.storedRegions[regionName] ~= nil then
 
-        tes3mp.LogMessage(enumerations.log.INFO, "Unloading region " .. regionName .. " for " ..
+        dreamweave.LogMessage(enumerations.log.INFO, "Unloading region " .. regionName .. " for " ..
             logicHandler.GetChatName(pid))
 
         -- No longer record that this player has the region loaded
@@ -1009,7 +1009,7 @@ end
 
 logicHandler.ResetCell = function(pid, cellDescription)
 
-    tes3mp.SendMessage(pid, "Resetting cell " .. cellDescription .. "\n")
+    dreamweave.SendMessage(pid, "Resetting cell " .. cellDescription .. "\n")
 
     -- If the desired cell is not loaded, load it temporarily
     if LoadedCells[cellDescription] == nil then
@@ -1030,9 +1030,9 @@ logicHandler.ResetCell = function(pid, cellDescription)
         logicHandler.UnloadCell(cellDescription)
     end
 
-    tes3mp.ClearCellsToReset()
-    tes3mp.AddCellToReset(cellDescription)
-    tes3mp.SendCellReset(pid, true)
+    dreamweave.ClearCellsToReset()
+    dreamweave.AddCellToReset(cellDescription)
+    dreamweave.SendCellReset(pid, true)
 end
 
 return logicHandler

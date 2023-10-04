@@ -1,7 +1,7 @@
 config = {}
 
 -- The path used by the server for its data folder
-config.dataPath = tes3mp.GetDataPath()
+config.dataPath = dreamweave.GetDataPath()
 
 -- The game mode displayed for this server in the server browser
 config.gameMode = "Default"

@@ -11,7 +11,7 @@ function Player:__init(pid, playerName)
     -- Ensure filename is valid
     self.accountName = fileHelper.fixFilename(playerName)
 
-    self.accountFile = tes3mp.GetCaseInsensitiveFilename(config.dataPath .. "/player/", self.accountName .. ".json")
+    self.accountFile = dreamweave.GetCaseInsensitiveFilename(config.dataPath .. "/player/", self.accountName .. ".json")
 
     if self.accountFile == "invalid" then
         self.hasAccount = false
@@ -25,17 +25,17 @@ function Player:CreateAccount()
     self.hasAccount = jsonInterface.save("player/" .. self.accountFile, self.data)
 
     if self.hasAccount then
-        tes3mp.LogMessage(enumerations.log.INFO, "Successfully created JSON file for player " .. self.accountName)
+        dreamweave.LogMessage(enumerations.log.INFO, "Successfully created JSON file for player " .. self.accountName)
     else
         local message = "Failed to create JSON file for " .. self.accountName
-        tes3mp.SendMessage(self.pid, message, true)
-        tes3mp.Kick(self.pid)
+        dreamweave.SendMessage(self.pid, message, true)
+        dreamweave.Kick(self.pid)
     end
 end
 
 function Player:SaveToDrive()
     if self.hasAccount then
-        tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(self.pid))
+        dreamweave.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(self.pid))
         jsonInterface.save("player/" .. self.accountFile, self.data, config.playerKeyOrder)
     end
 end
@@ -50,8 +50,8 @@ function Player:LoadFromDrive()
     self.data = jsonInterface.load("player/" .. self.accountFile)
 
     if self.data == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, "player/" .. self.accountFile .. " cannot be read!")
-        tes3mp.StopServer(2)
+        dreamweave.LogMessage(enumerations.log.ERROR, "player/" .. self.accountFile .. " cannot be read!")
+        dreamweave.StopServer(2)
     else
         -- JSON doesn't allow numerical keys, but we use them, so convert
         -- all string number keys into numerical keys
