@@ -27,7 +27,7 @@ speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
 require("defaultCommands")
 require("customScripts")
-
+require("wrapper")
 
 Database = nil
 Player = nil
