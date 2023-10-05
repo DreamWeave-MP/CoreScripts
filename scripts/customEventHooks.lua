@@ -9,9 +9,9 @@ customEventHooks.scriptID = {
 
 function customEventHooks.generateScriptID(filePath)
 	local seed = 0
-	for i = 1, #filePath:normalizePath() do
-		local charCode = string.byte(filePath, i)
-		seed = seed + charCode
+	for i = 1, #filePath do
+	  local charCode = string.byte(filePath:normalizePath(), i)
+	  seed = seed + charCode
 	end
 	math.randomseed(seed)
 
