@@ -174,17 +174,20 @@ end
 function OnServerInit()
 
     dreamweave.LogMessage(enumerations.log.INFO, "Called \"OnServerInit\"")
+    local expectedUpstreamVersion = "0.8.1"
+    local expectedDreamweaveVersion = "0.1.0"
+    local upstreamVersion = tes3mp.GetServerVersion()
+    local dreamweaveVersion = tes3mp.GetDreamweaveVersion()
 
-    local expectedVersionPrefix = "0.8.2"
-    local serverVersion = dreamweave.GetServerVersion()
-
-    if string.sub(serverVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
+    if string.sub(upstreamVersion, 1, string.len(expectedVersionPrefix)) ~= expectedVersionPrefix then
         dreamweave.LogAppend(enumerations.log.ERROR, "- Version mismatch between server and Core scripts!")
-        dreamweave.LogAppend(enumerations.log.ERROR, "- The Core scripts require a server version that starts with " ..
-            expectedVersionPrefix)
+        dreamweave.LogAppend(enumerations.log.ERROR, "- The Core scripts require a tes3mp version that starts with " ..
+            expectedUpstreamVersion "\n" ..
+	"- And a Dreamweave version that starts with " ..
+	expectedDreamweaveVersion)
         dreamweave.StopServer(1)
     end
-    
+
     local eventStatus = customEventHooks.triggerValidators("OnServerInit", {})
 
     if eventStatus.validDefaultHandler then
