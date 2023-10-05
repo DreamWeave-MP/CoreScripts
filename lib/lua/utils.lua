@@ -21,6 +21,14 @@ function string:trim()
     return (self:gsub("^%s*(.-)%s*$", "%1"))
 end
 
+function string:normalizePath()
+  return (self:match('^[%./\\]*(.-)[%./\\]*$')
+	  :gsub('%.lua', "")
+	  :gsub('[\\/.]+', '.')
+	  :gsub('server[./\\]', '')
+	  :gsub('scripts[./\\]', ''))
+end
+
 function prefixZeroes(inputString, desiredLength)
 
     local length = string.len(inputString)

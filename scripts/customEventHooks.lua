@@ -9,7 +9,7 @@ customEventHooks.scriptID = {
 
 function customEventHooks.generateScriptID(filePath)
 	local seed = 0
-	for i = 1, #filePath do
+	for i = 1, #filePath:normalizePath() do
 		local charCode = string.byte(filePath, i)
 		seed = seed + charCode
 	end
@@ -48,7 +48,7 @@ end
 
 function customEventHooks.registerValidator(event, callback)
 	-- Retrieve the file path of the current Lua script being executed.
-  local filePath = debug.getinfo(2, "S").source:sub(2)
+  local filePath = debug.getinfo(2, "S").source:sub(2):normalizePath()
 
   local scriptID = customEventHooks.generateScriptID(filePath)
   dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][validator]: Registering event "%s" with ScriptID "%s"',event, scriptID ))
@@ -74,7 +74,7 @@ end
 
 function customEventHooks.registerHandler(event, callback)
 	-- Retrieve the file path of the current Lua script being executed.
-  local filePath = debug.getinfo(2, "S").source:sub(2)
+  local filePath = debug.getinfo(2, "S").source:sub(2):normalizePath()
 
   local scriptID = customEventHooks.generateScriptID(filePath)
   dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][handler]: Registering event "%s" with ScriptID "%s"',event, scriptID))

@@ -681,7 +681,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "load" and admin then
 
-        local scriptName = cmd[2]
+      local scriptName = cmd[2]:normalizePath()
         
         if scriptName == nil then
             Players[pid]:Message("Use /load <scriptName>\n")
