@@ -557,7 +557,7 @@ end
 
 function tableHelper.print(inputTable, maxDepth, indentStr, indentLevel)
     local text = tableHelper.getPrintableTable(inputTable, maxDepth, indentStr, indentLevel)
-    tes3mp.LogMessage(2, text)
+    dreamweave.LogMessage(2, text)
 end
 
 return tableHelper
