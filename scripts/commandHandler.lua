@@ -681,25 +681,25 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     elseif cmd[1] == "load" and admin then
 
-      local scriptName = cmd[2]:normalizePath()
-        
+        local scriptName = cmd[2]:normalizePath()
+
         if scriptName == nil then
-            Players[pid]:Message("Use /load <scriptName>\n")
+            Players[pid]:Message(color.LightGray .. "Use /load <scriptName>\n" .. color.Default)
         else
             local wasLoaded = false
-    
+
             if package.loaded[scriptName] then
                 if type(package.loaded[scriptName]) ~= "table" then
-                    Players[pid]:Message(scriptName .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n")
+                    Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " was already loaded but it is not a valid lua module and thus cannot be properly reloaded.\n" .. color.Default)
                     return
                 end
-    
-                Players[pid]:Message(scriptName .. " was already loaded, so it is being reloaded.\n")
+
+                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray  .. " was already loaded, so it is being reloaded.\n" .. color.Default)
                 wasLoaded = true
             end
-    
+
             local result
-    
+
             if wasLoaded then
                 -- Local objects that use functions from the script we are reloading
                 -- will keep their references to the old versions of those functions if
@@ -713,39 +713,90 @@ function commandHandler.ProcessCommand(pid, cmd)
                 -- in turn also changes them in the local objects
                 --
                 local scriptPath = package.searchpath(scriptName, package.path)
+                local scriptID = customEventHooks.generateScriptID(scriptName)
+
+                -- Trigger OnScriptUnload event
+                local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
+
+                if eventStatus.validDefaultHandler then
+                    customEventHooks.unregisterAllByScriptID(scriptID)
+                end
+
+                customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
+
                 result = dofile(scriptPath)
-    
+
                 for key, value in pairs(package.loaded[scriptName]) do
                     if result[key] == nil then
                         package.loaded[scriptName][key] = nil
                     end
                 end
-    
+
                 for key, value in pairs(result) do
                     package.loaded[scriptName][key] = value
                 end
             else
                 result = prequire(scriptName)
             end
-            
+
             if result then
-                Players[pid]:Message(scriptName .. " was successfully loaded.\n")
+                if wasLoaded then
+                    Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " was successfully reloaded.\n".. color.Default)
+                else
+                    Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " was successfully loaded.\n".. color.Default)
+                end
             else
-                Players[pid]:Message(scriptName .. " could not be found.\n")
+                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " could not be found.\n" .. color.Default)
             end
         end
-
-    elseif cmd[1] == "unloadbyid" and admin then
+    elseif cmd[1] == "unload" and admin then
+        local scriptName = cmd[2]:normalizePath()
+        
+        if scriptName == nil then
+            Players[pid]:Message(color.LightGray .. "Use /unload <scriptName>\n" .. color.Default)
+        else
+            local wasLoaded = false
+    
+            if package.loaded[scriptName] then
+                if type(package.loaded[scriptName]) ~= "table" then
+                    Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " is already loaded but is not a valid Lua module and cannot be properly unloaded.\n" .. color.Default)
+                    return
+                end
+    
+                wasLoaded = true
+            end
+    
+            if wasLoaded then
+                local scriptID = customEventHooks.generateScriptID(scriptName)
+    
+                -- Trigger OnScriptUnload event
+                local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
+    
+                if eventStatus.validDefaultHandler then
+                    customEventHooks.unregisterAllByScriptID(scriptID)
+                end
+    
+                customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
+    
+                -- Fully unload the script by setting it to nil
+                package.loaded[scriptName] = nil
+    
+                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " has been successfully unloaded.\n".. color.Default)
+            else
+                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " is not currently loaded.\n" .. color.Default)
+            end
+        end
+    elseif cmd[1] == "unloadid" and admin then
         local scriptID = cmd[2]
         if scriptID == nil then
-            Players[pid]:Message("Use /unloadbyid <scriptID>\n")
+            Players[pid]:Message(color.LightGray .. "Use /unloadbyid <scriptID>\n" .. color.Default)
         else
             -- Trigger OnScriptUnload event
             local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
 
             if eventStatus.validDefaultHandler then
             customEventHooks.unregisterAllByScriptID(scriptID)
-            Players[pid]:Message(scriptID .. " was unloaded." .. "\n")
+            Players[pid]:Message(color.LightGray .. scriptID .. " was unloaded." .. "\n" .. color.Default)
             end
             customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
         end
