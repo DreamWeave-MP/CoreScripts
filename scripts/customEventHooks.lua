@@ -4,10 +4,19 @@ customEventHooks.validators = {}
 customEventHooks.handlers = {}
 customEventHooks.scriptID = {
 	handlers = {},
-	validators = {}
+	validators = {},
+	generatedScriptIDs = {}
 }
 
 function customEventHooks.generateScriptID(filePath)
+	if not string.match(filePath, "%S") then 
+		return nil
+	end
+
+	if customEventHooks.scriptID.generatedScriptIDs[filePath] then
+		return customEventHooks.scriptID.generatedScriptIDs[filePath]
+	end
+
 	local seed = 0
 	for i = 1, #filePath do
 	  local charCode = string.byte(filePath:normalizePath(), i)
@@ -16,7 +25,10 @@ function customEventHooks.generateScriptID(filePath)
 	math.randomseed(seed)
 
     local template = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-    return template:gsub("x", function() return string.format("%x", math.random(0, 15)) end)
+    local scriptID = template:gsub("x", function() return string.format("%x", math.random(0, 15)) end)
+    customEventHooks.scriptID.generatedScriptIDs[filePath] = scriptID
+
+    return scriptID
 end
 
 
@@ -53,16 +65,17 @@ function customEventHooks.registerValidator(event, callback)
   local scriptID = customEventHooks.generateScriptID(filePath)
   dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][validator]: Registering event "%s" with ScriptID "%s"',event, scriptID ))
 
-  if customEventHooks.validators[event] == nil then
-    customEventHooks.validators[event] = {}
+  if not customEventHooks.validators[event] then
+	customEventHooks.validators[event] = {}
   end
 
-  if customEventHooks.scriptID[scriptID] == nil then
+  if not customEventHooks.scriptID[scriptID] then
     dreamweave.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
     customEventHooks.scriptID[scriptID] = {}
+	customEventHooks.scriptID[scriptID].validators = {}
   end
 
-  if customEventHooks.scriptID[scriptID].validators == nil then
+  if not customEventHooks.scriptID[scriptID].validators then
     customEventHooks.scriptID[scriptID].validators = {}
   end
 
@@ -79,19 +92,19 @@ function customEventHooks.registerHandler(event, callback)
   local scriptID = customEventHooks.generateScriptID(filePath)
   dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][handler]: Registering event "%s" with ScriptID "%s"',event, scriptID))
 
-  if customEventHooks.handlers[event] == nil then
+  if not customEventHooks.handlers[event] then
     customEventHooks.handlers[event] = {}
   end
 
-  if customEventHooks.scriptID[scriptID] == nil then
+  if not customEventHooks.scriptID[scriptID] then
     dreamweave.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
     customEventHooks.scriptID[scriptID] = {}
   end
 
-  if customEventHooks.scriptID[scriptID].handlers == nil then
+  if not customEventHooks.scriptID[scriptID].handlers then
     customEventHooks.scriptID[scriptID].handlers = {}
   end
-
+  
   table.insert(customEventHooks.handlers[event], callback)
   table.insert(customEventHooks.scriptID[scriptID].handlers, {event, callback})
 
@@ -122,7 +135,7 @@ function customEventHooks.unregisterHandlersByScriptID(scriptID)
 
 	-- Get the events associated with the script ID
 	local scriptIDEvents = customEventHooks.scriptID[scriptID]
-	if scriptIDEvents == nil then
+	if not scriptIDEvents then
 		return
 	end
 
@@ -145,7 +158,7 @@ function customEventHooks.unregisterValidatorsByScriptID(scriptID)
 	local scriptIDEvents = customEventHooks.scriptID[scriptID]
 
 	-- If there are no events associated with the scriptID, return
-	if scriptIDEvents == nil then
+	if not scriptIDEvents then
 		return
 	end
 
