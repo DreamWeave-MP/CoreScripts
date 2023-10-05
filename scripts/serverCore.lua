@@ -1,3 +1,4 @@
+require("wrapper")
 require("utils")
 require("enumerations")
 tableHelper = require("tableHelper")
@@ -27,7 +28,6 @@ speechHelper = require("speechHelper")
 menuHelper = require("menuHelper")
 require("defaultCommands")
 require("customScripts")
-require("wrapper")
 
 Database = nil
 Player = nil
