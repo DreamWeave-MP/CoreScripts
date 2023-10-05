@@ -48,54 +48,54 @@ end
 
 function customEventHooks.registerValidator(event, callback)
 	-- Retrieve the file path of the current Lua script being executed.
-	local filePath = debug.getinfo(2, "S").source:sub(2)
+  local filePath = debug.getinfo(2, "S").source:sub(2)
 
-	local scriptID = customEventHooks.generateScriptID(filePath)
-	tes3mp.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][validator]: Registering event "%s" with ScriptID "%s"',event, scriptID ))
+  local scriptID = customEventHooks.generateScriptID(filePath)
+  dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][validator]: Registering event "%s" with ScriptID "%s"',event, scriptID ))
 
-	if customEventHooks.validators[event] == nil then
-		customEventHooks.validators[event] = {}
-	end
+  if customEventHooks.validators[event] == nil then
+    customEventHooks.validators[event] = {}
+  end
 
-	if customEventHooks.scriptID[scriptID] == nil then
-		tes3mp.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
-		customEventHooks.scriptID[scriptID] = {}
-	end
+  if customEventHooks.scriptID[scriptID] == nil then
+    dreamweave.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
+    customEventHooks.scriptID[scriptID] = {}
+  end
 
-	if customEventHooks.scriptID[scriptID].validators == nil then
-		customEventHooks.scriptID[scriptID].validators = {}
-	end
+  if customEventHooks.scriptID[scriptID].validators == nil then
+    customEventHooks.scriptID[scriptID].validators = {}
+  end
 
-	table.insert(customEventHooks.validators[event], callback)
-	table.insert(customEventHooks.scriptID[scriptID].validators, {event, callback})
+  table.insert(customEventHooks.validators[event], callback)
+  table.insert(customEventHooks.scriptID[scriptID].validators, {event, callback})
 
-	return scriptID
+  return scriptID
 end
 
 function customEventHooks.registerHandler(event, callback)
 	-- Retrieve the file path of the current Lua script being executed.
-	local filePath = debug.getinfo(2, "S").source:sub(2)
+  local filePath = debug.getinfo(2, "S").source:sub(2)
 
-	local scriptID = customEventHooks.generateScriptID(filePath)
-	tes3mp.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][handler]: Registering event "%s" with ScriptID "%s"',event, scriptID))
+  local scriptID = customEventHooks.generateScriptID(filePath)
+  dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][handler]: Registering event "%s" with ScriptID "%s"',event, scriptID))
 
-	if customEventHooks.handlers[event] == nil then
-		customEventHooks.handlers[event] = {}
-	end
+  if customEventHooks.handlers[event] == nil then
+    customEventHooks.handlers[event] = {}
+  end
 
-	if customEventHooks.scriptID[scriptID] == nil then
-		tes3mp.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
-		customEventHooks.scriptID[scriptID] = {}
-	end
+  if customEventHooks.scriptID[scriptID] == nil then
+    dreamweave.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
+    customEventHooks.scriptID[scriptID] = {}
+  end
 
-	if customEventHooks.scriptID[scriptID].handlers == nil then
-		customEventHooks.scriptID[scriptID].handlers = {}
-	end
+  if customEventHooks.scriptID[scriptID].handlers == nil then
+    customEventHooks.scriptID[scriptID].handlers = {}
+  end
 
-	table.insert(customEventHooks.handlers[event], callback)
-	table.insert(customEventHooks.scriptID[scriptID].handlers, {event, callback})
+  table.insert(customEventHooks.handlers[event], callback)
+  table.insert(customEventHooks.scriptID[scriptID].handlers, {event, callback})
 
-	return scriptID
+  return scriptID
 end
 
 function customEventHooks.triggerValidators(event, args)
@@ -118,7 +118,7 @@ end
 
 -- Function to unregister event handlers based on a scriptID
 function customEventHooks.unregisterHandlersByScriptID(scriptID)
-	tes3mp.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unloading Handlers using ScriptID: " .. scriptID)
+	dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unloading Handlers using ScriptID: " .. scriptID)
 
 	-- Get the events associated with the script ID
 	local scriptIDEvents = customEventHooks.scriptID[scriptID]
@@ -127,7 +127,7 @@ function customEventHooks.unregisterHandlersByScriptID(scriptID)
 	end
 
 	-- Iterate through each event and remove the handlers associated with it
-	for i, eventInfo in ipairs(scriptIDEvents.handlers) do
+	for _, eventInfo in ipairs(scriptIDEvents.handlers) do
 		local handlers = customEventHooks.handlers[eventInfo[1]]
 		for j, handler in ipairs(handlers) do
 			-- Remove the handler if it matches the function being unregistered
@@ -141,7 +141,7 @@ end
 
 -- Function to unregister event validators based on a scriptID
 function customEventHooks.unregisterValidatorsByScriptID(scriptID)
-	tes3mp.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering validators by scriptID: " .. scriptID)
+	dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering validators by scriptID: " .. scriptID)
 	local scriptIDEvents = customEventHooks.scriptID[scriptID]
 
 	-- If there are no events associated with the scriptID, return
@@ -170,7 +170,7 @@ end
 
 function customEventHooks.getscriptID(scriptName)
 	local ScriptID = customEventHooks.generateScriptID(scriptName)
-	tes3mp.LogMessage(enumerations.log.INFO, "[customEventHooks]: Getting ScriptID for script: " .. scriptName)
+	dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Getting ScriptID for script: " .. scriptName)
 
 	for ScriptID, eventLists in pairs(customEventHooks.scriptID) do
 		if ScriptID == ScriptID then
