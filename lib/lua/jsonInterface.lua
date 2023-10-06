@@ -9,7 +9,7 @@ if cjsonExists then
     cjson.encode_empty_table_as_object(false)
     cjson.decode_null_as_lightuserdata(false)
 else
-    tes3mp.LogMessage(enumerations.log.ERROR, "Could not find Lua CJSON! The decoding and encoding of JSON files will always use dkjson and be slower as a result.")
+    dreamweave.LogMessage(enumerations.log.ERROR, "Could not find Lua CJSON! The decoding and encoding of JSON files will always use dkjson and be slower as a result.")
 end
 
 local jsonInterface = {}
@@ -40,7 +40,7 @@ end
 function jsonInterface.load(fileName)
 
     if jsonInterface.ioLibrary == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
+        dreamweave.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
         return nil
     end
 
@@ -64,7 +64,7 @@ function jsonInterface.load(fileName)
             if status then
                 return decodedContent
             else
-                tes3mp.LogMessage(enumerations.log.ERROR, "Could not load " .. fileName .. " using Lua CJSON " ..
+                dreamweave.LogMessage(enumerations.log.ERROR, "Could not load " .. fileName .. " using Lua CJSON " ..
                     "due to improperly formatted JSON! Error:\n" .. result .. "\n" .. fileName .. " is being read " ..
                     "via the slower dkjson instead.")
             end
@@ -80,7 +80,7 @@ end
 function jsonInterface.writeToFile(fileName, content)
 
     if jsonInterface.ioLibrary == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
+        dreamweave.LogMessage(enumerations.log.ERROR, jsonInterface.libraryMissingMessage)
         return false
     end
 

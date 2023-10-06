@@ -25,7 +25,7 @@ function Database:Execute(query)
     local response = self.connection:execute(query)
 
     if response == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, "Could not execute query: " .. query)
+        dreamweave.LogMessage(enumerations.log.ERROR, "Could not execute query: " .. query)
     end
 
     return response
@@ -155,7 +155,7 @@ function Database:SavePlayer(dbPid, data)
         elseif category ~= "login" then
 
             local tableName = "player_" .. category
-            tes3mp.LogMessage(enumerations.log.INFO, "Saving category " .. category)
+            dreamweave.LogMessage(enumerations.log.INFO, "Saving category " .. category)
             local tempTable = tableHelper.deepCopy(categoryTable)
             tempTable.dbPid = dbPid
             self:InsertRow(tableName, tempTable)
@@ -337,9 +337,9 @@ function Database:CreatePlayerTables()
 
     columnList = { dbPidRow }
 
-    for i = 0, (tes3mp.GetAttributeCount() - 1) do
+    for i = 0, (dreamweave.GetAttributeCount() - 1) do
         local attributePair = {}
-        attributePair[tes3mp.GetAttributeName(i)] = "INTEGER"
+        attributePair[dreamweave.GetAttributeName(i)] = "INTEGER"
         table.insert(columnList, attributePair)
     end
 
@@ -349,9 +349,9 @@ function Database:CreatePlayerTables()
 
     columnList = { dbPidRow }
 
-    for i = 0, (tes3mp.GetSkillCount() - 1) do
+    for i = 0, (dreamweave.GetSkillCount() - 1) do
         local skillPair = {}
-        skillPair[tes3mp.GetSkillName(i)] = "INTEGER"
+        skillPair[dreamweave.GetSkillName(i)] = "INTEGER"
         table.insert(columnList, skillPair)
     end
 

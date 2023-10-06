@@ -20,7 +20,7 @@ end
 
 local invalidCommand = function(pid)
     local message = "Not a valid command. Type /help for more info.\n"
-    tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
+    dreamweave.SendMessage(pid, color.Error .. message .. color.Default, false)
 end
 
 defaultCommands = {}
@@ -28,15 +28,15 @@ defaultCommands = {}
 -- Commands
 defaultCommands.msg = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't message yourself.\n")
+        dreamweave.SendMessage(pid, "You can't message yourself.\n")
     elseif cmd[3] == nil then
-        tes3mp.SendMessage(pid, "You cannot send a blank message.\n")
+        dreamweave.SendMessage(pid, "You cannot send a blank message.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         local targetPid = tonumber(cmd[2])
         message = logicHandler.GetChatName(pid) .. " to " .. logicHandler.GetChatName(targetPid) .. ": "
         message = message .. tableHelper.concatenateFromIndex(cmd, 3) .. "\n"
-        tes3mp.SendMessage(pid, message, false)
-        tes3mp.SendMessage(targetPid, message, false)
+        dreamweave.SendMessage(pid, message, false)
+        dreamweave.SendMessage(targetPid, message, false)
     end
 end
 
@@ -45,7 +45,7 @@ customCommandHooks.registerCommand("message", defaultCommands.msg)
 
 defaultCommands.inviteAlly = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't invite yourself to be your own ally.\n")
+        dreamweave.SendMessage(pid, "You can't invite yourself to be your own ally.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
@@ -65,10 +65,10 @@ defaultCommands.inviteAlly = function(pid, cmd)
             senderMessage = "You have invited " .. logicHandler.GetChatName(targetPid) .. " to be your ally.\n"
             local receiverMessage = logicHandler.GetChatName(pid) .. " has invited you to become their ally. Write " ..
                 color.Yellow .. "/join " .. pid .. color.White .. " to accept.\n"
-            tes3mp.SendMessage(targetPid, receiverMessage, false)
+            dreamweave.SendMessage(targetPid, receiverMessage, false)
         end
 
-        tes3mp.SendMessage(pid, senderMessage, false)
+        dreamweave.SendMessage(pid, senderMessage, false)
     end
 end
 
@@ -76,7 +76,7 @@ customCommandHooks.registerCommand("invite", defaultCommands.inviteAlly)
 
 defaultCommands.joinTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't join yourself as your own ally.\n")
+        dreamweave.SendMessage(pid, "You can't join yourself as your own ally.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
@@ -91,7 +91,7 @@ defaultCommands.joinTeam = function(pid, cmd)
                 color.Yellow .. "/leave " .. targetPid .. color.White .. " if you later decide to leave " ..
                 "the partnership.\n"
             local receiverMessage = logicHandler.GetChatName(pid) .. " has agreed to become your ally.\n"
-            tes3mp.SendMessage(targetPid, receiverMessage, false)
+            dreamweave.SendMessage(targetPid, receiverMessage, false)
 
             table.insert(Players[pid].data.alliedPlayers, Players[targetPid].accountName)
             table.insert(Players[targetPid].data.alliedPlayers, Players[pid].accountName)
@@ -103,7 +103,7 @@ defaultCommands.joinTeam = function(pid, cmd)
             senderMessage = "You have not yet been invited to become an ally of " .. logicHandler.GetChatName(targetPid) .. "\n"
         end
 
-        tes3mp.SendMessage(pid, senderMessage, false)
+        dreamweave.SendMessage(pid, senderMessage, false)
     end
 end
 
@@ -111,7 +111,7 @@ customCommandHooks.registerCommand("join", defaultCommands.joinTeam)
 
 defaultCommands.leaveTeam = function(pid, cmd)
     if pid == tonumber(cmd[2]) then
-        tes3mp.SendMessage(pid, "You can't leave an alliance with yourself.\n")
+        dreamweave.SendMessage(pid, "You can't leave an alliance with yourself.\n")
     elseif logicHandler.CheckPlayerValidity(pid, cmd[2]) then
 
         local targetPid = tonumber(cmd[2])
@@ -120,7 +120,7 @@ defaultCommands.leaveTeam = function(pid, cmd)
         if tableHelper.containsValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName) then
             senderMessage = "You have stopped having " .. logicHandler.GetChatName(targetPid) .. " as your ally \n"
             local receiverMessage = logicHandler.GetChatName(pid) .. " has stopped having you as an ally.\n"
-            tes3mp.SendMessage(targetPid, receiverMessage, false)
+            dreamweave.SendMessage(targetPid, receiverMessage, false)
 
             tableHelper.removeValue(Players[pid].data.alliedPlayers, Players[targetPid].accountName)
             tableHelper.cleanNils(Players[pid].data.alliedPlayers)
@@ -134,7 +134,7 @@ defaultCommands.leaveTeam = function(pid, cmd)
             senderMessage = "You are not an ally of " .. logicHandler.GetChatName(targetPid) .. "\n"
         end
 
-        tes3mp.SendMessage(pid, senderMessage, false)
+        dreamweave.SendMessage(pid, senderMessage, false)
     end
 end
 
@@ -142,7 +142,7 @@ customCommandHooks.registerCommand("leave", defaultCommands.leaveTeam)
 
 defaultCommands.me = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. " " .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-    tes3mp.SendMessage(pid, message, true)
+    dreamweave.SendMessage(pid, message, true)
 end
 
 customCommandHooks.registerCommand("me", defaultCommands.me)
@@ -155,7 +155,7 @@ defaultCommands.localMessage = function(pid, cmd)
 
             local message = logicHandler.GetChatName(pid) .. " to local area: "
             message = message .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-            tes3mp.SendMessage(visitorPid, message, false)
+            dreamweave.SendMessage(visitorPid, message, false)
         end
     end
 end
@@ -166,7 +166,7 @@ customCommandHooks.registerCommand("l", defaultCommands.localMessage)
 defaultCommands.greentext = function(pid, cmd)
     local message = logicHandler.GetChatName(pid) .. ": " .. color.GreenText ..
             ">" .. tableHelper.concatenateFromIndex(cmd, 2) .. "\n"
-    tes3mp.SendMessage(pid, message, true)
+    dreamweave.SendMessage(pid, message, true)
 end
 
 customCommandHooks.registerCommand("greentext", defaultCommands.greentext)
@@ -188,10 +188,10 @@ defaultCommands.ban = function(pid, cmd)
             table.insert(banList.ipAddresses, ipAddress)
             SaveBanList()
 
-            tes3mp.SendMessage(pid, ipAddress .. " is now banned.\n", false)
-            tes3mp.BanAddress(ipAddress)
+            dreamweave.SendMessage(pid, ipAddress .. " is now banned.\n", false)
+            dreamweave.BanAddress(ipAddress)
         else
-            tes3mp.SendMessage(pid, ipAddress .. " was already banned.\n", false)
+            dreamweave.SendMessage(pid, ipAddress .. " was already banned.\n", false)
         end
     elseif (cmd[2] == "name" or cmd[2] == "player") and cmd[3] ~= nil then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
@@ -202,7 +202,7 @@ defaultCommands.ban = function(pid, cmd)
         local targetName = Players[targetPid].name
         logicHandler.BanPlayer(pid, targetName)
     else
-        tes3mp.SendMessage(pid, "Invalid input for ban.\n", false)
+        dreamweave.SendMessage(pid, "Invalid input for ban.\n", false)
     end
 end
 
@@ -223,16 +223,16 @@ defaultCommands.unban = function(pid, cmd)
             tableHelper.removeValue(banList.ipAddresses, ipAddress)
             SaveBanList()
 
-            tes3mp.SendMessage(pid, ipAddress .. " is now unbanned.\n", false)
-            tes3mp.UnbanAddress(ipAddress)
+            dreamweave.SendMessage(pid, ipAddress .. " is now unbanned.\n", false)
+            dreamweave.UnbanAddress(ipAddress)
         else
-            tes3mp.SendMessage(pid, ipAddress .. " is not banned.\n", false)
+            dreamweave.SendMessage(pid, ipAddress .. " is not banned.\n", false)
         end
     elseif cmd[2] == "name" or cmd[2] == "player" then
         local targetName = tableHelper.concatenateFromIndex(cmd, 3)
         logicHandler.UnbanPlayer(pid, targetName)
     else
-        tes3mp.SendMessage(pid, "Invalid input for unban.\n", false)
+        dreamweave.SendMessage(pid, "Invalid input for unban.\n", false)
     end
 end
 
@@ -286,7 +286,7 @@ defaultCommands.banlist = function(pid, cmd)
         message = "Please specify whether you want the banlist for IPs or for names.\n"
     end
 
-    tes3mp.SendMessage(pid, message, false)
+    dreamweave.SendMessage(pid, message, false)
 end
 
 customCommandHooks.registerCommand("banlist", defaultCommands.banlist)
@@ -303,7 +303,7 @@ defaultCommands.ipaddresses = function(pid, cmd)
     local targetPlayer = logicHandler.GetPlayerByName(targetName)
 
     if targetPlayer == nil then
-        tes3mp.SendMessage(pid, "Player " .. targetName .. " does not exist.\n", false)
+        dreamweave.SendMessage(pid, "Player " .. targetName .. " does not exist.\n", false)
     elseif targetPlayer.data.ipAddresses ~= nil then
         local message = "Player " .. targetPlayer.accountName .. " has used the following IP addresses:\n"
 
@@ -316,7 +316,7 @@ defaultCommands.ipaddresses = function(pid, cmd)
         end
 
         message = message .. "\n"
-        tes3mp.SendMessage(pid, message, false)
+        dreamweave.SendMessage(pid, message, false)
     end
 end
 
@@ -365,7 +365,7 @@ defaultCommands.overrideDestination = function(pid, cmd)
     end
 
     if cmd[2] == nil or cmd[3] == nil then
-        tes3mp.SendMessage(pid, 'Invalid inputs! Use /overridedestination all/<pid> "Old Cell Name" "New Cell Name"\n')
+        dreamweave.SendMessage(pid, 'Invalid inputs! Use /overridedestination all/<pid> "Old Cell Name" "New Cell Name"\n')
         return
     end
 
@@ -377,7 +377,7 @@ defaultCommands.overrideDestination = function(pid, cmd)
     local cellDescriptions = tableHelper.getTableFromSplit(inputConcatenation, patterns.quoteSplit)
 
     if tableHelper.getCount(cellDescriptions) ~= 2 then
-        tes3mp.SendMessage(pid, "Invalid inputs! Please specify two different cells with their names between quotation marks.\n")
+        dreamweave.SendMessage(pid, "Invalid inputs! Please specify two different cells with their names between quotation marks.\n")
         return
     end
 
@@ -409,7 +409,7 @@ defaultCommands.overrideDestination = function(pid, cmd)
         Players[targetPid]:LoadDestinationOverrides()
     end
 
-    tes3mp.SendMessage(pid, "Doors and clientside commands leading to " .. cellDescriptions[1] .. " now lead to " ..
+    dreamweave.SendMessage(pid, "Doors and clientside commands leading to " .. cellDescriptions[1] .. " now lead to " ..
         cellDescriptions[2] .. " instead.\n")
 end
 
@@ -428,7 +428,7 @@ defaultCommands.setTrap = function(pid, cmd)
     end
 
     if cmd[2] == nil or cmd[3] == nil then
-        tes3mp.SendMessage(pid, 'Invalid inputs! Use /settrap <uniqueIndex> <spellId>\n')
+        dreamweave.SendMessage(pid, 'Invalid inputs! Use /settrap <uniqueIndex> <spellId>\n')
         return
     end
 
@@ -446,7 +446,7 @@ defaultCommands.setTrap = function(pid, cmd)
     -- Get rid of quotation marks
     spellId = string.gsub(spellId, '"', '')
 
-    tes3mp.SendMessage(pid, "Setting spell " .. spellId .. " as trap for object " .. uniqueIndex .. 
+    dreamweave.SendMessage(pid, "Setting spell " .. spellId .. " as trap for object " .. uniqueIndex .. 
         " in current cell " .. currentCellDescription .. "\n")
 
     currentCell:InitializeObjectData(uniqueIndex, "")
@@ -462,16 +462,16 @@ defaultCommands.runStartup = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
     if isAdmin == false then
-        tes3mp.SendMessage(pid, "You need to be an admin to run this command\n")
+        dreamweave.SendMessage(pid, "You need to be an admin to run this command\n")
         return
     end
 
     for _, scriptName in pairs(config.worldStartupScripts) do
-        tes3mp.SendMessage(pid, "Running " .. color.Yellow .. scriptName .. color.White .. " script.\n")
+        dreamweave.SendMessage(pid, "Running " .. color.Yellow .. scriptName .. color.White .. " script.\n")
         logicHandler.RunConsoleCommandOnPlayer(pid, "startscript " .. scriptName, false)
     end
 
-    tes3mp.SendMessage(pid, color.Red .. "Warning: " .. color.White .. "Make sure to run this command again later if you " ..
+    dreamweave.SendMessage(pid, color.Red .. "Warning: " .. color.White .. "Make sure to run this command again later if you " ..
         "reset the cells on this server.\n")
 
     WorldInstance.coreVariables.hasRunStartupScripts = true
@@ -483,12 +483,12 @@ defaultCommands.resetCell = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
     if isModerator == false then
-        tes3mp.SendMessage(pid, "You need to be a moderator to run this command\n")
+        dreamweave.SendMessage(pid, "You need to be a moderator to run this command\n")
         return
     end
 
     if cmd[2] == nil then
-        tes3mp.SendMessage(pid, 'Invalid inputs! Use /resetcell "Cell Name"\n')
+        dreamweave.SendMessage(pid, 'Invalid inputs! Use /resetcell "Cell Name"\n')
         return
     end
 
@@ -504,13 +504,13 @@ defaultCommands.setPlayerModel = function(pid, cmd)
     local isModerator, isAdmin, isServerOwner = getRanks(pid)
 
     if isAdmin == false then
-        tes3mp.SendMessage(pid, "You need to be an admin to run this command\n")
+        dreamweave.SendMessage(pid, "You need to be an admin to run this command\n")
         return
     end
 
     if logicHandler.CheckPlayerValidity(pid, cmd[2]) then
         if cmd[3] == nil then
-            tes3mp.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> <modelFile>\n')
+            dreamweave.SendMessage(pid, 'Invalid inputs! Use /setmodel <pid> <modelFile>\n')
             return
         end
 

@@ -6,7 +6,7 @@ function StateHelper:LoadJournal(pid, stateObject)
         stateObject.data.journal = {}
     end
 
-    tes3mp.ClearJournalChanges(pid)
+    dreamweave.ClearJournalChanges(pid)
 
     for _, journalItem in pairs(stateObject.data.journal) do
         if journalItem.type == enumerations.journal.ENTRY then
@@ -16,17 +16,17 @@ function StateHelper:LoadJournal(pid, stateObject)
             end
 
             if journalItem.timestamp then
-                tes3mp.AddJournalEntryWithTimestamp(pid, journalItem.quest, journalItem.index, journalItem.actorRefId,
+                dreamweave.AddJournalEntryWithTimestamp(pid, journalItem.quest, journalItem.index, journalItem.actorRefId,
                     journalItem.timestamp.daysPassed, journalItem.timestamp.month, journalItem.timestamp.day)
             else
-                tes3mp.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
+                dreamweave.AddJournalEntry(pid, journalItem.quest, journalItem.index, journalItem.actorRefId)
             end
         else
-            tes3mp.AddJournalIndex(pid, journalItem.quest, journalItem.index)
+            dreamweave.AddJournalIndex(pid, journalItem.quest, journalItem.index)
         end
     end
 
-    tes3mp.SendJournalChanges(pid)
+    dreamweave.SendJournalChanges(pid)
 end
 
 function StateHelper:LoadFactionRanks(pid, stateObject)
@@ -35,16 +35,16 @@ function StateHelper:LoadFactionRanks(pid, stateObject)
         stateObject.data.factionRanks = {}
     end
 
-    tes3mp.ClearFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, enumerations.faction.RANK)
+    dreamweave.ClearFactionChanges(pid)
+    dreamweave.SetFactionChangesAction(pid, enumerations.faction.RANK)
 
     for factionId, rank in pairs(stateObject.data.factionRanks) do
-        tes3mp.SetFactionId(factionId)
-        tes3mp.SetFactionRank(rank)
-        tes3mp.AddFaction(pid)
+        dreamweave.SetFactionId(factionId)
+        dreamweave.SetFactionRank(rank)
+        dreamweave.AddFaction(pid)
     end
 
-    tes3mp.SendFactionChanges(pid)
+    dreamweave.SendFactionChanges(pid)
 end
 
 function StateHelper:LoadFactionExpulsion(pid, stateObject)
@@ -53,16 +53,16 @@ function StateHelper:LoadFactionExpulsion(pid, stateObject)
         stateObject.data.factionExpulsion = {}
     end
 
-    tes3mp.ClearFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, enumerations.faction.EXPULSION)
+    dreamweave.ClearFactionChanges(pid)
+    dreamweave.SetFactionChangesAction(pid, enumerations.faction.EXPULSION)
 
     for factionId, state in pairs(stateObject.data.factionExpulsion) do
-        tes3mp.SetFactionId(factionId)
-        tes3mp.SetFactionExpulsionState(state)
-        tes3mp.AddFaction(pid)
+        dreamweave.SetFactionId(factionId)
+        dreamweave.SetFactionExpulsionState(state)
+        dreamweave.AddFaction(pid)
     end
 
-    tes3mp.SendFactionChanges(pid)
+    dreamweave.SendFactionChanges(pid)
 end
 
 function StateHelper:LoadFactionReputation(pid, stateObject)
@@ -70,16 +70,16 @@ function StateHelper:LoadFactionReputation(pid, stateObject)
         stateObject.data.factionReputation = {}
     end
 
-    tes3mp.ClearFactionChanges(pid)
-    tes3mp.SetFactionChangesAction(pid, enumerations.faction.REPUTATION)
+    dreamweave.ClearFactionChanges(pid)
+    dreamweave.SetFactionChangesAction(pid, enumerations.faction.REPUTATION)
 
     for factionId, reputation in pairs(stateObject.data.factionReputation) do
-        tes3mp.SetFactionId(factionId)
-        tes3mp.SetFactionReputation(reputation)
-        tes3mp.AddFaction(pid)
+        dreamweave.SetFactionId(factionId)
+        dreamweave.SetFactionReputation(reputation)
+        dreamweave.AddFaction(pid)
     end
 
-    tes3mp.SendFactionChanges(pid)
+    dreamweave.SendFactionChanges(pid)
 end
 
 function StateHelper:LoadTopics(pid, stateObject)
@@ -88,14 +88,14 @@ function StateHelper:LoadTopics(pid, stateObject)
         stateObject.data.topics = {}
     end
 
-    tes3mp.ClearTopicChanges(pid)
+    dreamweave.ClearTopicChanges(pid)
 
     for _, topicId in pairs(stateObject.data.topics) do
 
-        tes3mp.AddTopic(pid, topicId)
+        dreamweave.AddTopic(pid, topicId)
     end
 
-    tes3mp.SendTopicChanges(pid)
+    dreamweave.SendTopicChanges(pid)
 end
 
 function StateHelper:LoadBounty(pid, stateObject)
@@ -112,8 +112,8 @@ function StateHelper:LoadBounty(pid, stateObject)
         stateObject.data.stats.bounty = nil
     end
 
-    tes3mp.SetBounty(pid, stateObject.data.fame.bounty)
-    tes3mp.SendBounty(pid)
+    dreamweave.SetBounty(pid, stateObject.data.fame.bounty)
+    dreamweave.SendBounty(pid)
 end
 
 function StateHelper:LoadReputation(pid, stateObject)
@@ -124,8 +124,8 @@ function StateHelper:LoadReputation(pid, stateObject)
         stateObject.data.fame.reputation = 0
     end
 
-    tes3mp.SetReputation(pid, stateObject.data.fame.reputation)
-    tes3mp.SendReputation(pid)
+    dreamweave.SetReputation(pid, stateObject.data.fame.reputation)
+    dreamweave.SendReputation(pid)
 end
 
 function StateHelper:LoadClientScriptVariables(pid, stateObject)
@@ -140,17 +140,17 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
 
     local variableCount = 0
 
-    tes3mp.ClearClientGlobals()
+    dreamweave.ClearClientGlobals()
 
     for variableId, variableTable in pairs(stateObject.data.clientVariables.globals) do
         if type(variableTable) == "table" then
 
             if variableTable.variableType == enumerations.variableType.SHORT then
-                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.SHORT)
+                dreamweave.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.SHORT)
             elseif variableTable.variableType == enumerations.variableType.LONG then
-                tes3mp.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.LONG)
+                dreamweave.AddClientGlobalInteger(variableId, variableTable.intValue, enumerations.variableType.LONG)
             elseif variableTable.variableType == enumerations.variableType.FLOAT then
-                tes3mp.AddClientGlobalFloat(variableId, variableTable.floatValue)
+                dreamweave.AddClientGlobalFloat(variableId, variableTable.floatValue)
             end
 
             variableCount = variableCount + 1
@@ -158,7 +158,7 @@ function StateHelper:LoadClientScriptVariables(pid, stateObject)
     end
 
     if variableCount > 0 then
-        tes3mp.SendClientScriptGlobal(pid)
+        dreamweave.SendClientScriptGlobal(pid)
     end
 end
 
@@ -170,16 +170,16 @@ function StateHelper:LoadDestinationOverrides(pid, stateObject)
 
     local destinationCount = 0
 
-    tes3mp.ClearDestinationOverrides()
+    dreamweave.ClearDestinationOverrides()
 
     for oldCellDescription, newCellDescription in pairs(stateObject.data.destinationOverrides) do
 
-        tes3mp.AddDestinationOverride(oldCellDescription, newCellDescription)
+        dreamweave.AddDestinationOverride(oldCellDescription, newCellDescription)
         destinationCount = destinationCount + 1
     end
 
     if destinationCount > 0 then
-        tes3mp.SendWorldDestinationOverride(pid)
+        dreamweave.SendWorldDestinationOverride(pid)
     end
 end
 
@@ -190,13 +190,13 @@ function StateHelper:LoadMap(pid, stateObject)
     end
 
     local tileCount = 0
-    tes3mp.ClearMapChanges()
+    dreamweave.ClearMapChanges()
 
     for index, cellDescription in pairs(stateObject.data.mapExplored) do
 
         local filePath = config.dataPath .. "/map/" .. cellDescription .. ".png"
 
-        if tes3mp.DoesFilePathExist(filePath) then
+        if dreamweave.DoesFilePathExist(filePath) then
 
             local cellX, cellY
             _, _, cellX, cellY = string.find(cellDescription, patterns.exteriorCell)
@@ -204,14 +204,14 @@ function StateHelper:LoadMap(pid, stateObject)
             cellY = tonumber(cellY)
 
             if type(cellX) == "number" and type(cellY) == "number" then
-                tes3mp.LoadMapTileImageFile(cellX, cellY, filePath)
+                dreamweave.LoadMapTileImageFile(cellX, cellY, filePath)
                 tileCount = tileCount + 1
             end
         end
     end
 
     if tileCount > 0 then
-        tes3mp.SendWorldMap(pid)
+        dreamweave.SendWorldMap(pid)
     end
 end
 
@@ -241,10 +241,10 @@ function StateHelper:SaveFactionRanks(pid, stateObject)
         stateObject.data.factionRanks = {}
     end
 
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+    for i = 0, dreamweave.GetFactionChangesSize(pid) - 1 do
 
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionRanks[factionId] = tes3mp.GetFactionRank(pid, i)
+        local factionId = dreamweave.GetFactionId(pid, i)
+        stateObject.data.factionRanks[factionId] = dreamweave.GetFactionRank(pid, i)
     end
 
     stateObject:QuicksaveToDrive()
@@ -256,10 +256,10 @@ function StateHelper:SaveFactionExpulsion(pid, stateObject)
         stateObject.data.factionExpulsion = {}
     end
 
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
+    for i = 0, dreamweave.GetFactionChangesSize(pid) - 1 do
 
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionExpulsion[factionId] = tes3mp.GetFactionExpulsionState(pid, i)
+        local factionId = dreamweave.GetFactionId(pid, i)
+        stateObject.data.factionExpulsion[factionId] = dreamweave.GetFactionExpulsionState(pid, i)
     end
 
     stateObject:QuicksaveToDrive()
@@ -271,9 +271,9 @@ function StateHelper:SaveFactionReputation(pid, stateObject)
         stateObject.data.factionReputation = {}
     end
 
-    for i = 0, tes3mp.GetFactionChangesSize(pid) - 1 do
-        local factionId = tes3mp.GetFactionId(pid, i)
-        stateObject.data.factionReputation[factionId] = tes3mp.GetFactionReputation(pid, i)
+    for i = 0, dreamweave.GetFactionChangesSize(pid) - 1 do
+        local factionId = dreamweave.GetFactionId(pid, i)
+        stateObject.data.factionReputation[factionId] = dreamweave.GetFactionReputation(pid, i)
     end
 
     stateObject:QuicksaveToDrive()
@@ -285,8 +285,8 @@ function StateHelper:SaveTopics(pid, stateObject)
         stateObject.data.topics = {}
     end
 
-    for i = 0, tes3mp.GetTopicChangesSize(pid) - 1 do
-        local topicId = tes3mp.GetTopicId(pid, i)
+    for i = 0, dreamweave.GetTopicChangesSize(pid) - 1 do
+        local topicId = dreamweave.GetTopicId(pid, i)
 
         if not tableHelper.containsValue(stateObject.data.topics, topicId) then
             table.insert(stateObject.data.topics, topicId)
@@ -302,7 +302,7 @@ function StateHelper:SaveBounty(pid, stateObject)
         stateObject.data.fame = {}
     end
 
-    stateObject.data.fame.bounty = tes3mp.GetBounty(pid)
+    stateObject.data.fame.bounty = dreamweave.GetBounty(pid)
 
     stateObject:QuicksaveToDrive()
 end
@@ -313,7 +313,7 @@ function StateHelper:SaveReputation(pid, stateObject)
         stateObject.data.fame = {}
     end
 
-    stateObject.data.fame.reputation = tes3mp.GetReputation(pid)
+    stateObject.data.fame.reputation = dreamweave.GetReputation(pid)
 
     stateObject:QuicksaveToDrive()
 end
@@ -337,9 +337,9 @@ end
 
 function StateHelper:SaveMapExploration(pid, stateObject)
 
-    local cell = tes3mp.GetCell(pid)
+    local cell = dreamweave.GetCell(pid)
 
-    if tes3mp.IsInExterior(pid) == true then
+    if dreamweave.IsInExterior(pid) == true then
         if not tableHelper.containsValue(stateObject.data.mapExplored, cell) then
             table.insert(stateObject.data.mapExplored, cell)
         end

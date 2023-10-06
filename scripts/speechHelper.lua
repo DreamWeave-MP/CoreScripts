@@ -148,7 +148,7 @@ function speechHelper.PlaySpeech(pid, speechInput, speechIndex)
     local speechPath = speechHelper.GetSpeechPath(pid, speechInput, speechIndex)
 
     if speechPath then
-        tes3mp.PlaySpeech(pid, speechPath)
+        dreamweave.PlaySpeech(pid, speechPath)
         return true
     end
 
