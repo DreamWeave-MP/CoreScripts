@@ -361,7 +361,7 @@ config.validRecordSettings = {
     book = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "text", "weight", "value", "scrollState", "skillId" },
     cell = { "baseId", "id", "noSleep", "hasAmbient", "ambient", "sunlight", "hasWater",
-             "waterLevel", "quasiEx", "region" },
+             "waterLevel", "quasiEx", "region", "fog" },
     clothing = { "baseId", "id", "name", "model", "icon", "script", "enchantmentId", "enchantmentCharge",
         "subtype", "weight", "value" },
     container = { "baseId", "id", "name", "model", "script", "weight", "flags" },
@@ -440,7 +440,8 @@ config.booleanRecordSettings = { "scrollState", "keyState", "vampireState" , "ha
 config.minMaxRecordSettings = { "damageChop", "damageSlash", "damageThrust" }
 
 -- The record type settings whose input should be converted to tables with 3 color values
-config.rgbRecordSettings = { "color" , "sunlight", "ambient"}
+-- NOTE: Fog is a special case as it actually is a table with 4 values.
+config.rgbRecordSettings = { "color" , "sunlight", "ambient", "fog"}
 
 -- The types of object and actor packets stored in cell data
 config.cellPacketTypes = { "delete", "place", "spawn", "lock", "trap", "scale", "state", "miscellaneous",

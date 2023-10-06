@@ -1217,6 +1217,7 @@ function commandHandler.StoreRecord(pid, cmd)
                 local redValue = tonumber(cmd[4])
                 local greenValue = tonumber(cmd[5])
                 local blueValue = tonumber(cmd[6])
+                local densityValue = tonumber (cmd[7])
 
                 if type(redValue) == "number" and type(greenValue) == "number" and type(blueValue) == "number" and
                     redValue > -1 and redValue < 256 and greenValue > -1 and greenValue < 256 and
@@ -1227,6 +1228,15 @@ function commandHandler.StoreRecord(pid, cmd)
                         inputSetting .. "\n")
                     return
                 end
+
+                if densityValue and type(densityValue) == "number" and densityValue > -1 and densityValue < 256 then
+                  storedTable[inputSetting].density = densityValue
+                else
+                  Players[pid]:Message("Please use three valid numerical values between 0 and 255 as the input for " ..
+                                       inputSetting .. "\n")
+                  return
+                end
+
             elseif tableHelper.containsValue(config.booleanRecordSettings, inputSetting) then
                 if inputValue == "true" or inputValue == "on" or tonumber(inputValue) == 1 then
                     storedTable[inputSetting] = true
