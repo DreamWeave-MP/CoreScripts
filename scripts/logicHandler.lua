@@ -17,7 +17,7 @@ ObjectLoops = {}
 Menus = {}
 
 for _, menuFile in ipairs(config.menuHelperFiles) do
-    require("menu/" .. menuFile)
+    require("menu." .. menuFile)
 end
 
 logicHandler.InitializeWorld = function()
