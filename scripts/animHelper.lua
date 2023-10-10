@@ -1,8 +1,5 @@
 tableHelper = require("tableHelper")
 
---- Unsigned int representing player id
---- @class PlayerID
-
 --- Master table for all animHelper functions
 --- @class AnimHelper
 --- @field GetAnimation fun(pid: PlayerID, animAlias: string): string
