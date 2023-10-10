@@ -1,12 +1,12 @@
 --- @class TypedVariableScopes
---- @field ignored string[]? Variables which never send traffic
---- @field personal string[]? Variables exclusive to specific players
---- @field quest string[]? Variables that should synchronized if config.shareJournal is enabled
---- @field kills string[]? Variables that are handled like killcounts, if config.shareKills is enabled
---- @field factionRanks string[]? Variables related to faction ranks which are shared if config.shareFactionRanks is enabled
---- @field factionExpulsion string[]? Variables for faction expulsion which sync if config.shareFactionExpulsion is enabled
---- @field worldwide string[]? Variables always shared across all players
---- @field unknown string[]? Unknown handling
+--- @field ignored? string[] Variables which never send traffic
+--- @field personal? string[] Variables exclusive to specific players
+--- @field quest? string[] Variables that should synchronized if config.shareJournal is enabled
+--- @field kills? string[] Variables that are handled like killcounts, if config.shareKills is enabled
+--- @field factionRanks? string[] Variables related to faction ranks which are shared if config.shareFactionRanks is enabled
+--- @field factionExpulsion? string[] Variables for faction expulsion which sync if config.shareFactionExpulsion is enabled
+--- @field worldwide? string[] Variables always shared across all players
+--- @field unknown? string[] Unknown handling
 
 --- Place clientside variables in different categories to decide how they are synchronized, saved and loaded
 --- Master table containing all variable types, and a table with named scopes
