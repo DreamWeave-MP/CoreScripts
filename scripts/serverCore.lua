@@ -1,4 +1,5 @@
 require("wrapper")
+require("types")
 require("utils")
 require("enumerations")
 tableHelper = require("tableHelper")
