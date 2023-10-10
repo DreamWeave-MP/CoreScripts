@@ -14,8 +14,8 @@
 --- NOTE: Does not actually sync member or local variables currently
 --- @class ClientVariableScopes
 --- @field globals TypedVariableScopes Global MWScript variables
---- @field locals TypedVariableScopes?  Local MWScript variables
---- @field members TypedVariableScopes? Actually I'm not sure what these are for
+--- @field locals? TypedVariableScopes  Local MWScript variables
+--- @field members? TypedVariableScopes Actually I'm not sure what these are for
 local clientVariableScopes = {
     globals = {
     },
