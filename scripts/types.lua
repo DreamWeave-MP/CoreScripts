@@ -1,0 +1,2 @@
+--- Unsigned int representing player id
+--- @class PlayerID
