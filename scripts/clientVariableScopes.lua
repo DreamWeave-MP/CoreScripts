@@ -20,9 +20,30 @@
 -- * "worldwide" is where you place variables that are always shared across all players
 --   because they affect the physical world in a way that should be visible to everyone,
 --   i.e. they affect structures, mechanism states, water levels, and so on
+
+--- @alias addedVariableScopes clientVariableScopes
+--- @alias variable string
+--- @alias varTable table <variable>
+--- @alias syncState
+---| "ignored", table> # Variables which never send traffic
+---| "personal" string # Varibles exclusive to specific players
+---| "quest" string # Variables that should synchronized if config.shareJournal is enabled
+---| "kills" string # Variables that are handled like killcounts, if config.shareKills is enabled
+---| "factionRanks" string # Variables related to faction ranks which are shared if config.shareFactionRanks is enabled
+---| "factionExpulsion" string # Variables for faction expulsion which sync if config.shareFactionExpulsion is enabled
+---| "worldwide" string # Variables always shared across all players
+---| "unknown", string  # Unknown handling
+
+--- @see NOTE: Does not sync member or local variables currently
+--- @class clientVariableScopes
+--- @field public globals { syncState: varTable }
 local clientVariableScopes = {
     globals = {}
 }
+
+--globas is a Table
+-- each field is also a named table
+-- those tables are keyed with the sync state, and its values are a string[]?
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") then
 
