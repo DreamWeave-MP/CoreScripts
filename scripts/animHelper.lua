@@ -4,6 +4,7 @@ tableHelper = require("tableHelper")
 --- @class AnimHelper
 --- @field GetAnimation fun(pid: PlayerID, animAlias: string): string
 --- @field GetValidList fun(pid: PlayerID): string[]
+--- @field PlayAnimation fun(pid: PlayerID, animAlias: string): boolean
 local animHelper = {}
 
 --- Literal animation names common to all races and genders
@@ -27,7 +28,7 @@ local femaleAnimAliases = { adjust_hair = "idle4", touch_hip = "idle5" }
 local beastAnimAliases = { act_confused = "idle9", look_around = "idle2", touch_hands = "idle6" }
 
 --- Retrieve a real animation name using its alias relative to player race/gender
---- @param pid integer The playerID
+--- @param pid PlayerID The playerID
 --- @param animAlias string Practical name for the animation, used as a table key in the animAlias tables
 --- @return string animation Literal animation name or invalid if the anim does not exist for this race/gender
 function animHelper.GetAnimation(pid, animAlias)
