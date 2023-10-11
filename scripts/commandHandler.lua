@@ -713,7 +713,10 @@ function commandHandler.ProcessCommand(pid, cmd)
                 -- in turn also changes them in the local objects
                 --
                 local scriptPath = package.searchpath(scriptName, package.path)
-                local scriptID = customEventHooks.generateScriptID(scriptName)
+                local scriptID = customEventHooks.getScriptID(scriptName)
+                if not scriptID then
+                    scriptID = customEventHooks.generateScriptID(scriptName)
+                end
 
                 -- Trigger OnScriptUnload event
                 local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
@@ -767,8 +770,12 @@ function commandHandler.ProcessCommand(pid, cmd)
             end
     
             if wasLoaded then
-                local scriptID = customEventHooks.generateScriptID(scriptName)
-    
+
+                local scriptID = customEventHooks.getScriptID(scriptName)
+                if not scriptID then
+                    scriptID = customEventHooks.generateScriptID(scriptName)
+                end
+
                 -- Trigger OnScriptUnload event
                 local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
     
