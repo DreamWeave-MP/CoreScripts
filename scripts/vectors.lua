@@ -7,6 +7,14 @@ function vec3:__call(x, y, z)
     return setmetatable({x=x or 0,y=y or 0,z=z or 0}, getmetatable(self))
 end
 
+function vec3:length()
+    return math.sqrt(self.x^2 + self.y^2 + self.z^2)
+end
+
+function vec3:length2()
+  return self.x^2 + self.y^2 + self.z^2
+end
+
 function vec3.__add(a, b)
     return vec3(a.x + b.x, a.y + b.y, a.z + b.z)
 end
@@ -16,7 +24,7 @@ function vec3.__sub(a, b)
 end
 
 function vec3.__mul(a, b)
-    if type(a) == 'number' then 
+    if type(a) == 'number' then
         return vec3(a * b.x, a * b.y, a * b.z)
     elseif type(b) == 'number' then
         return vec3(a.x * b, a.y * b, a.z*b)
@@ -26,11 +34,6 @@ end
 
 function vec3.__div(a, b)
     return vec3(a.x/b, a.y/b, a.z/b)
-end
-
--- Needs to be changed to __len once Lua 5.2 is supported completely
-function vec3.__unm(a)
-    return math.sqrt(a.x^2 + a.y^2 + a.z^2)
 end
 
 function vec3.__eq(a, b)
