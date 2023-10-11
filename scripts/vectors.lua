@@ -11,8 +11,9 @@ function vec3:length()
     return math.sqrt(self.x^2 + self.y^2 + self.z^2)
 end
 
-function vec3:length2()
-  return self.x^2 + self.y^2 + self.z^2
+function vec3.__pow(a, b)
+  if type(b) ~= 'number' then return end
+  return vec3(a.x^b, a.y^b, a.z^b) 
 end
 
 function vec3.__add(a, b)
