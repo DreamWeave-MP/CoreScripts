@@ -1,6 +1,11 @@
+--- Wrapper function that invokes real dreamweave functions from tes3mp custom scripts.
+--- On first execution of any function in the table, a warning and stack trace
+--- are generated prior to returning the real function.
+---@param tes3mp_function function Tes3MP function name
+---@return function Corresponding dreamweave function of the same name
 local function tes3mpWrapper(tes3mp_function)
     local doOnce = true
-    return function(...) -- get the set of actual parameters
+    return function(...)
       if (doOnce) then
         dreamweave.LogAppend(enumerations.log.WARN,
                              "A call to a tes3mp function was made.\n" ..
@@ -14,6 +19,12 @@ local function tes3mpWrapper(tes3mp_function)
     end
 end
 
+--- Wrapper type for old tes3mp functions.
+--- Any tes3mp function in this table when first called will
+--- initiate a stack trace and a log warning.
+--- NOTE: This table exists for backwards compatibility with third party scripts.
+--- It *will* be deprecated at some point, thus the warnings generated.
+--- @class TES3MP
 tes3mp = {
   AddActor = tes3mpWrapper(dreamweave.AddActor),
   AddActorSpellActive = tes3mpWrapper(dreamweave.AddActorSpellActive),
