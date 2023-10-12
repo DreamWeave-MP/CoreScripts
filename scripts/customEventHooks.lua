@@ -1,6 +1,12 @@
 local customEventHooks = {}
 local template = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
+-- Variables for event registration and re-registration logging
+local previousValidatorEvents = {}
+local previousHandlerEvents = {}
+local previousValidatorFilePath = nil
+local previousHandlerFilePath = nil
+
 customEventHooks.validators = {}
 customEventHooks.handlers = {}
 customEventHooks.scriptID = {
@@ -15,7 +21,7 @@ function customEventHooks.generateScriptID(filePath)
     end
 
     local seed = 0
-    for i = 1, #filePath:normalizePath() do
+    for i = 1, #filePath do
         local charCode = string.byte(filePath:normalizePath(), i)
         seed = seed + charCode
     end
@@ -64,6 +70,20 @@ function customEventHooks.registerValidator(event, callback)
         scriptID = customEventHooks.generateScriptID(filePath)
     end
 
+    -- If we are now registering a new event, check if a previous script's customEventHook registration was caused by a nested include of an already registered script.
+    -- If so, we print the functions that were attempted to be re-registered, as well as the script that triggered it.
+    -- Although this check does not prevent multiple registrations from happening, it highlights that the event is being included incorrectly.
+    if previousValidatorFilePath and previousValidatorFilePath ~= filePath and previousValidatorEvents[previousValidatorFilePath] then 
+        local callingScript = previousValidatorEvents[previousValidatorFilePath].callingScript
+        local eventsConcatenated = table.concat(previousValidatorEvents[previousValidatorFilePath].events, '", "')
+        if #previousValidatorEvents[previousValidatorFilePath].events > 0 then
+            eventsConcatenated = '"' .. eventsConcatenated .. '"'
+        end
+        dreamweave.LogMessage(enumerations.log.WARN, string.format('[customEventHooks][validator]: Events [%s] from previous script "%s" called by "%s"', eventsConcatenated, previousValidatorFilePath, callingScript))
+    
+        previousValidatorEvents[previousValidatorFilePath] = nil
+    end
+
     dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][validator]: Registering event "%s" with ScriptID "%s"',event, scriptID))
 
     if not customEventHooks.validators[event] then
@@ -73,15 +93,36 @@ function customEventHooks.registerValidator(event, callback)
     if not customEventHooks.scriptID[scriptID] then
         dreamweave.LogMessage(enumerations.log.INFO, string.format('[customEventHooks]: Registered ScriptID "%s" for script "%s"', scriptID, filePath))
         customEventHooks.scriptID[scriptID] = {}
-        customEventHooks.scriptID[scriptID].validators = {}
     end
 
     if not customEventHooks.scriptID[scriptID].validators then
         customEventHooks.scriptID[scriptID].validators = {}
     end
 
+    -- Check if the current event already exists in the list of handlers for the current script.
+    local eventExists = false
+    for _, handlerInfo in ipairs(customEventHooks.scriptID[scriptID].validators) do
+        if handlerInfo[1] == event then
+            eventExists = true
+            break
+        end
+    end
+
+    -- If the current event already exists in the list of handlers for the current script,
+    -- record the event and the calling script for re-registration logging.
+    if eventExists then
+        -- Note: This debug only works on a nested include.
+        local callingScript = debug.getinfo(4, "S").source:sub(2):normalizePath()
+        if previousValidatorEvents[filePath] == nil then
+            previousValidatorEvents[filePath] = { callingScript = callingScript, events = {} }
+        end
+        table.insert(previousValidatorEvents[filePath].events, event)
+    end
+
     table.insert(customEventHooks.validators[event], callback)
     table.insert(customEventHooks.scriptID[scriptID].validators, {event, callback})
+
+    previousValidatorFilePath = filePath
 
     return scriptID
 end
@@ -93,6 +134,21 @@ function customEventHooks.registerHandler(event, callback)
     local scriptID = customEventHooks.getScriptID(filePath)
     if not scriptID then
         scriptID = customEventHooks.generateScriptID(filePath)
+    end
+
+    -- If we are now registering a new event, check if a previous script's customEventHook registration was caused by a nested include of an already registered script.
+    -- If so, we print the functions that were attempted to be re-registered, as well as the script that triggered it.
+    -- Although this check does not prevent multiple registrations from happening, it highlights that the event is being included incorrectly.
+    if previousHandlerFilePath and previousHandlerFilePath ~= filePath and previousHandlerEvents[previousHandlerFilePath] then 
+        local callingScript = previousHandlerEvents[previousHandlerFilePath].callingScript
+        local eventsConcatenated = table.concat(previousHandlerEvents[previousHandlerFilePath].events, '", "')
+        if #previousHandlerEvents[previousHandlerFilePath].events > 0 then
+            eventsConcatenated = '"' .. eventsConcatenated .. '"'
+        end
+        dreamweave.LogMessage(enumerations.log.WARN, string.format("[customEventHooks][handler]: Events [%s] from previous script '%s' called by '%s'", eventsConcatenated, previousHandlerFilePath, callingScript))
+    
+        -- Clear the table for the previousHandlerFilePath
+        previousHandlerEvents[previousHandlerFilePath] = nil
     end
 
     dreamweave.LogMessage(enumerations.log.VERBOSE, string.format('[customEventHooks][handler]: Registering event "%s" with ScriptID "%s"',event, scriptID))
@@ -110,8 +166,30 @@ function customEventHooks.registerHandler(event, callback)
         customEventHooks.scriptID[scriptID].handlers = {}
     end
 
+    -- Check if the current event already exists in the list of handlers for the current script.
+    local eventExists = false
+    for _, handlerInfo in ipairs(customEventHooks.scriptID[scriptID].handlers) do
+        if handlerInfo[1] == event then
+            eventExists = true
+            break
+        end
+    end
+
+    -- If the current event already exists in the list of handlers for the current script,
+    -- record the event and the calling script for re-registration logging.
+    if eventExists then
+        -- Note: This debug only works on a nested include.
+        local callingScript = debug.getinfo(4, "S").source:sub(2):normalizePath()
+        if previousHandlerEvents[filePath] == nil then
+            previousHandlerEvents[filePath] = { callingScript = callingScript, events = {} }
+        end
+        table.insert(previousHandlerEvents[filePath].events, event)
+    end
+
     table.insert(customEventHooks.handlers[event], callback)
     table.insert(customEventHooks.scriptID[scriptID].handlers, {event, callback})
+
+    previousHandlerFilePath = filePath
 
     return scriptID
 end
