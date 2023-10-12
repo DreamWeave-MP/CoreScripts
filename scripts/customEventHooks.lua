@@ -228,69 +228,55 @@ function customEventHooks.triggerHandlers(event, eventStatus, args)
 end
 
 -- Function to unregister event handlers based on a scriptID
-function customEventHooks.unregisterHandlersByScriptID(scriptID)
-    dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unloading Handlers using ScriptID: " .. scriptID)
+function customEventHooks.unregisterEventsByType(scriptID, registerType)
 
-    -- Get the events associated with the script ID
-    local scriptIDEvents = customEventHooks.scriptID[scriptID]
-    if not scriptIDEvents then
-        dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: No Handler events associated with scriptID: " .. scriptID)
-        return
+  if registerType ~= "validators" and registerType ~= "handlers" then
+    dreamweave.LogMessage(enumerations.log.ERROR, "[customEventHooks]: INTERNAL ERROR: Requested an invalid registration type: "
+			  .. registerType .. "to clear.\nPlease report this to a developer!")
+    return
+  end
+
+  dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unloading " ..
+			registerType .. " using ScriptID: " .. scriptID)
+
+  -- Get the events associated with the script ID
+  local scriptIDEvents = customEventHooks.scriptID[scriptID][registerType]
+
+  if not scriptIDEvents then
+    dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: No " ..
+			  registerType .. " associated with scriptID: " .. scriptID)
+    return
+  end
+
+  -- If there are no handlers for this scriptID, or the handler isn't a table, bail
+  if not scriptIDEvents or type(scriptIDEvents) ~= "table" then return end
+
+  local registrations
+  local callback
+
+  for index, eventInfo in ipairs(scriptIDEvents) do
+    registrations = customEventHooks[registerType][eventInfo[1]]
+    -- Check if the handlers table exists and is not nil
+    if registrations then
+      table.remove(scriptIDEvents, index)
+      callback = eventInfo[2]
+      break
     end
+  end
 
-    -- Iterate through each event and remove the handlers associated with it
-    if scriptIDEvents.handlers and type(scriptIDEvents.handlers) == "table" then
-        for _, eventInfo in ipairs(scriptIDEvents.handlers) do
-            local handlers = customEventHooks.handlers[eventInfo[1]]
-            
-            -- Check if the handlers table exists and is not nil
-            if handlers then
-                for j, handler in ipairs(handlers) do
-                    -- Remove the handler if it matches the function being unregistered
-                    if handler == eventInfo[2] then
-                        table.remove(handlers, j)
-                        break
-                    end
-                end
-            end
-        end
+  for index, registration in ipairs(registrations) do
+    -- Remove the handler if it matches the function being unregistered
+    if registration == callback then
+      table.remove(registrations, index)
+      return
     end
-end
-
--- Function to unregister event validators based on a scriptID
-function customEventHooks.unregisterValidatorsByScriptID(scriptID)
-    dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering validators by scriptID: " .. scriptID)
-    local scriptIDEvents = customEventHooks.scriptID[scriptID]
-
-    -- If there are no events associated with the scriptID, return
-    if not scriptIDEvents then
-        dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: No validator events associated with scriptID: " .. scriptID)
-        return
-    end
-
-    -- Iterate through the events and their validators
-    if scriptIDEvents.validators and type(scriptIDEvents.validators) == "table" then
-        for _, eventInfo in ipairs(scriptIDEvents.validators) do
-            local validators = customEventHooks.validators[eventInfo[1]]
-            
-            -- Check if the handlers table exists and is not nil
-            if validators then
-                for j, validator in ipairs(validators) do
-                    -- Remove the handler if it matches the function being unregistered
-                    if validator == eventInfo[2] then
-                        table.remove(validators, j)
-                        break
-                    end
-                end
-            end
-        end
-    end
+  end
 end
 
 function customEventHooks.unregisterAllByScriptID(scriptID)
-    dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering all events for scriptID: " .. scriptID)
-    customEventHooks.unregisterValidatorsByScriptID(scriptID)
-    customEventHooks.unregisterHandlersByScriptID(scriptID)
+  dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering all events for scriptID: " .. scriptID)
+  customEventHooks.unregisterEventsByType(scriptID, "validators")
+  customEventHooks.unregisterEventsByType(scriptID, "handlers")
 end
 
 function customEventHooks.getScriptID(filePath)
