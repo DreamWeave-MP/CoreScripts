@@ -738,6 +738,9 @@ function commandHandler.ProcessCommand(pid, cmd)
                 for key, value in pairs(result) do
                     package.loaded[scriptName][key] = value
                 end
+
+		customEventHooks.triggerInit(scriptID)
+
             else
                 result = prequire(scriptName)
             end

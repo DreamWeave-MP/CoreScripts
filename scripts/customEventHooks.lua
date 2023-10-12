@@ -194,6 +194,21 @@ function customEventHooks.registerHandler(event, callback)
     return scriptID
 end
 
+function customEventHooks.triggerInit(scriptID)
+  if not customEventHooks.handlers["OnScriptLoad"] then print("No OnScriptLoad Handlers defined!") return end
+
+  if not customEventHooks.scriptID[scriptID] then print ("Unable to find script to init!") return end
+
+  local registeredScriptHandlers = customEventHooks.scriptID[scriptID].handlers
+
+  for _, callback in ipairs(registeredScriptHandlers) do
+    if callback[1] == "OnScriptLoad" then
+      eventStatus = customEventHooks.updateEventStatus(eventStatus, callback[2](eventStatus))
+    end
+  end
+
+end
+
 function customEventHooks.triggerValidators(event, args)
     local eventStatus = customEventHooks.makeEventStatus(true, true)
     if customEventHooks.validators[event] ~= nil then
