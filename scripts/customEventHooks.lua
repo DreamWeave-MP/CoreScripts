@@ -224,13 +224,19 @@ function customEventHooks.unregisterHandlersByScriptID(scriptID)
     end
 
     -- Iterate through each event and remove the handlers associated with it
-    for _, eventInfo in ipairs(scriptIDEvents.handlers) do
-        local handlers = customEventHooks.handlers[eventInfo[1]]
-        for j, handler in ipairs(handlers) do
-            -- Remove the handler if it matches the function being unregistered
-            if handler == eventInfo[2] then
-                table.remove(handlers, j)
-                break
+    if scriptIDEvents.handlers and type(scriptIDEvents.handlers) == "table" then
+        for _, eventInfo in ipairs(scriptIDEvents.handlers) do
+            local handlers = customEventHooks.handlers[eventInfo[1]]
+            
+            -- Check if the handlers table exists and is not nil
+            if handlers then
+                for j, handler in ipairs(handlers) do
+                    -- Remove the handler if it matches the function being unregistered
+                    if handler == eventInfo[2] then
+                        table.remove(handlers, j)
+                        break
+                    end
+                end
             end
         end
     end
@@ -248,13 +254,19 @@ function customEventHooks.unregisterValidatorsByScriptID(scriptID)
     end
 
     -- Iterate through the events and their validators
-    for i, eventInfo in ipairs(scriptIDEvents.validators) do
-        local validators = customEventHooks.validators[eventInfo[1]]
-        for j, validator in ipairs(validators) do
-            -- Remove the validator if it matches the function being unregistered
-            if validator == eventInfo[2] then
-                    table.remove(validators, j)
-                break
+    if scriptIDEvents.validators and type(scriptIDEvents.validators) == "table" then
+        for _, eventInfo in ipairs(scriptIDEvents.validators) do
+            local validators = customEventHooks.validators[eventInfo[1]]
+            
+            -- Check if the handlers table exists and is not nil
+            if validators then
+                for j, validator in ipairs(validators) do
+                    -- Remove the handler if it matches the function being unregistered
+                    if validator == eventInfo[2] then
+                        table.remove(validators, j)
+                        break
+                    end
+                end
             end
         end
     end
