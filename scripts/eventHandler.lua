@@ -2048,6 +2048,7 @@ function eventHandler.LoadScript(pid, scriptId)
     local result = false
     if eventStatus.validDefaultHandler then
         result = ScriptLoader.loadScript(scriptId)
+        -- Trigger init hack here
     end
 
     if eventStatus.validCustomHandlers then
