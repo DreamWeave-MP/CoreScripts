@@ -2,8 +2,6 @@
 ---@class ScriptLoader
 local ScriptLoader = {
     ScriptData = {
-        Handlers = {},
-        Validators = {},
         GeneratedScriptIds = {}, ---@type table<string, string> Mapping of filepath to script Id
     },
 }
@@ -25,7 +23,7 @@ function ScriptLoader.generateScriptId(filePath)
 
     local scriptID = template:gsub("x", function() return string.format("%x", math.random(0, 15)) end)
     ScriptLoader.ScriptData.GeneratedScriptIds[filePath] = scriptID
-    dreamweave.LogMessage(enumerations.log.VERBOSE, '[customEventHooks]: Generated ScriptID for script: "' .. filePath..'" is ' .. scriptID)
+    tes3mp.LogMessage(enumerations.log.VERBOSE, '[customEventHooks]: Generated ScriptID for script: "' .. filePath..'" is ' .. scriptID)
 
     return scriptID
 end
@@ -69,10 +67,10 @@ function ScriptLoader.getScriptId(filePath)
     local filePath = filePath:normalizePath()
 
     if ScriptLoader.ScriptData.GeneratedScriptIds[filePath] then
-        dreamweave.LogMessage(enumerations.log.VERBOSE, '[ScriptLoader][getScriptID]: ScriptID for script: "' .. filePath..'" is ' .. ScriptLoader.ScriptData.GeneratedScriptIds[filePath])
+        tes3mp.LogMessage(enumerations.log.VERBOSE, '[ScriptLoader][getScriptID]: ScriptID for script: "' .. filePath..'" is ' .. ScriptLoader.ScriptData.GeneratedScriptIds[filePath])
         return ScriptLoader.ScriptData.GeneratedScriptIds[filePath]
      else
-        dreamweave.LogMessage(enumerations.log.VERBOSE, '[ScriptLoader]: ScriptID not found for script: "' .. filePath..'"')
+        tes3mp.LogMessage(enumerations.log.VERBOSE, '[ScriptLoader]: ScriptID not found for script: "' .. filePath..'"')
         return ""
      end
 end
@@ -103,22 +101,6 @@ function ScriptLoader.unloadScript(filePath)
 
     for key, value in pairs(result) do
         package.loaded[filePath][key] = value
-    end
-
-    ScriptLoader.triggerInit(scriptID)
-end
-
-function ScriptLoader.triggerInit(scriptID)
-    if not ScriptLoader.handlers["OnScriptLoad"] then print("No OnScriptLoad Handlers defined!") return end
-
-    if not ScriptLoader.ScriptData[scriptID] then print ("Unable to find script to init!") return end
-
-    local registeredScriptHandlers = ScriptLoader.ScriptData[scriptID].Handlers
-
-    for _, callback in ipairs(registeredScriptHandlers) do
-      if callback[1] == "OnScriptLoad" then
-        eventStatus = ScriptLoader.updateEventStatus(eventStatus, callback[2](eventStatus))
-      end
     end
 end
 

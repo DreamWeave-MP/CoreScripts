@@ -2039,7 +2039,7 @@ end
 function eventHandler.LoadScript(pid, scriptId)
     local canLoadScript, errorMessage = ScriptLoader.canLoadScript(scriptId)
     if not canLoadScript then
-        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " will not be laoded because: " .. errorMessage .. "\n" .. color.Default)
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " will not be loaded because: " .. errorMessage .. "\n" .. color.Default)
         return
     end
 
