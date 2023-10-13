@@ -45,7 +45,7 @@ updateTimerId = nil
 
 banList = {}
 
-if (config.databaseType and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
+if (config.databaseType ~= nil and config.databaseType ~= "json") and doesModuleExist("luasql." .. config.databaseType) then
 
     Database = require("database")
     Database:LoadDriver(config.databaseType)
@@ -76,9 +76,9 @@ function LoadBanList()
     tes3mp.LogMessage(enumerations.log.INFO, "Reading banlist.json")
     banList = jsonInterface.load("banlist.json")
 
-    if not banList.playerNames then
+    if banList.playerNames == nil then
         banList.playerNames = {}
-    elseif not banList.ipAddresses then
+    elseif banList.ipAddresses == nil then
         banList.ipAddresses = {}
     end
 
@@ -98,27 +98,28 @@ function LoadBanList()
         tes3mp.LogAppend(enumerations.log.WARN, message)
     end
 
-    if #banList.playerNames <= 0 then return end
-    
-    local message = "- Banning all IP addresses stored for players:\n"
+    if #banList.playerNames > 0 then
+        local message = "- Banning all IP addresses stored for players:\n"
 
-    for index, targetName in pairs(banList.playerNames) do
-        message = message .. targetName
+        for index, targetName in pairs(banList.playerNames) do
+            message = message .. targetName
 
-        if index < #banList.playerNames then
-            message = message .. ", "
+            if index < #banList.playerNames then
+                message = message .. ", "
+            end
+
+            local targetPlayer = logicHandler.GetPlayerByName(targetName)
+
+            if targetPlayer ~= nil then
+
+                for index, ipAddress in pairs(targetPlayer.data.ipAddresses) do
+                    tes3mp.BanAddress(ipAddress)
+                end
+            end
         end
 
-        local targetPlayer = logicHandler.GetPlayerByName(targetName)
-
-        if not targetPlayer then return end
-
-        for _, ipAddress in pairs(targetPlayer.data.ipAddresses) do
-            tes3mp.BanAddress(ipAddress)
-        end
+        tes3mp.LogAppend(enumerations.log.WARN, message)
     end
-
-    tes3mp.LogAppend(enumerations.log.WARN, message)
 end
 
 function SaveBanList()
@@ -130,43 +131,54 @@ do
     
     function UpdateTime()
 
-        if not config.passTimeWhenEmpty and tableHelper.getCount(Players) <= 0 then return end
+        if config.passTimeWhenEmpty or tableHelper.getCount(Players) > 0 then
     
-        hourCounter = hourCounter + (0.0083 * WorldInstance.frametimeMultiplier)
-
-        local hourFloor = math.floor(hourCounter)
-
-        if not previousHourFloor then
-            previousHourFloor = hourFloor
-        elseif hourFloor > previousHourFloor then
-            if hourFloor >= 24 then
-                local eventStatus = customEventHooks.triggerValidators("OnGameDay", {})
-                if eventStatus.validDefaultHandler then
-                    hourCounter = hourCounter - hourFloor
-                    hourFloor = 0
-
-                    tes3mp.LogMessage(enumerations.log.INFO, "The world time day has been incremented")
-                    WorldInstance:IncrementDay()
-                end
-                customEventHooks.triggerHandlers("OnGameDay", eventStatus, {})
-            end
-
-            local eventStatus = customEventHooks.triggerValidators("OnGameHour", {})
-            if eventStatus.validDefaultHandler then
-                tes3mp.LogMessage(enumerations.log.INFO, "The world time hour is now " .. hourFloor)
-                WorldInstance.data.time.hour = hourCounter
-
-                WorldInstance:UpdateFrametimeMultiplier()
-
-                if tableHelper.getCount(Players) > 0 then
-                    WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
-                end
-
+            hourCounter = hourCounter + (0.0083 * WorldInstance.frametimeMultiplier)
+    
+            local hourFloor = math.floor(hourCounter)
+    
+            if previousHourFloor == nil then
                 previousHourFloor = hourFloor
+<<<<<<< HEAD
             end
             customEventHooks.triggerHandlers("OnGameHour", eventStatus, {})
         end
 
+=======
+    
+            elseif hourFloor > previousHourFloor then
+    
+                if hourFloor >= 24 then
+
+                    local eventStatus = customEventHooks.triggerValidators("OnGameDay", {})
+                    if eventStatus.validDefaultHandler then
+                        hourCounter = hourCounter - hourFloor
+                        hourFloor = 0
+    
+                        tes3mp.LogMessage(enumerations.log.INFO, "The world time day has been incremented")
+                        WorldInstance:IncrementDay()
+                    end
+                    customEventHooks.triggerHandlers("OnGameDay", eventStatus, {})
+                end
+    
+                local eventStatus = customEventHooks.triggerValidators("OnGameHour", {})
+                if eventStatus.validDefaultHandler then
+                    tes3mp.LogMessage(enumerations.log.INFO, "The world time hour is now " .. hourFloor)
+                    WorldInstance.data.time.hour = hourCounter
+    
+                    WorldInstance:UpdateFrametimeMultiplier()
+    
+                    if tableHelper.getCount(Players) > 0 then
+                        WorldInstance:LoadTime(tableHelper.getAnyValue(Players).pid, true)
+                    end
+    
+                    previousHourFloor = hourFloor
+                end
+                customEventHooks.triggerHandlers("OnGameHour", eventStatus, {})
+            end
+        end
+    
+>>>>>>> parent of 9881467 (refactor(scipts): pt. 1 removing explicit nil checks)
         tes3mp.RestartTimer(updateTimerId, time.seconds(1))
     end
 end
@@ -190,7 +202,7 @@ function OnServerInit()
     if eventStatus.validDefaultHandler then
         logicHandler.InitializeWorld()
 
-        for _, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
+        for priorityLevel, recordStoreTypes in ipairs(config.recordStoreLoadOrder) do
             for _, storeType in ipairs(recordStoreTypes) do
                 logicHandler.LoadRecordStore(storeType)
             end
@@ -216,72 +228,73 @@ end
 function OnServerPostInit()
     tes3mp.LogMessage(enumerations.log.INFO, "Called \"OnServerPostInit\"")
     local eventStatus = customEventHooks.triggerValidators("OnServerPostInit", {})
-    if not eventStatus.validDefaultHandler then return end
+    if eventStatus.validDefaultHandler then
 
-    clientVariableScopes = require("clientVariableScopes")
-    speechCollections = require("speechCollections")
+        clientVariableScopes = require("clientVariableScopes")
+        speechCollections = require("speechCollections")
 
-    eventHandler.InitializeDefaultValidators()
-    eventHandler.InitializeDefaultHandlers()
+        eventHandler.InitializeDefaultValidators()
+        eventHandler.InitializeDefaultHandlers()
 
-    tes3mp.SetGameMode(config.gameMode)
+        tes3mp.SetGameMode(config.gameMode)
 
-    local consoleRuleString = "allowed"
-    if not config.allowConsole then
-        consoleRuleString = "not " .. consoleRuleString
-    end
-
-    local bedRestRuleString = "allowed"
-    if not config.allowBedRest then
-        bedRestRuleString = "not " .. bedRestRuleString
-    end
-
-    local wildRestRuleString = "allowed"
-    if not config.allowWildernessRest then
-        wildRestRuleString = "not " .. wildRestRuleString
-    end
-
-    local waitRuleString = "allowed"
-    if not config.allowWait then
-        waitRuleString = "not " .. waitRuleString
-    end
-
-    tes3mp.SetRuleString("enforceDataFiles", tostring(config.enforceDataFiles))
-    tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
-    tes3mp.SetRuleValue("difficulty", config.difficulty)
-    tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
-    tes3mp.SetRuleString("console", consoleRuleString)
-    tes3mp.SetRuleString("bedResting", bedRestRuleString)
-    tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
-    tes3mp.SetRuleString("waiting", waitRuleString)
-    tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
-    tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
-    tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
-    tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
-    tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
-    tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
-    tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
-    tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
-    tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
-    tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
-    tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
-
-    local respawnCell
-
-    if config.respawnAtImperialShrine then
-        respawnCell = "nearest Imperial shrine"
-
-        if config.respawnAtTribunalTemple then
-            respawnCell = respawnCell .. " or Tribunal temple"
+        local consoleRuleString = "allowed"
+        if not config.allowConsole then
+            consoleRuleString = "not " .. consoleRuleString
         end
-    elseif config.respawnAtTribunalTemple then
-        respawnCell = "nearest Tribunal temple"
-    elseif type(config.defaultRespawn) == "table" then
-        respawnCell = config.defaultRespawn.cellDescription
-    end
 
-    if respawnCell then
-        tes3mp.SetRuleString("respawnCell", respawnCell)
+        local bedRestRuleString = "allowed"
+        if not config.allowBedRest then
+            bedRestRuleString = "not " .. bedRestRuleString
+        end
+
+        local wildRestRuleString = "allowed"
+        if not config.allowWildernessRest then
+            wildRestRuleString = "not " .. wildRestRuleString
+        end
+
+        local waitRuleString = "allowed"
+        if not config.allowWait then
+            waitRuleString = "not " .. waitRuleString
+        end
+
+        tes3mp.SetRuleString("enforceDataFiles", tostring(config.enforceDataFiles))
+        tes3mp.SetRuleString("ignoreScriptErrors", tostring(config.ignoreScriptErrors))
+        tes3mp.SetRuleValue("difficulty", config.difficulty)
+        tes3mp.SetRuleValue("deathPenaltyJailDays", config.deathPenaltyJailDays)
+        tes3mp.SetRuleString("console", consoleRuleString)
+        tes3mp.SetRuleString("bedResting", bedRestRuleString)
+        tes3mp.SetRuleString("wildernessResting", wildRestRuleString)
+        tes3mp.SetRuleString("waiting", waitRuleString)
+        tes3mp.SetRuleValue("enforcedLogLevel", config.enforcedLogLevel)
+        tes3mp.SetRuleValue("physicsFramerate", config.physicsFramerate)
+        tes3mp.SetRuleString("shareJournal", tostring(config.shareJournal))
+        tes3mp.SetRuleString("shareFactionRanks", tostring(config.shareFactionRanks))
+        tes3mp.SetRuleString("shareFactionExpulsion", tostring(config.shareFactionExpulsion))
+        tes3mp.SetRuleString("shareFactionReputation", tostring(config.shareFactionReputation))
+        tes3mp.SetRuleString("shareTopics", tostring(config.shareTopics))
+        tes3mp.SetRuleString("shareBounty", tostring(config.shareBounty))
+        tes3mp.SetRuleString("shareReputation", tostring(config.shareReputation))
+        tes3mp.SetRuleString("shareMapExploration", tostring(config.shareMapExploration))
+        tes3mp.SetRuleString("enablePlacedObjectCollision", tostring(config.enablePlacedObjectCollision))
+
+        local respawnCell
+
+        if config.respawnAtImperialShrine == true then
+            respawnCell = "nearest Imperial shrine"
+
+            if config.respawnAtTribunalTemple == true then
+                respawnCell = respawnCell .. " or Tribunal temple"
+            end
+        elseif config.respawnAtTribunalTemple == true then
+            respawnCell = "nearest Tribunal temple"
+        elseif type(config.defaultRespawn) == "table" then
+            respawnCell = config.defaultRespawn.cellDescription
+        end
+
+        if respawnCell ~= nil then
+            tes3mp.SetRuleString("respawnCell", respawnCell)
+        end
     end
 
     customEventHooks.triggerHandlers("OnServerPostInit", eventStatus, {})
@@ -304,34 +317,46 @@ function LoadDataFileList(filename)
 
     local jsonDataFileList = jsonInterface.load(filename)
 
-    if not jsonDataFileList then
+    if jsonDataFileList == nil then
         tes3mp.LogMessage(enumerations.log.ERROR, "Data file list " .. filename .. " cannot be read!")
         tes3mp.StopServer(2)
-        return
-    end
+    else
+        -- Fix numerical keys to print plugins in the correct order
+        tableHelper.fixNumericalKeys(jsonDataFileList, true)
 
-    tableHelper.fixNumericalKeys(jsonDataFileList, true)
+        for listIndex, pluginEntry in ipairs(jsonDataFileList) do
+            for entryIndex, checksumStringArray in pairs(pluginEntry) do
 
+<<<<<<< HEAD
     for listIndex, pluginEntry in ipairs(jsonDataFileList) do
         for entryIndex, checksumStringArray in pairs(pluginEntry) do
             dataFileList[listIndex] = {}
             dataFileList[listIndex].name = entryIndex
             local checksums = {}
             local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
+=======
+                dataFileList[listIndex] = {}
+                dataFileList[listIndex].name = entryIndex
+>>>>>>> parent of 9881467 (refactor(scipts): pt. 1 removing explicit nil checks)
 
-            for _, checksumString in ipairs(checksumStringArray) do
-                debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
-                table.insert(checksums, tonumber(checksumString, 16))
+                local checksums = {}
+                local debugMessage = ("- %d: \"%s\": ["):format(listIndex, entryIndex)
+
+                for _, checksumString in ipairs(checksumStringArray) do
+
+                    debugMessage = debugMessage .. ("%X, "):format(tonumber(checksumString, 16))
+                    table.insert(checksums, tonumber(checksumString, 16))
+                end
+                dataFileList[listIndex].checksums = checksums
+                table.insert(dataFileList[listIndex], "")
+
+                debugMessage = debugMessage .. "\b\b]"
+                tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
             end
-
-            dataFileList[listIndex].checksums = checksums
-            table.insert(dataFileList[listIndex], "")
-            debugMessage = debugMessage .. "\b\b]"
-            tes3mp.LogAppend(enumerations.log.WARN, debugMessage)
         end
-    end
 
-    return dataFileList
+        return dataFileList
+    end
 end
 
 function OnRequestDataFileList()

@@ -19,7 +19,7 @@
 
 ]]
 
-
+---@class customCommandHooks
 local customCommandHooks = {}
 
 local specialCharacter = "/"
@@ -28,45 +28,58 @@ customCommandHooks.commands = {}
 customCommandHooks.rankRequirement = {}
 customCommandHooks.nameRequirement = {}
 
+
+---@param cmd string Command Syntax
+---@param callback string Command Response
 function customCommandHooks.registerCommand(cmd, callback)
+    if type(cmd) ~= "string" then return end
     customCommandHooks.commands[cmd] = callback 
 end
 
+---@param cmd string Command Syntax
 function customCommandHooks.removeCommand(cmd)
+    if type(cmd) ~= "string" then return end
     customCommandHooks.commands[cmd] = nil 
     customCommandHooks.rankRequirement[cmd] = nil
     customCommandHooks.nameRequirement[cmd] = nil
 end
 
+---@param cmd string Command Syntax
 function customCommandHooks.getCallback(cmd)
+    if type(cmd) ~= "string" then return end
     return customCommandHooks.commands[cmd]
 end
 
+---@param cmd string Command Syntax
+---@param rank string Permission Level
 function customCommandHooks.setRankRequirement(cmd, rank)
-    if customCommandHooks.commands[cmd] ~= nil then
-        customCommandHooks.rankRequirement[cmd] = rank
-    end
+    if customCommandHooks.commands[cmd] == nil or type(cmd) ~= "string" then return end
+    customCommandHooks.rankRequirement[cmd] = rank
 end
 
+---@param cmd string Command Syntax
 function customCommandHooks.removeRankRequirement(cmd)
     customCommandHooks.rankRequirement[cmd] = nil
 end
 
+---@param cmd string Command Syntax
+---@param names string Name
 function customCommandHooks.setNameRequirement(cmd, names)
-    if customCommandHooks.commands[cmd] ~= nil then
-        customCommandHooks.nameRequirement[cmd] = names
-    end
+    if customCommandHooks.commands[cmd] ~= nil and type(cmd) ~= "string" then return end 
+    customCommandHooks.nameRequirement[cmd] = names
 end
 
 function customCommandHooks.addNameRequirement(cmd, name)
-    if customCommandHooks.commands[cmd] ~= nil then
-        if customCommandHooks.nameRequirement[cmd] == nil then
-            customCommandHooks.nameRequirement[cmd] = {}
-        end
-        table.insert(customCommandHooks.nameRequirement[cmd], name)
+    if customCommandHooks.commands[cmd] == nil and type(cmd) == "string" then return end
+    
+    if customCommandHooks.nameRequirement[cmd] == nil then
+        customCommandHooks.nameRequirement[cmd] = {}
     end
+    
+    table.insert(customCommandHooks.nameRequirement[cmd], name)
 end
 
+---@param cmd string Command Syntax
 function customCommandHooks.removeNameRequirement(cmd)
     customCommandHooks.nameRequirement[cmd] = nil
 end

@@ -2,6 +2,8 @@ require("config")
 require("patterns")
 stateHelper = require("stateHelper")
 tableHelper = require("tableHelper")
+
+---@class BasePlayer
 local BasePlayer = class("BasePlayer")
 
 function BasePlayer:__init(pid, playerName)

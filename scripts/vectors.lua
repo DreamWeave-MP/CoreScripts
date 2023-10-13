@@ -3,6 +3,12 @@ local vec3 = {}
 
 vec3.__index = vec3
 
+vec3.hello = "hi"
+
+---Initialise your 3D Vector
+---@param x number
+---@param y number
+---@param z number
 function vec3:__call(x, y, z)
     return setmetatable({x=x or 0,y=y or 0,z=z or 0}, getmetatable(self))
 end
