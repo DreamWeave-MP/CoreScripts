@@ -1,6 +1,7 @@
 --ScriptLoader Singleton
 ---@class ScriptLoader
 local ScriptLoader = {
+    LoadedScripts = {}, ---@type table<string, unknown>
     ScriptData = {
         GeneratedScriptIds = {}, ---@type table<string, string> Mapping of filepath to script Id
     },
@@ -51,6 +52,7 @@ end
 function ScriptLoader.loadScript(filePath)
     local result = prequire(filePath)
     if result then
+        ScriptLoader.LoadedScripts[filePath] = {}
         return true
     else
         return false
@@ -73,33 +75,13 @@ function ScriptLoader.getScriptId(filePath)
      end
 end
 
--- TODO: figure out wtf this was supposed to be doing
 function ScriptLoader.unloadScript(filePath)
-    -- Local objects that use functions from the script we are reloading
-    -- will keep their references to the old versions of those functions if
-    -- we do this:
-    --
-    -- package.loaded[scriptName] = nil
-    -- require(scriptName)
-    --
-    -- To get around that, we load up the script with dofile() instead and
-    -- then update the function references in package.loaded[scriptName], which
-    -- in turn also changes them in the local objects
-    --
-    local scriptPath = package.searchpath(filePath, package.path)
-    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptId(filePath)
+    for key, _ in pairs(package.loaded[filePath]) do
+        package.loaded[filePath][key] = nil
+      end
 
-    local result = dofile(scriptPath)
-
-    for key, value in pairs(package.loaded[filePath]) do
-        if result[key] == nil then
-            package.loaded[filePath][key] = nil
-        end
-    end
-
-    for key, value in pairs(result) do
-        package.loaded[filePath][key] = value
-    end
+      package.loaded[filePath] = nil
+      ScriptLoader.LoadedScripts[filePath] = nil
 end
 
 return ScriptLoader

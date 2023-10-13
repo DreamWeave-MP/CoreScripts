@@ -12,6 +12,11 @@ local customEventHooks = {
     flattenedValidators = {},
 }
 
+local previousValidatorEvents = {}
+local previousHandlerEvents = {}
+local previousValidatorFilePath = nil
+local previousHandlerFilePath = nil
+
 --TODO: currently, this is hard coupled to scriptloader. Determine if this is okay
 
 function customEventHooks.makeEventStatus(validDefaultHandler, validCustomHandlers)
@@ -44,16 +49,24 @@ function customEventHooks.registerValidator(event, callback)
     local filePath = debug.getinfo(2, "S").source:sub(2):normalizePath()
     local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptId(filePath)
 
+    if ScriptLoader.LoadedScripts[filePath] then
+        --
+    end
+
     local eventMap = customEventHooks.validators[event]
     if  not eventMap then
         customEventHooks.validators[event] = {}
         eventMap = customEventHooks.validators[event]
     end
 
-    local validatorMap = customEventHooks.validators[event][scriptId]
+    local validatorMap = eventMap[scriptId]
     if not validatorMap then
-        customEventHooks.validators[event][scriptId] = {}
-        validatorMap = customEventHooks.validators[event][scriptId]
+        eventMap[scriptId] = {}
+        validatorMap = eventMap[scriptId]
+    end
+
+    if not customEventHooks.flattenedValidators[event] then
+        customEventHooks.flattenedValidators[event] = {}
     end
 
     table.insert(validatorMap, callback)
@@ -72,10 +85,14 @@ function customEventHooks.registerHandler(event, callback)
         eventMap = customEventHooks.handlers[event]
     end
 
-    local handlerMap = customEventHooks.handlers[event][scriptId]
+    local handlerMap = eventMap[scriptId]
     if not handlerMap then
-        customEventHooks.handlers[event][scriptId] = {}
-        handlerMap = customEventHooks.handlers[event][scriptId]
+        eventMap[scriptId] = {}
+        handlerMap = eventMap[scriptId]
+    end
+
+    if not customEventHooks.flattenedHandlers[event] then
+        customEventHooks.flattenedHandlers[event] = {}
     end
 
     table.insert(handlerMap, callback)
