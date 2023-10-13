@@ -694,40 +694,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         if scriptName == nil then
             Players[pid]:Message(color.LightGray .. "Use /unload <scriptName>\n" .. color.Default)
         else
-            local wasLoaded = false
-    
-            if package.loaded[scriptName] then
-                if type(package.loaded[scriptName]) ~= "table" then
-                    Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " is already loaded but is not a valid Lua module and cannot be properly unloaded.\n" .. color.Default)
-                    return
-                end
-    
-                wasLoaded = true
-            end
-    
-            if wasLoaded then
-
-                local scriptID = customEventHooks.getScriptID(scriptName)
-                if not scriptID then
-                    scriptID = customEventHooks.generateScriptID(scriptName)
-                end
-
-                -- Trigger OnScriptUnload event
-                local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
-    
-                if eventStatus.validDefaultHandler then
-                    customEventHooks.unregisterAllByScriptId(scriptID)
-                end
-    
-                customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
-    
-                -- Fully unload the script by setting it to nil
-                package.loaded[scriptName] = nil
-    
-                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " has been successfully unloaded.\n".. color.Default)
-            else
-                Players[pid]:Message(color.GoldenRod  .. scriptName .. color.LightGray .. " is not currently loaded.\n" .. color.Default)
-            end
+            eventHandler.UnloadScript(pid, scriptName)
         end
     elseif cmd[1] == "unloadid" and admin then
         local scriptID = cmd[2]
