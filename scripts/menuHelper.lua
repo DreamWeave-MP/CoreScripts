@@ -553,7 +553,7 @@ function menuHelper.DisplayMenu(pid, menuIndex)
 
     Players[pid].displayedMenuButtons = displayedButtons
 
-    tes3mp.CustomMessageBox(pid, config.customMenuIds.menuHelper, text, buttonList)
+    dreamweave.CustomMessageBox(pid, config.customMenuIds.menuHelper, text, buttonList)
 end
 
 return menuHelper

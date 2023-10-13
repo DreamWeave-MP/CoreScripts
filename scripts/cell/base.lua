@@ -101,21 +101,21 @@ end
 function BaseCell:EnsureSendPacket(pid, sendType, packetType, forEveryone, action)
 
     if action and packetType == "object" then
-        tes3mp.SetObjectListAction(0)
+        dreamweave.SetObjectListAction(0)
     elseif action and packetType == "actor" then
-		tes3mp.SetActorListAction(0)
+		dreamweave.SetActorListAction(0)
 	end
 	
     if packetType == "object" then
-        tes3mp[sendType](forEveryone)	
-        tes3mp.ClearObjectList()
-        tes3mp.SetObjectListPid(pid)
-        tes3mp.SetObjectListCell(self.description)
+        dreamweave[sendType](forEveryone)	
+        dreamweave.ClearObjectList()
+        dreamweave.SetObjectListPid(pid)
+        dreamweave.SetObjectListCell(self.description)
     elseif packetType == "actor" then
-        tes3mp[sendType](forEveryone)   
-        tes3mp.ClearActorList()
-        tes3mp.SetActorListPid(pid)
-        tes3mp.SetActorListCell(self.description)      
+        dreamweave[sendType](forEveryone)   
+        dreamweave.ClearActorList()
+        dreamweave.SetActorListPid(pid)
+        dreamweave.SetActorListCell(self.description)      
     end
 end
 
@@ -228,12 +228,12 @@ function BaseCell:AddVisitor(pid)
         self:LoadMomentaryCellData(pid)
 
         if not self:HasFullContainerData() and not self.isRequestingContainerData then
-            tes3mp.LogAppend(enumerations.log.INFO, "- Requesting containers")
+            dreamweave.LogAppend(enumerations.log.INFO, "- Requesting containers")
             self:RequestContainers(pid)
         end
 
         if not self:HasFullActorList() and not self.isRequestingActorList then
-            tes3mp.LogAppend(enumerations.log.INFO, "- Requesting actor list")
+            dreamweave.LogAppend(enumerations.log.INFO, "- Requesting actor list")
             self:RequestActorList(pid)
         end
     end
@@ -272,7 +272,7 @@ end
 
 function BaseCell:SetAuthority(pid)
     self.authority = pid
-    tes3mp.LogMessage(enumerations.log.INFO, "Authority of cell " .. self.data.entry.description ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Authority of cell " .. self.data.entry.description ..
         " is now " .. logicHandler.GetChatName(pid))
 
     self:LoadActorAuthority(pid)
@@ -466,7 +466,7 @@ function BaseCell:SaveObjectsPlaced(objects)
 
             self.data.objectData[uniqueIndex].location = location
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+            dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
                 ", count: " .. count .. ", charge: " .. charge .. ", enchantmentCharge: " .. enchantmentCharge ..
                 ", soul: " .. soul .. ", goldValue: " .. goldValue)
 
@@ -498,7 +498,7 @@ function BaseCell:SaveObjectsSpawned(objects)
             local refId = object.refId
             self:InitializeObjectData(uniqueIndex, refId)
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
+            dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
             self.data.objectData[uniqueIndex].location = location
 
@@ -517,7 +517,7 @@ function BaseCell:SaveObjectsSpawned(objects)
 
                     if hasPlayerSummoner then
                         local summonerPid = object.summon.summoner.pid
-                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by player " ..
+                        dreamweave.LogAppend(enumerations.log.INFO, "- summoned by player " ..
                             logicHandler.GetChatName(summonerPid))
 
                         -- Track the player and the summon for each other
@@ -527,7 +527,7 @@ function BaseCell:SaveObjectsSpawned(objects)
                     else
                         summon.summoner.refId = object.summon.summoner.refId
                         summon.summoner.uniqueIndex = object.summon.summoner.uniqueIndex
-                        tes3mp.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summon.summoner.uniqueIndex ..
+                        dreamweave.LogAppend(enumerations.log.INFO, "- summoned by actor " .. summon.summoner.uniqueIndex ..
                             ", refId: " .. summon.summoner.refId)
                     end
 
@@ -559,7 +559,7 @@ function BaseCell:SaveObjectsLocked(objects)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].lockLevel = lockLevel
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
             ", lockLevel: " .. lockLevel)
 
         tableHelper.insertValueIfMissing(self.data.packets.lock, uniqueIndex)
@@ -577,7 +577,7 @@ function BaseCell:SaveObjectsMiscellaneous(objects)
         self.data.objectData[uniqueIndex].lastGoldRestockHour = object.lastGoldRestockHour
         self.data.objectData[uniqueIndex].lastGoldRestockDay = object.lastGoldRestockDay
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
             ", goldPool: " .. object.goldPool .. ", lastGoldRestockHour: " .. object.lastGoldRestockHour ..
             ", lastGoldRestockDay: " .. object.lastGoldRestockDay)
 
@@ -600,7 +600,7 @@ function BaseCell:SaveObjectTrapsTriggered(objects)
             self.data.objectData[uniqueIndex].trapSpellId = ""
         end
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
             ", trapSpellId: " .. object.trapSpellId .. ", trapAction: " ..
             tableHelper.getIndexByValue(enumerations.trap, object.trapAction))
 
@@ -618,7 +618,7 @@ function BaseCell:SaveObjectsScaled(objects)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].scale = scale
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
             ", scale: " .. scale)
 
         tableHelper.insertValueIfMissing(self.data.packets.scale, uniqueIndex)
@@ -635,7 +635,7 @@ function BaseCell:SaveObjectStates(objects)
         self:InitializeObjectData(uniqueIndex, refId)
         self.data.objectData[uniqueIndex].state = state
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId ..
             ", state: " .. tostring(state))
 
         tableHelper.insertValueIfMissing(self.data.packets.state, uniqueIndex)
@@ -696,22 +696,22 @@ end
 
 function BaseCell:SaveContainers(pid)
 
-    tes3mp.ReadReceivedObjectList()
-    tes3mp.CopyReceivedObjectListToStore()
+    dreamweave.ReadReceivedObjectList()
+    dreamweave.CopyReceivedObjectListToStore()
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving Container from " .. logicHandler.GetChatName(pid) ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Saving Container from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    local packetOrigin = tes3mp.GetObjectListOrigin()
-    local action = tes3mp.GetObjectListAction()
-    local subAction = tes3mp.GetObjectListContainerSubAction()
+    local packetOrigin = dreamweave.GetObjectListOrigin()
+    local action = dreamweave.GetObjectListAction()
+    local subAction = dreamweave.GetObjectListContainerSubAction()
 
-    for objectIndex = 0, tes3mp.GetObjectListSize() - 1 do
+    for objectIndex = 0, dreamweave.GetObjectListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetObjectRefNum(objectIndex) .. "-" .. tes3mp.GetObjectMpNum(objectIndex)
-        local refId = tes3mp.GetObjectRefId(objectIndex)
+        local uniqueIndex = dreamweave.GetObjectRefNum(objectIndex) .. "-" .. dreamweave.GetObjectMpNum(objectIndex)
+        local refId = dreamweave.GetObjectRefId(objectIndex)
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. refId)
 
         self:InitializeObjectData(uniqueIndex, refId)
 
@@ -725,14 +725,14 @@ function BaseCell:SaveContainers(pid)
             inventory = {}
         end
 
-        for itemIndex = 0, tes3mp.GetContainerChangesSize(objectIndex) - 1 do
+        for itemIndex = 0, dreamweave.GetContainerChangesSize(objectIndex) - 1 do
 
-            local itemRefId = tes3mp.GetContainerItemRefId(objectIndex, itemIndex)
-            local itemCount = tes3mp.GetContainerItemCount(objectIndex, itemIndex)
-            local itemCharge = tes3mp.GetContainerItemCharge(objectIndex, itemIndex)
-            local itemEnchantmentCharge = tes3mp.GetContainerItemEnchantmentCharge(objectIndex, itemIndex)
-            local itemSoul = tes3mp.GetContainerItemSoul(objectIndex, itemIndex)
-            local actionCount = tes3mp.GetContainerItemActionCount(objectIndex, itemIndex)
+            local itemRefId = dreamweave.GetContainerItemRefId(objectIndex, itemIndex)
+            local itemCount = dreamweave.GetContainerItemCount(objectIndex, itemIndex)
+            local itemCharge = dreamweave.GetContainerItemCharge(objectIndex, itemIndex)
+            local itemEnchantmentCharge = dreamweave.GetContainerItemEnchantmentCharge(objectIndex, itemIndex)
+            local itemSoul = dreamweave.GetContainerItemSoul(objectIndex, itemIndex)
+            local actionCount = dreamweave.GetContainerItemActionCount(objectIndex, itemIndex)
 
             -- Check if the object's stored inventory contains this item already
             if inventoryHelper.containsItem(inventory, itemRefId, itemCharge, itemEnchantmentCharge, itemSoul) then
@@ -741,7 +741,7 @@ function BaseCell:SaveContainers(pid)
                 local item = inventory[foundIndex]
 
                 if action == enumerations.container.ADD then
-                    tes3mp.LogAppend(enumerations.log.VERBOSE, "- Adding count of " .. itemCount .. " to existing item " ..
+                    dreamweave.LogAppend(enumerations.log.VERBOSE, "- Adding count of " .. itemCount .. " to existing item " ..
                         item.refId .. " with current count of " .. item.count)
                     item.count = item.count + itemCount
 
@@ -750,7 +750,7 @@ function BaseCell:SaveContainers(pid)
 
                     -- The item will still exist in the container with a lower count
                     if newCount > 0 then
-                        tes3mp.LogAppend(enumerations.log.VERBOSE, "- Removed count of " .. actionCount .. " from item " ..
+                        dreamweave.LogAppend(enumerations.log.VERBOSE, "- Removed count of " .. actionCount .. " from item " ..
                             item.refId .. " that had count of " .. item.count .. ", resulting in remaining count of " .. newCount)
                         item.count = newCount
                     -- The item is to be completely removed
@@ -758,10 +758,10 @@ function BaseCell:SaveContainers(pid)
                         inventory[foundIndex] = nil
                     else
                         actionCount = item.count
-                        tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount ..
+                        dreamweave.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount ..
                             " from item" .. item.refId .. " that only had count of " .. item.count)
-                        tes3mp.LogAppend(enumerations.log.WARN, "- Removed just " .. actionCount .. " instead")
-                        tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
+                        dreamweave.LogAppend(enumerations.log.WARN, "- Removed just " .. actionCount .. " instead")
+                        dreamweave.SetContainerItemActionCountByIndex(objectIndex, itemIndex, actionCount)
                         inventory[foundIndex] = nil
                     end
 
@@ -776,11 +776,11 @@ function BaseCell:SaveContainers(pid)
                 end
             else
                 if action == enumerations.container.REMOVE then
-                    tes3mp.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount .. 
+                    dreamweave.LogAppend(enumerations.log.WARN, "- Attempt to remove count of " .. actionCount .. 
                         " from non-existent item " .. itemRefId)
-                    tes3mp.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
+                    dreamweave.SetContainerItemActionCountByIndex(objectIndex, itemIndex, 0)
                 else
-                    tes3mp.LogAppend(enumerations.log.VERBOSE, "- Added new item " .. itemRefId .. " with count of " ..
+                    dreamweave.LogAppend(enumerations.log.VERBOSE, "- Added new item " .. itemRefId .. " with count of " ..
                         itemCount)
                     inventoryHelper.addItem(inventory, itemRefId, itemCount,
                         itemCharge, itemEnchantmentCharge, itemSoul)
@@ -805,20 +805,20 @@ function BaseCell:SaveContainers(pid)
     -- If so, only send the reply to other players
     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
     if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
-        tes3mp.SendContainer(true, true)
+        dreamweave.SendContainer(true, true)
     -- Is this a container packet originating from a client script or
     -- dialogue? If so, its effects have already taken place on the
     -- sending client, so only send it to other players
     elseif packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_LOCAL or
         packetOrigin == enumerations.packetOrigin.CLIENT_SCRIPT_GLOBAL or
         packetOrigin == enumerations.packetOrigin.CLIENT_DIALOGUE then
-        tes3mp.SendContainer(true, true)
+        dreamweave.SendContainer(true, true)
     -- Otherwise, send the received packet to everyone, including the
     -- player who sent it (because no clientside changes will be made
     -- to the related container otherwise)
     -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is false
     else
-        tes3mp.SendContainer(true, false)
+        dreamweave.SendContainer(true, false)
     end
 
     self:QuicksaveToDrive()
@@ -829,7 +829,7 @@ function BaseCell:SaveContainers(pid)
         self.isRequestingContainerData = false
         self.data.loadState.hasFullContainerData = true
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. self.description ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. self.description ..
             " is now recorded as having full container data")
     end
 end
@@ -879,7 +879,7 @@ function BaseCell:SaveActorList(actors)
     for uniqueIndex, actor in pairs(actors) do
 
         self:InitializeObjectData(uniqueIndex, actor.refId)
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. actor.refId)
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. ", refId: " .. actor.refId)
 
         tableHelper.insertValueIfMissing(self.data.packets.actorList, uniqueIndex)
     end
@@ -891,15 +891,15 @@ function BaseCell:SaveActorList(actors)
         self.isRequestingActorList = false
         self.data.loadState.hasFullActorList = true
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. self.description ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. self.description ..
             " is now recorded as having a full actor list")
     end
 end
 
 function BaseCell:SaveActorPositions()
 
-    tes3mp.ReadCellActorList(self.description)
-    local actorListSize = tes3mp.GetActorListSize()
+    dreamweave.ReadCellActorList(self.description)
+    local actorListSize = dreamweave.GetActorListSize()
 
     if actorListSize == 0 then
         return
@@ -907,17 +907,17 @@ function BaseCell:SaveActorPositions()
 
     for objectIndex = 0, actorListSize - 1 do
 
-        local uniqueIndex = tes3mp.GetActorRefNum(objectIndex) .. "-" .. tes3mp.GetActorMpNum(objectIndex)
+        local uniqueIndex = dreamweave.GetActorRefNum(objectIndex) .. "-" .. dreamweave.GetActorMpNum(objectIndex)
 
-        if tes3mp.DoesActorHavePosition(objectIndex) == true and self:ContainsObject(uniqueIndex) then
+        if dreamweave.DoesActorHavePosition(objectIndex) == true and self:ContainsObject(uniqueIndex) then
 
             self.data.objectData[uniqueIndex].location = {
-                posX = tes3mp.GetActorPosX(objectIndex),
-                posY = tes3mp.GetActorPosY(objectIndex),
-                posZ = tes3mp.GetActorPosZ(objectIndex),
-                rotX = tes3mp.GetActorRotX(objectIndex),
-                rotY = tes3mp.GetActorRotY(objectIndex),
-                rotZ = tes3mp.GetActorRotZ(objectIndex)
+                posX = dreamweave.GetActorPosX(objectIndex),
+                posY = dreamweave.GetActorPosY(objectIndex),
+                posZ = dreamweave.GetActorPosZ(objectIndex),
+                rotX = dreamweave.GetActorRotX(objectIndex),
+                rotY = dreamweave.GetActorRotY(objectIndex),
+                rotZ = dreamweave.GetActorRotZ(objectIndex)
             }
 
             tableHelper.insertValueIfMissing(self.data.packets.position, uniqueIndex)
@@ -927,8 +927,8 @@ end
 
 function BaseCell:SaveActorStatsDynamic()
 
-    tes3mp.ReadCellActorList(self.description)
-    local actorListSize = tes3mp.GetActorListSize()
+    dreamweave.ReadCellActorList(self.description)
+    local actorListSize = dreamweave.GetActorListSize()
 
     if actorListSize == 0 then
         return
@@ -936,20 +936,20 @@ function BaseCell:SaveActorStatsDynamic()
 
     for objectIndex = 0, actorListSize - 1 do
 
-        local uniqueIndex = tes3mp.GetActorRefNum(objectIndex) .. "-" .. tes3mp.GetActorMpNum(objectIndex)
+        local uniqueIndex = dreamweave.GetActorRefNum(objectIndex) .. "-" .. dreamweave.GetActorMpNum(objectIndex)
 
-        if tes3mp.DoesActorHaveStatsDynamic(objectIndex) == true and self:ContainsObject(uniqueIndex) then
+        if dreamweave.DoesActorHaveStatsDynamic(objectIndex) == true and self:ContainsObject(uniqueIndex) then
 
             self.data.objectData[uniqueIndex].stats = {
-                healthBase = tes3mp.GetActorHealthBase(objectIndex),
-                healthCurrent = tes3mp.GetActorHealthCurrent(objectIndex),
-                healthModified = tes3mp.GetActorHealthModified(objectIndex),
-                magickaBase = tes3mp.GetActorMagickaBase(objectIndex),
-                magickaCurrent = tes3mp.GetActorMagickaCurrent(objectIndex),
-                magickaModified = tes3mp.GetActorMagickaModified(objectIndex),
-                fatigueBase = tes3mp.GetActorFatigueBase(objectIndex),
-                fatigueCurrent = tes3mp.GetActorFatigueCurrent(objectIndex),
-                fatigueModified = tes3mp.GetActorFatigueModified(objectIndex)
+                healthBase = dreamweave.GetActorHealthBase(objectIndex),
+                healthCurrent = dreamweave.GetActorHealthCurrent(objectIndex),
+                healthModified = dreamweave.GetActorHealthModified(objectIndex),
+                magickaBase = dreamweave.GetActorMagickaBase(objectIndex),
+                magickaCurrent = dreamweave.GetActorMagickaCurrent(objectIndex),
+                magickaModified = dreamweave.GetActorMagickaModified(objectIndex),
+                fatigueBase = dreamweave.GetActorFatigueBase(objectIndex),
+                fatigueCurrent = dreamweave.GetActorFatigueCurrent(objectIndex),
+                fatigueModified = dreamweave.GetActorFatigueModified(objectIndex)
             }
 
             tableHelper.insertValueIfMissing(self.data.packets.statsDynamic, uniqueIndex)
@@ -961,7 +961,7 @@ function BaseCell:SaveActorEquipment(actors)
 
     for uniqueIndex, actor in pairs(actors) do
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
 
         if self:ContainsObject(uniqueIndex) then
             self.data.objectData[uniqueIndex].equipment = {}
@@ -981,7 +981,7 @@ function BaseCell:SaveActorSpellsActive(actors)
 
     for uniqueIndex, actor in pairs(actors) do
 
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex)
 
         if self:ContainsObject(uniqueIndex) then
 
@@ -1086,20 +1086,20 @@ function BaseCell:SaveActorCellChanges(pid)
 
     local temporaryLoadedCells = {}
 
-    tes3mp.ReadReceivedActorList()
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
+    dreamweave.ReadReceivedActorList()
+    dreamweave.LogMessage(enumerations.log.INFO, "Saving ActorCellChange from " .. logicHandler.GetChatName(pid) ..
         " about " .. self.description)
 
-    for actorIndex = 0, tes3mp.GetActorListSize() - 1 do
+    for actorIndex = 0, dreamweave.GetActorListSize() - 1 do
 
-        local uniqueIndex = tes3mp.GetActorRefNum(actorIndex) .. "-" .. tes3mp.GetActorMpNum(actorIndex)
-        local newCellDescription = tes3mp.GetActorCell(actorIndex)
+        local uniqueIndex = dreamweave.GetActorRefNum(actorIndex) .. "-" .. dreamweave.GetActorMpNum(actorIndex)
+        local newCellDescription = dreamweave.GetActorCell(actorIndex)
 
         if newCellDescription == self.description then
-            tes3mp.LogAppend(enumerations.log.INFO, "- Ignored invalid cell change that was moving " .. uniqueIndex .. " to " ..
+            dreamweave.LogAppend(enumerations.log.INFO, "- Ignored invalid cell change that was moving " .. uniqueIndex .. " to " ..
                 self.description .. " despite that actor already being in that cell")
         else
-            tes3mp.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. " moved to " .. newCellDescription)
+            dreamweave.LogAppend(enumerations.log.INFO, "- " .. uniqueIndex .. " moved to " .. newCellDescription)
 
             -- If the new cell is not loaded, load it temporarily
             if LoadedCells[newCellDescription] == nil then
@@ -1115,7 +1115,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 -- Was this actor spawned in the old cell, instead of being a pre-existing actor?
                 -- If so, delete it entirely from the old cell and make it get spawned in the new cell
                 if tableHelper.containsValue(self.data.packets.spawn, uniqueIndex) == true then
-                    tes3mp.LogAppend(enumerations.log.INFO, "-- As a server-only object, it was moved entirely")
+                    dreamweave.LogAppend(enumerations.log.INFO, "-- As a server-only object, it was moved entirely")
 
                     -- If this object is based on a generated record, move its record link
                     -- to the new cell
@@ -1156,7 +1156,7 @@ function BaseCell:SaveActorCellChanges(pid)
                     -- Is the new cell actually this actor's original cell?
                     -- If so, move its data back and remove all of its cell change data
                     if originalCellDescription == newCellDescription then
-                        tes3mp.LogAppend(enumerations.log.INFO, "-- It is now back in its original cell " .. originalCellDescription)
+                        dreamweave.LogAppend(enumerations.log.INFO, "-- It is now back in its original cell " .. originalCellDescription)
                         self:MoveObjectData(uniqueIndex, newCell)
 
                         tableHelper.removeValue(newCell.data.packets.cellChangeTo, uniqueIndex)
@@ -1178,11 +1178,11 @@ function BaseCell:SaveActorCellChanges(pid)
                         local originalCell = LoadedCells[originalCellDescription]
 
                         if originalCell.data.objectData[uniqueIndex] ~= nil then
-                            tes3mp.LogAppend(enumerations.log.INFO, "-- This is now referenced in its original cell " ..
+                            dreamweave.LogAppend(enumerations.log.INFO, "-- This is now referenced in its original cell " ..
                                 originalCellDescription)
                             originalCell.data.objectData[uniqueIndex].cellChangeTo = newCellDescription
                         else
-                            tes3mp.LogAppend(enumerations.log.ERROR, "-- It does not exist in its original cell " ..
+                            dreamweave.LogAppend(enumerations.log.ERROR, "-- It does not exist in its original cell " ..
                                 originalCellDescription .. "! Please report this to a developer")
                         end
                     end
@@ -1191,7 +1191,7 @@ function BaseCell:SaveActorCellChanges(pid)
                 -- in its old cell, as long as it's not supposed to already be in the new cell
                 elseif self.data.objectData[uniqueIndex].cellChangeTo ~= newCellDescription then
 
-                    tes3mp.LogAppend(enumerations.log.INFO, "-- This was its first move away from its original cell")
+                    dreamweave.LogAppend(enumerations.log.INFO, "-- This was its first move away from its original cell")
 
                     self:MoveObjectData(uniqueIndex, newCell)
 
@@ -1210,16 +1210,16 @@ function BaseCell:SaveActorCellChanges(pid)
 
                 if newCell.data.objectData[uniqueIndex] ~= nil then
                     newCell.data.objectData[uniqueIndex].location = {
-                        posX = tes3mp.GetActorPosX(actorIndex),
-                        posY = tes3mp.GetActorPosY(actorIndex),
-                        posZ = tes3mp.GetActorPosZ(actorIndex),
-                        rotX = tes3mp.GetActorRotX(actorIndex),
-                        rotY = tes3mp.GetActorRotY(actorIndex),
-                        rotZ = tes3mp.GetActorRotZ(actorIndex)
+                        posX = dreamweave.GetActorPosX(actorIndex),
+                        posY = dreamweave.GetActorPosY(actorIndex),
+                        posZ = dreamweave.GetActorPosZ(actorIndex),
+                        rotX = dreamweave.GetActorRotX(actorIndex),
+                        rotY = dreamweave.GetActorRotY(actorIndex),
+                        rotZ = dreamweave.GetActorRotZ(actorIndex)
                     }
                 end
             else
-                tes3mp.LogAppend(enumerations.log.ERROR, "-- Invalid cell change was attempted! Please report " ..
+                dreamweave.LogAppend(enumerations.log.ERROR, "-- Invalid cell change was attempted! Please report " ..
                     "this to a developer")
             end
         end
@@ -1254,9 +1254,9 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEvery
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1269,7 +1269,7 @@ function BaseCell:LoadObjectsDeleted(pid, objectData, uniqueIndexArray, forEvery
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectDelete(forEveryone)
+        dreamweave.SendObjectDelete(forEveryone)
     end
 end
 
@@ -1277,9 +1277,9 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1312,10 +1312,10 @@ function BaseCell:LoadObjectsPlaced(pid, objectData, uniqueIndexArray, forEveryo
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectPlace(forEveryone)
+        dreamweave.SendObjectPlace(forEveryone)
         -- The object rotation isn't set correctly via ObjectPlace in clients without a certain hotfix,
         -- so set it separately here
-        tes3mp.SendObjectRotate(forEveryone)
+        dreamweave.SendObjectRotate(forEveryone)
     end
 end
 
@@ -1323,9 +1323,9 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1376,7 +1376,7 @@ function BaseCell:LoadObjectsSpawned(pid, objectData, uniqueIndexArray, forEvery
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectSpawn(forEveryone)
+        dreamweave.SendObjectSpawn(forEveryone)
     end
 end
 
@@ -1384,9 +1384,9 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1405,7 +1405,7 @@ function BaseCell:LoadObjectsLocked(pid, objectData, uniqueIndexArray, forEveryo
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectLock(forEveryone)
+        dreamweave.SendObjectLock(forEveryone)
     end
 end
 
@@ -1413,9 +1413,9 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1442,7 +1442,7 @@ function BaseCell:LoadObjectsMiscellaneous(pid, objectData, uniqueIndexArray, fo
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectMiscellaneous(forEveryone)
+        dreamweave.SendObjectMiscellaneous(forEveryone)
     end
 end
 
@@ -1450,9 +1450,9 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1469,7 +1469,7 @@ function BaseCell:LoadObjectTrapsTriggered(pid, objectData, uniqueIndexArray, fo
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectTrap(forEveryone)
+        dreamweave.SendObjectTrap(forEveryone)
     end
 end
 
@@ -1477,9 +1477,9 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1498,7 +1498,7 @@ function BaseCell:LoadObjectsScaled(pid, objectData, uniqueIndexArray, forEveryo
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectScale(forEveryone)
+        dreamweave.SendObjectScale(forEveryone)
     end
 end
 
@@ -1506,9 +1506,9 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1527,7 +1527,7 @@ function BaseCell:LoadObjectStates(pid, objectData, uniqueIndexArray, forEveryon
     end
 
     if objectCount > 0 then
-        tes3mp.SendObjectState(forEveryone)
+        dreamweave.SendObjectState(forEveryone)
     end
 end
 
@@ -1535,9 +1535,9 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
@@ -1554,16 +1554,16 @@ function BaseCell:LoadDoorStates(pid, objectData, uniqueIndexArray, forEveryone)
     end
 
     if objectCount > 0 then
-        tes3mp.SendDoorState(forEveryone)
+        dreamweave.SendDoorState(forEveryone)
     end
 end
 
 function BaseCell:LoadDoorDestinations(pid, objectData, uniqueIndexArray, forEveryone)
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddDoorDestination(uniqueIndex, objectData[uniqueIndex])
@@ -1575,7 +1575,7 @@ function BaseCell:LoadDoorDestinations(pid, objectData, uniqueIndexArray, forEve
     end
 
     if objectCount > 0 then
-        tes3mp.SendDoorDestination(forEveryone)
+        dreamweave.SendDoorDestination(forEveryone)
     end
 end
 
@@ -1583,9 +1583,9 @@ function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forE
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
         packetBuilder.AddClientScriptLocal(uniqueIndex, objectData[uniqueIndex])
@@ -1597,7 +1597,7 @@ function BaseCell:LoadClientScriptLocals(pid, objectData, uniqueIndexArray, forE
     end
 
     if objectCount > 0 then
-        tes3mp.SendClientScriptLocal(forEveryone)
+        dreamweave.SendClientScriptLocal(forEveryone)
     end
 end
 
@@ -1605,18 +1605,18 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
 
     local objectCount = 0
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetObjectRefNum(splitIndex[1])
-        tes3mp.SetObjectMpNum(splitIndex[2])
+        dreamweave.SetObjectRefNum(splitIndex[1])
+        dreamweave.SetObjectMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].inventory ~= nil then
-            tes3mp.SetObjectRefId(objectData[uniqueIndex].refId)
+            dreamweave.SetObjectRefId(objectData[uniqueIndex].refId)
 
             for itemIndex, item in pairs(objectData[uniqueIndex].inventory) do
 
@@ -1628,20 +1628,20 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
                     item.soul = ""
                 end
 
-                tes3mp.SetContainerItemRefId(item.refId)
-                tes3mp.SetContainerItemCount(item.count)
-                tes3mp.SetContainerItemCharge(item.charge)
-                tes3mp.SetContainerItemEnchantmentCharge(item.enchantmentCharge)
-                tes3mp.SetContainerItemSoul(item.soul)
+                dreamweave.SetContainerItemRefId(item.refId)
+                dreamweave.SetContainerItemCount(item.count)
+                dreamweave.SetContainerItemCharge(item.charge)
+                dreamweave.SetContainerItemEnchantmentCharge(item.enchantmentCharge)
+                dreamweave.SetContainerItemSoul(item.soul)
 
-                tes3mp.AddContainerItem()
+                dreamweave.AddContainerItem()
             end
 
-            tes3mp.AddObject()
+            dreamweave.AddObject()
 
             objectCount = objectCount + 1
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had container packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had container packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1654,9 +1654,9 @@ function BaseCell:LoadContainers(pid, objectData, uniqueIndexArray)
     if objectCount > 0 then
 
         -- Set the action to SET
-        tes3mp.SetObjectListAction(0)
+        dreamweave.SetObjectListAction(0)
 
-        tes3mp.SendContainer()
+        dreamweave.SendContainer()
     end
 end
 
@@ -1689,22 +1689,22 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) then
-            tes3mp.SetActorRefId(objectData[uniqueIndex].refId)
+            dreamweave.SetActorRefId(objectData[uniqueIndex].refId)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had actorList packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had actorList packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1717,34 +1717,34 @@ function BaseCell:LoadActorList(pid, objectData, uniqueIndexArray)
     if actorCount > 0 then
 
         -- Set the action to SET
-        tes3mp.SetActorListAction(0)
+        dreamweave.SetActorListAction(0)
 
-        tes3mp.SendActorList()
+        dreamweave.SendActorList()
     end
 end
 
 function BaseCell:LoadActorAuthority(pid)
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
-    tes3mp.SendActorAuthority()
+    dreamweave.SendActorAuthority()
 end
 
 function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) then
             local location = objectData[uniqueIndex].location
@@ -1753,15 +1753,15 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
             if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
                 self:ContainsPosition(location.posX, location.posY) then
 
-                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+                dreamweave.SetActorPosition(location.posX, location.posY, location.posZ)
+                dreamweave.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-                tes3mp.AddActor()
+                dreamweave.AddActor()
 
                 actorCount = actorCount + 1
             end
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had position packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had position packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1772,7 +1772,7 @@ function BaseCell:LoadActorPositions(pid, objectData, uniqueIndexArray)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorPosition()
+        dreamweave.SendActorPosition()
     end
 end
 
@@ -1780,34 +1780,34 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].stats ~= nil then
             local stats = objectData[uniqueIndex].stats
 
-            tes3mp.SetActorHealthBase(stats.healthBase)
-            tes3mp.SetActorHealthCurrent(stats.healthCurrent)
-            tes3mp.SetActorHealthModified(stats.healthModified)
-            tes3mp.SetActorMagickaBase(stats.magickaBase)
-            tes3mp.SetActorMagickaCurrent(stats.magickaCurrent)
-            tes3mp.SetActorMagickaModified(stats.magickaModified)
-            tes3mp.SetActorFatigueBase(stats.fatigueBase)
-            tes3mp.SetActorFatigueCurrent(stats.fatigueCurrent)
-            tes3mp.SetActorFatigueModified(stats.fatigueModified)
+            dreamweave.SetActorHealthBase(stats.healthBase)
+            dreamweave.SetActorHealthCurrent(stats.healthCurrent)
+            dreamweave.SetActorHealthModified(stats.healthModified)
+            dreamweave.SetActorMagickaBase(stats.magickaBase)
+            dreamweave.SetActorMagickaCurrent(stats.magickaCurrent)
+            dreamweave.SetActorMagickaModified(stats.magickaModified)
+            dreamweave.SetActorFatigueBase(stats.fatigueBase)
+            dreamweave.SetActorFatigueCurrent(stats.fatigueCurrent)
+            dreamweave.SetActorFatigueModified(stats.fatigueModified)
 
-            tes3mp.AddActor()
+            dreamweave.AddActor()
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had statsDynamic packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1818,7 +1818,7 @@ function BaseCell:LoadActorStatsDynamic(pid, objectData, uniqueIndexArray)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorStatsDynamic()
+        dreamweave.SendActorStatsDynamic()
     end
 end
 
@@ -1826,20 +1826,20 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].equipment ~= nil then
             local equipment = objectData[uniqueIndex].equipment
 
-            for itemIndex = 0, tes3mp.GetEquipmentSize() - 1 do
+            for itemIndex = 0, dreamweave.GetEquipmentSize() - 1 do
 
                 local currentItem = equipment[itemIndex]
 
@@ -1848,18 +1848,18 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
                         currentItem.enchantmentCharge = -1
                     end
 
-                    tes3mp.EquipActorItem(itemIndex, currentItem.refId, currentItem.count,
+                    dreamweave.EquipActorItem(itemIndex, currentItem.refId, currentItem.count,
                         currentItem.charge, currentItem.enchantmentCharge)
                 else
-                    tes3mp.UnequipActorItem(itemIndex)
+                    dreamweave.UnequipActorItem(itemIndex)
                 end
             end
 
-            tes3mp.AddActor()
+            dreamweave.AddActor()
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had equipment packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had equipment packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1870,7 +1870,7 @@ function BaseCell:LoadActorEquipment(pid, objectData, uniqueIndexArray)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorEquipment()
+        dreamweave.SendActorEquipment()
     end
 end
 
@@ -1878,15 +1878,15 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].spellsActive ~= nil then
 
@@ -1895,7 +1895,7 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
 
             actorCount = actorCount + 1
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had spellsActive packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had spellsActive packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1906,7 +1906,7 @@ function BaseCell:LoadActorSpellsActive(pid, objectData, uniqueIndexArray)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorSpellsActiveChanges()
+        dreamweave.SendActorSpellsActiveChanges()
     end
 end
 
@@ -1914,30 +1914,30 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
 
     local actorCount = 0
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].deathState ~= nil then
             if objectData[uniqueIndex].stats == nil or objectData[uniqueIndex].stats.healthCurrent < 1 then
-                tes3mp.SetActorDeathState(objectData[uniqueIndex].deathState)
-                tes3mp.SetActorDeathInstant(true)
-                tes3mp.AddActor()
+                dreamweave.SetActorDeathState(objectData[uniqueIndex].deathState)
+                dreamweave.SetActorDeathInstant(true)
+                dreamweave.AddActor()
 
                 actorCount = actorCount + 1
             else
-                tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
+                dreamweave.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
                 ", but its health is above 0! Please report this to a developer")
                 tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
             end
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had death packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -1948,7 +1948,7 @@ function BaseCell:LoadActorDeath(pid, objectData, uniqueIndexArray)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorDeath()
+        dreamweave.SendActorDeath()
     end    
 end
 
@@ -1961,15 +1961,15 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
     -- need to be tracked and sent separately to all the cell's visitors
     local sharedPacketUniqueIndexes = {}
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(uniqueIndexArray) do
 
         local splitIndex = uniqueIndex:split("-")
-        tes3mp.SetActorRefNum(splitIndex[1])
-        tes3mp.SetActorMpNum(splitIndex[2])
+        dreamweave.SetActorRefNum(splitIndex[1])
+        dreamweave.SetActorMpNum(splitIndex[2])
 
         if self:ContainsObject(uniqueIndex) and objectData[uniqueIndex].ai ~= nil then
             local ai = objectData[uniqueIndex].ai
@@ -1989,7 +1989,7 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                     ai.action == enumerations.ai.ESCORT or ai.action == enumerations.ai.FOLLOW then
 
                     isValid = false
-                    tes3mp.LogAppend(enumerations.log.WARN, "- Could not find valid AI target for actor " ..
+                    dreamweave.LogAppend(enumerations.log.WARN, "- Could not find valid AI target for actor " ..
                         uniqueIndex)
                 end
             end
@@ -2007,7 +2007,7 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
                 end
             end
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had AI packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had AI packet recorded for " .. uniqueIndex ..
                 ", but no matching object data! Please report this to a developer")
             tableHelper.removeValue(uniqueIndexArray, uniqueIndex)
         end
@@ -2019,27 +2019,27 @@ function BaseCell:LoadActorAI(pid, objectData, uniqueIndexArray)
 
     -- Send the packets meant for just this new visitor
     if actorCount > 0 then
-        tes3mp.SendActorAI(false)
+        dreamweave.SendActorAI(false)
     end
 
     -- Send the packets targeting this visitor that all the visitors
     -- need to have
     if tableHelper.getCount(sharedPacketUniqueIndexes) > 0 then
 
-        tes3mp.ClearActorList()
-        tes3mp.SetActorListPid(pid)
-        tes3mp.SetActorListCell(self.description)
+        dreamweave.ClearActorList()
+        dreamweave.SetActorListPid(pid)
+        dreamweave.SetActorListCell(self.description)
 
         for arrayIndex, uniqueIndex in pairs(sharedPacketUniqueIndexes) do
 
             local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetActorRefNum(splitIndex[1])
-            tes3mp.SetActorMpNum(splitIndex[2])
+            dreamweave.SetActorRefNum(splitIndex[1])
+            dreamweave.SetActorMpNum(splitIndex[2])
             local ai = objectData[uniqueIndex].ai
             packetBuilder.AddAIActor(uniqueIndex, pid, ai)
         end
 
-        tes3mp.SendActorAI(true)
+        dreamweave.SendActorAI(true)
     end
 end
 
@@ -2049,9 +2049,9 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     local actorCount = 0
 
     -- Move actors originally from this cell to other cells
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     for arrayIndex, uniqueIndex in pairs(self.data.packets.cellChangeTo) do
 
@@ -2059,11 +2059,11 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
             local newCellDescription = objectData[uniqueIndex].cellChangeTo
 
-            tes3mp.SetActorCell(newCellDescription)
+            dreamweave.SetActorCell(newCellDescription)
 
             local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetActorRefNum(splitIndex[1])
-            tes3mp.SetActorMpNum(splitIndex[2])
+            dreamweave.SetActorRefNum(splitIndex[1])
+            dreamweave.SetActorMpNum(splitIndex[2])
 
             -- If the new cell is not loaded, load it temporarily
             if LoadedCells[newCellDescription] == nil then
@@ -2079,21 +2079,21 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
                 if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
                     LoadedCells[newCellDescription]:ContainsPosition(location.posX, location.posY) then
 
-                    tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-                    tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+                    dreamweave.SetActorPosition(location.posX, location.posY, location.posZ)
+                    dreamweave.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-                    tes3mp.AddActor()
+                    dreamweave.AddActor()
 
                     actorCount = actorCount + 1
                 end
             else
-                tes3mp.LogAppend(enumerations.log.ERROR, "- Tried to move " .. uniqueIndex .. " from " ..
+                dreamweave.LogAppend(enumerations.log.ERROR, "- Tried to move " .. uniqueIndex .. " from " ..
                     self.description .. " to  " .. newCellDescription .. " with no position data!")
                 objectData[uniqueIndex] = nil
                 tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
             end
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had cellChangeTo packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had cellChangeTo packet recorded for " .. uniqueIndex ..
                 ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeTo, uniqueIndex)
         end
@@ -2104,7 +2104,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     end
 
     if actorCount > 0 then
-        tes3mp.SendActorCellChange()
+        dreamweave.SendActorCellChange()
     end
 
     -- Go through every temporary loaded cell and unload it
@@ -2127,7 +2127,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
 
             table.insert(cellChangesFrom[originalCellDescription], uniqueIndex)
         else
-            tes3mp.LogAppend(enumerations.log.ERROR, "- Had cellChangeFrom packet recorded for " .. uniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.ERROR, "- Had cellChangeFrom packet recorded for " .. uniqueIndex ..
                 ", but no matching cell description! Please report this to a developer")
             tableHelper.removeValue(self.data.packets.cellChangeFrom, uniqueIndex)
         end
@@ -2138,17 +2138,17 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
     -- Send a cell change packet for every cell that has sent actors to this cell
     for originalCellDescription, actorArray in pairs(cellChangesFrom) do
 
-        tes3mp.ClearActorList()
-        tes3mp.SetActorListPid(pid)
-        tes3mp.SetActorListCell(originalCellDescription)
+        dreamweave.ClearActorList()
+        dreamweave.SetActorListPid(pid)
+        dreamweave.SetActorListCell(originalCellDescription)
 
         for arrayIndex, uniqueIndex in pairs(actorArray) do
 
             local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetActorRefNum(splitIndex[1])
-            tes3mp.SetActorMpNum(splitIndex[2])
+            dreamweave.SetActorRefNum(splitIndex[1])
+            dreamweave.SetActorMpNum(splitIndex[2])
 
-            tes3mp.SetActorCell(self.description)
+            dreamweave.SetActorCell(self.description)
 
             local location = objectData[uniqueIndex].location
 
@@ -2156,10 +2156,10 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
             if tableHelper.getCount(location) == 6 and tableHelper.usesNumericalValues(location) and
                 self:ContainsPosition(location.posX, location.posY) then
 
-                tes3mp.SetActorPosition(location.posX, location.posY, location.posZ)
-                tes3mp.SetActorRotation(location.rotX, location.rotY, location.rotZ)
+                dreamweave.SetActorPosition(location.posX, location.posY, location.posZ)
+                dreamweave.SetActorRotation(location.rotX, location.rotY, location.rotZ)
 
-                tes3mp.AddActor()
+                dreamweave.AddActor()
 
                 actorCount = actorCount + 1
             end
@@ -2170,7 +2170,7 @@ function BaseCell:LoadActorCellChanges(pid, objectData)
         end
 
         if actorCount > 0 then
-            tes3mp.SendActorCellChange()
+            dreamweave.SendActorCellChange()
         end
     end
 end
@@ -2180,13 +2180,13 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
     self.isRequestingContainerData = true
     self.containerRequestPid = pid
 
-    tes3mp.ClearObjectList()
-    tes3mp.SetObjectListPid(pid)
-    tes3mp.SetObjectListCell(self.description)
+    dreamweave.ClearObjectList()
+    dreamweave.SetObjectListPid(pid)
+    dreamweave.SetObjectListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetObjectListAction(enumerations.container.REQUEST)
-    tes3mp.SetObjectListContainerSubAction(enumerations.containerSub.NONE)
+    dreamweave.SetObjectListAction(enumerations.container.REQUEST)
+    dreamweave.SetObjectListContainerSubAction(enumerations.containerSub.NONE)
 
     -- If certain uniqueIndexes are specified, iterate through them and
     -- add them as world objects
@@ -2197,17 +2197,17 @@ function BaseCell:RequestContainers(pid, requestUniqueIndexes)
         for arrayIndex, uniqueIndex in pairs(requestUniqueIndexes) do
 
             local splitIndex = uniqueIndex:split("-")
-            tes3mp.SetObjectRefNum(splitIndex[1])
-            tes3mp.SetObjectMpNum(splitIndex[2])
+            dreamweave.SetObjectRefNum(splitIndex[1])
+            dreamweave.SetObjectMpNum(splitIndex[2])
 
             if self.data.objectData[uniqueIndex] ~= nil and self.data.objectData[uniqueIndex].refId ~= nil then
-                tes3mp.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
+                dreamweave.SetObjectRefId(self.data.objectData[uniqueIndex].refId)
             end
-            tes3mp.AddObject()
+            dreamweave.AddObject()
         end
     end
 
-    tes3mp.SendContainer()
+    dreamweave.SendContainer()
 end
 
 function BaseCell:RequestActorList(pid)
@@ -2215,14 +2215,14 @@ function BaseCell:RequestActorList(pid)
     self.isRequestingActorList = true
     self.actorListRequestPid = pid
 
-    tes3mp.ClearActorList()
-    tes3mp.SetActorListPid(pid)
-    tes3mp.SetActorListCell(self.description)
+    dreamweave.ClearActorList()
+    dreamweave.SetActorListPid(pid)
+    dreamweave.SetActorListCell(self.description)
 
     -- Set the action to REQUEST
-    tes3mp.SetActorListAction(3)
+    dreamweave.SetActorListAction(3)
 
-    tes3mp.SendActorList()
+    dreamweave.SendActorList()
 end
 
 function BaseCell:LoadInitialCellData(pid)
@@ -2237,7 +2237,7 @@ function BaseCell:LoadInitialCellData(pid)
         }
     end
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Loading data of cell " .. self.description .. " for " ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Loading data of cell " .. self.description .. " for " ..
         logicHandler.GetChatName(pid))
 
     local objectData = self.data.objectData

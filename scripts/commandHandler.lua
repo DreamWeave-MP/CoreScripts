@@ -4,7 +4,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     if cmd[1] == nil then
         local message = "Please use a command after the / symbol.\n"
-        tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
+        dreamweave.SendMessage(pid, color.Error .. message .. color.Default, false)
         return false
     else
         -- The command itself should always be lowercase
@@ -53,7 +53,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 local targetPid = tonumber(cmd[2])
                 logicHandler.SetCellAuthority(targetPid, cellDescription)
             else
-                tes3mp.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
+                dreamweave.SendMessage(pid, "Cell \"" .. cellDescription .. "\" isn't loaded!\n", false)
             end
         end
 
@@ -64,14 +64,14 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if Players[targetPid]:IsAdmin() then
                 message = "You cannot kick an Admin from the server.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             elseif Players[targetPid]:IsModerator() and not admin then
                 message = "You cannot kick a fellow Moderator from the server.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             else
                 message = logicHandler.GetChatName(targetPid) .. " was kicked from the server by " ..
                     logicHandler.GetChatName(pid) .. ".\n"
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
                 Players[targetPid]:Kick()
             end
         end
@@ -84,10 +84,10 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if Players[targetPid]:IsAdmin() then
                 message = targetName .. " is already an Admin.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             else
                 message = targetName .. " was promoted to Admin!\n"
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 2
                 Players[targetPid]:QuicksaveToDrive()
             end
@@ -101,15 +101,15 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if Players[targetPid]:IsServerOwner() then
                 message = "Cannot demote " .. targetName .. " because they are a Server Owner.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             elseif Players[targetPid]:IsAdmin() then
                 message = targetName .. " was demoted from Admin to Moderator!\n"
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 1
                 Players[targetPid]:QuicksaveToDrive()
             else
                 message = targetName .. " is not an Admin.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             end
         end
 
@@ -121,13 +121,13 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if Players[targetPid]:IsAdmin() then
                 message = targetName .. " is already an Admin.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             elseif Players[targetPid]:IsModerator() then
                 message = targetName .. " is already a Moderator.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             else
                 message = targetName .. " was promoted to Moderator!\n"
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 1
                 Players[targetPid]:QuicksaveToDrive()
             end
@@ -141,15 +141,15 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if Players[targetPid]:IsAdmin() then
                 message = "Cannot demote " .. targetName .. " because they are an Admin.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             elseif Players[targetPid]:IsModerator() then
                 message = targetName .. " was demoted from Moderator!\n"
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
                 Players[targetPid].data.settings.staffRank = 0
                 Players[targetPid]:QuicksaveToDrive()
             else
                 message = targetName .. " is not a Moderator.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             end
         end
 
@@ -161,9 +161,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             local newRace = tableHelper.concatenateFromIndex(cmd, 3)
 
             Players[targetPid].data.character.race = newRace
-            tes3mp.SetRace(targetPid, newRace)
-            tes3mp.SetResetStats(targetPid, false)
-            tes3mp.SendBaseInfo(targetPid)
+            dreamweave.SetRace(targetPid, newRace)
+            dreamweave.SetResetStats(targetPid, false)
+            dreamweave.SendBaseInfo(targetPid)
         end
 
     elseif cmd[1] == "sethead" and admin then
@@ -174,9 +174,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             local newHead = tableHelper.concatenateFromIndex(cmd, 3)
 
             Players[targetPid].data.character.head = newHead
-            tes3mp.SetHead(targetPid, newHead)
-            tes3mp.SetResetStats(targetPid, false)
-            tes3mp.SendBaseInfo(targetPid)
+            dreamweave.SetHead(targetPid, newHead)
+            dreamweave.SetResetStats(targetPid, false)
+            dreamweave.SendBaseInfo(targetPid)
         end
 
     elseif cmd[1] == "sethair" and admin then
@@ -187,9 +187,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             local newHair = tableHelper.concatenateFromIndex(cmd, 3)
 
             Players[targetPid].data.character.hair = newHair
-            tes3mp.SetHair(targetPid, newHair)
-            tes3mp.SetResetStats(targetPid, false)
-            tes3mp.SendBaseInfo(targetPid)
+            dreamweave.SetHair(targetPid, newHair)
+            dreamweave.SetResetStats(targetPid, false)
+            dreamweave.SendBaseInfo(targetPid)
         end
 
     elseif cmd[1] == "setattr" and moderator then
@@ -204,17 +204,17 @@ function commandHandler.ProcessCommand(pid, cmd)
                 if tonumber(cmd[3]) ~= nil then
                     attrId = tonumber(cmd[3])
                 else
-                    attrId = tes3mp.GetAttributeId(cmd[3])
+                    attrId = dreamweave.GetAttributeId(cmd[3])
                 end
 
-                if attrId ~= -1 and attrId < tes3mp.GetAttributeCount() then
-                    tes3mp.SetAttributeBase(targetPid, attrId, value)
-                    tes3mp.SendAttributes(targetPid)
+                if attrId ~= -1 and attrId < dreamweave.GetAttributeCount() then
+                    dreamweave.SetAttributeBase(targetPid, attrId, value)
+                    dreamweave.SendAttributes(targetPid)
 
-                    local message = targetName .. "'s " .. tes3mp.GetAttributeName(attrId) ..
+                    local message = targetName .. "'s " .. dreamweave.GetAttributeName(attrId) ..
                         " is now " .. value .. "\n"
-                    tes3mp.SendMessage(pid, message, true)
-                    local attributeName = tes3mp.GetAttributeName(attrId)
+                    dreamweave.SendMessage(pid, message, true)
+                    local attributeName = dreamweave.GetAttributeName(attrId)
                     Players[targetPid].data.attributes[attributeName].base = value
                 end
             end
@@ -232,17 +232,17 @@ function commandHandler.ProcessCommand(pid, cmd)
                 if tonumber(cmd[3]) ~= nil then
                     skillId = tonumber(cmd[3])
                 else
-                    skillId = tes3mp.GetSkillId(cmd[3])
+                    skillId = dreamweave.GetSkillId(cmd[3])
                 end
 
-                if skillId ~= -1 and skillId < tes3mp.GetSkillCount() then
-                    tes3mp.SetSkillBase(targetPid, skillId, value)
-                    tes3mp.SendSkills(targetPid)
+                if skillId ~= -1 and skillId < dreamweave.GetSkillCount() then
+                    dreamweave.SetSkillBase(targetPid, skillId, value)
+                    dreamweave.SendSkills(targetPid)
 
-                    local message = targetName .. "'s " .. tes3mp.GetSkillName(skillId) ..
+                    local message = targetName .. "'s " .. dreamweave.GetSkillName(skillId) ..
                         " is now " .. value .. "\n"
-                    tes3mp.SendMessage(pid, message, true)
-                    local skillName = tes3mp.GetSkillName(skillId)
+                    dreamweave.SendMessage(pid, message, true)
+                    local skillName = dreamweave.GetSkillName(skillId)
                     Players[targetPid].data.skills[skillName].base = value
                 end
             end
@@ -259,15 +259,15 @@ function commandHandler.ProcessCommand(pid, cmd)
             if type(xValue) == "number" and type(yValue) == "number" and
                type(zValue) == "number" then
 
-                tes3mp.SetMomentum(targetPid, xValue, yValue, zValue)
-                tes3mp.SendMomentum(targetPid)
+                dreamweave.SetMomentum(targetPid, xValue, yValue, zValue)
+                dreamweave.SendMomentum(targetPid)
             else
-                tes3mp.SendMessage(pid, "Not a valid argument. Use /setmomentum <pid> <x> <y> <z>\n", false)
+                dreamweave.SendMessage(pid, "Not a valid argument. Use /setmomentum <pid> <x> <y> <z>\n", false)
             end
         end
 
     elseif cmd[1] == "setext" and admin then
-        tes3mp.SetExterior(pid, cmd[2], cmd[3])
+        dreamweave.SetExterior(pid, cmd[2], cmd[3])
 
     elseif cmd[1] == "getpos" and moderator then
         logicHandler.PrintPlayerPosition(pid, cmd[2])
@@ -285,10 +285,10 @@ function commandHandler.ProcessCommand(pid, cmd)
             if difficulty == "default" or type(difficulty) == "number" then
                 Players[targetPid]:SetDifficulty(difficulty)
                 Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " ..
+                dreamweave.SendMessage(pid, "Difficulty for " .. Players[targetPid].name .. " is now " ..
                     difficulty .. "\n", true)
             else
-                tes3mp.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>\n", false)
+                dreamweave.SendMessage(pid, "Not a valid argument. Use /setdifficulty <pid> <value>\n", false)
                 return false
             end
         end
@@ -310,14 +310,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetConsoleAllowed("default")
                 state = " reset to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> on/off/default\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setconsole <pid> on/off/default\n", false)
                  return false
             end
 
             Players[targetPid]:LoadSettings()
-            tes3mp.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
+            dreamweave.SendMessage(pid, "Console for " .. Players[targetPid].name .. state, false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Console" .. state, false)
+                dreamweave.SendMessage(targetPid, "Console" .. state, false)
             end
         end
 
@@ -338,14 +338,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetBedRestAllowed("default")
                 state = " reset to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> on/off/default\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setbedrest <pid> on/off/default\n", false)
                  return false
             end
 
             Players[targetPid]:LoadSettings()
-            tes3mp.SendMessage(pid, "Bed resting for " .. Players[targetPid].name .. state, false)
+            dreamweave.SendMessage(pid, "Bed resting for " .. Players[targetPid].name .. state, false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Bed resting" .. state, false)
+                dreamweave.SendMessage(targetPid, "Bed resting" .. state, false)
             end
         end
 
@@ -366,14 +366,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetWildernessRestAllowed("default")
                 state = " reset to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> on/off/default\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setwildrest <pid> on/off/default\n", false)
                  return false
             end
 
             Players[targetPid]:LoadSettings()
-            tes3mp.SendMessage(pid, "Wilderness resting for " .. Players[targetPid].name .. state, false)
+            dreamweave.SendMessage(pid, "Wilderness resting for " .. Players[targetPid].name .. state, false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Wilderness resting" .. state, false)
+                dreamweave.SendMessage(targetPid, "Wilderness resting" .. state, false)
             end
         end
 
@@ -394,14 +394,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetWaitAllowed("default")
                 state = " reset to default.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setwait <pid> on/off/default\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setwait <pid> on/off/default\n", false)
                  return false
             end
 
             Players[targetPid]:LoadSettings()
-            tes3mp.SendMessage(pid, "Waiting for " .. Players[targetPid].name .. state, false)
+            dreamweave.SendMessage(pid, "Waiting for " .. Players[targetPid].name .. state, false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Waiting" .. state, false)
+                dreamweave.SendMessage(targetPid, "Waiting" .. state, false)
             end
         end
 
@@ -418,10 +418,10 @@ function commandHandler.ProcessCommand(pid, cmd)
             if physicsFramerate == "default" or type(physicsFramerate) == "number" then
                 Players[targetPid]:SetPhysicsFramerate(physicsFramerate)
                 Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Physics framerate for " .. Players[targetPid].name
+                dreamweave.SendMessage(pid, "Physics framerate for " .. Players[targetPid].name
                     .. " is now " .. physicsFramerate .. "\n", true)
             else
-                tes3mp.SendMessage(pid, "Not a valid argument. Use /setphysicsfps <pid> <value>\n", false)
+                dreamweave.SendMessage(pid, "Not a valid argument. Use /setphysicsfps <pid> <value>\n", false)
                 return false
             end
         end
@@ -439,10 +439,10 @@ function commandHandler.ProcessCommand(pid, cmd)
             if logLevel == "default" or type(logLevel) == "number" then
                 Players[targetPid]:SetEnforcedLogLevel(logLevel)
                 Players[targetPid]:LoadSettings()
-                tes3mp.SendMessage(pid, "Enforced log level for " .. Players[targetPid].name
+                dreamweave.SendMessage(pid, "Enforced log level for " .. Players[targetPid].name
                     .. " is now " .. logLevel .. "\n", true)
             else
-                tes3mp.SendMessage(pid, "Not a valid argument. Use /setloglevel <pid> <value>\n", false)
+                dreamweave.SendMessage(pid, "Not a valid argument. Use /setloglevel <pid> <value>\n", false)
                 return false
             end
         end
@@ -457,15 +457,15 @@ function commandHandler.ProcessCommand(pid, cmd)
             if type(tonumber(scale)) == "number" then
                 scale = tonumber(scale)
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setscale <pid> <value>.\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setscale <pid> <value>.\n", false)
                  return false
             end
 
             Players[targetPid]:SetScale(scale)
             Players[targetPid]:LoadShapeshift()
-            tes3mp.SendMessage(pid, "Scale for " .. Players[targetPid].name .. " is now " .. scale .. "\n", false)
+            dreamweave.SendMessage(pid, "Scale for " .. Players[targetPid].name .. " is now " .. scale .. "\n", false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Your scale is now " .. scale .. "\n", false)
+                dreamweave.SendMessage(targetPid, "Your scale is now " .. scale .. "\n", false)
             end
         end
 
@@ -483,14 +483,14 @@ function commandHandler.ProcessCommand(pid, cmd)
                 Players[targetPid]:SetWerewolfState(false)
                 state = " disabled.\n"
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> on/off.\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /setwerewolf <pid> on/off.\n", false)
                  return false
             end
 
             Players[targetPid]:LoadShapeshift()
-            tes3mp.SendMessage(pid, "Werewolf state for " .. Players[targetPid].name .. state, false)
+            dreamweave.SendMessage(pid, "Werewolf state for " .. Players[targetPid].name .. state, false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "Werewolf state" .. state, false)
+                dreamweave.SendMessage(targetPid, "Werewolf state" .. state, false)
             end
         end
 
@@ -502,17 +502,17 @@ function commandHandler.ProcessCommand(pid, cmd)
             local creatureRefId = tableHelper.concatenateFromIndex(cmd, 3)
 
             Players[targetPid].data.shapeshift.creatureRefId = creatureRefId
-            tes3mp.SetCreatureRefId(targetPid, creatureRefId)
-            tes3mp.SendShapeshift(targetPid)
+            dreamweave.SetCreatureRefId(targetPid, creatureRefId)
+            dreamweave.SendShapeshift(targetPid)
 
             if creatureRefId == "" then
                 creatureRefId = "nothing"
             end
 
-            tes3mp.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " ..
+            dreamweave.SendMessage(pid, Players[targetPid].accountName .. " is now disguised as " ..
                 creatureRefId .. "\n", false)
             if targetPid ~= pid then
-                tes3mp.SendMessage(targetPid, "You are now disguised as " .. creatureRefId .. "\n", false)
+                dreamweave.SendMessage(targetPid, "You are now disguised as " .. creatureRefId .. "\n", false)
             end
         end
 
@@ -528,13 +528,13 @@ function commandHandler.ProcessCommand(pid, cmd)
             elseif cmd[3] == "off" then
                 nameState = false
             else
-                 tes3mp.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> on/off\n", false)
+                 dreamweave.SendMessage(pid, "Not a valid argument. Use /usecreaturename <pid> on/off\n", false)
                  return false
             end
 
             Players[targetPid].data.shapeshift.displayCreatureName = nameState
-            tes3mp.SetCreatureNameDisplayState(targetPid, nameState)
-            tes3mp.SendShapeshift(targetPid)
+            dreamweave.SetCreatureNameDisplayState(targetPid, nameState)
+            dreamweave.SendShapeshift(targetPid)
         end
 
     elseif cmd[1] == "sethour" and moderator then
@@ -553,7 +553,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 WorldInstance:LoadTime(pid, true)
                 hourCounter = inputValue
             else
-                tes3mp.SendMessage(pid, "There aren't that many hours in a day.\n", false)
+                dreamweave.SendMessage(pid, "There aren't that many hours in a day.\n", false)
             end
         end
 
@@ -570,7 +570,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 WorldInstance:QuicksaveToDrive()
                 WorldInstance:LoadTime(pid, true)
             else
-                tes3mp.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
+                dreamweave.SendMessage(pid, "There are only " .. daysInMonth .. " days in the current month.\n", false)
             end
         end
 
@@ -603,7 +603,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             WorldInstance:UpdateFrametimeMultiplier()
             WorldInstance:LoadTime(pid, true)
         else
-            tes3mp.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
+            dreamweave.SendMessage(pid, "Invalid input! Please use /settimescale day/night/both <value>\n", false)
         end
 
     elseif cmd[1] == "setcollision" and admin then
@@ -615,7 +615,7 @@ function commandHandler.ProcessCommand(pid, cmd)
         elseif cmd[2] ~= nil and cmd[3] == "off" then
             collisionState = false
         else
-             tes3mp.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off\n", false)
+             dreamweave.SendMessage(pid, "Not a valid argument. Use /setcollision <category> on/off\n", false)
              return false
         end
 
@@ -623,25 +623,25 @@ function commandHandler.ProcessCommand(pid, cmd)
         local categoryValue = enumerations.objectCategories[categoryInput]
 
         if categoryValue == enumerations.objectCategories.PLAYER then
-            tes3mp.SetPlayerCollisionState(collisionState)
+            dreamweave.SetPlayerCollisionState(collisionState)
         elseif categoryValue == enumerations.objectCategories.ACTOR then
-            tes3mp.SetActorCollisionState(collisionState)
+            dreamweave.SetActorCollisionState(collisionState)
         elseif categoryValue == enumerations.objectCategories.PLACED_OBJECT then
-            tes3mp.SetPlacedObjectCollisionState(collisionState)
+            dreamweave.SetPlacedObjectCollisionState(collisionState)
 
             if cmd[4] == "on" then
-                tes3mp.UseActorCollisionForPlacedObjects(true)
+                dreamweave.UseActorCollisionForPlacedObjects(true)
             elseif cmd[4] == "off" then
-                tes3mp.UseActorCollisionForPlacedObjects(false)
+                dreamweave.UseActorCollisionForPlacedObjects(false)
             end
         else
-            tes3mp.SendMessage(pid, categoryInput .. " is not a valid object category. Valid choices are " ..
+            dreamweave.SendMessage(pid, categoryInput .. " is not a valid object category. Valid choices are " ..
                 tableHelper.concatenateTableIndexes(enumerations.objectCategories, ", ") .. "\n", false)
             return false
         end
 
-        tes3mp.SendWorldCollisionOverride(pid, true)
-        tes3mp.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
+        dreamweave.SendWorldCollisionOverride(pid, true)
+        dreamweave.SendMessage(pid, "Collision for " .. categoryInput .. " is now " .. cmd[3] ..
             " for all newly loaded cells.\n", false)
 
     elseif cmd[1] == "overridecollision" and admin then
@@ -820,7 +820,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
         WorldInstance:QuicksaveToDrive()
         WorldInstance:LoadKills(pid, true)
-        tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
+        dreamweave.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", true)
         
     elseif cmd[1] == "resetkills" and config.shareKills == false then
 	
@@ -834,30 +834,30 @@ function commandHandler.ProcessCommand(pid, cmd)
 
         Players[pid]:QuicksaveToDrive()
         Players[pid]:LoadKills(pid, false)
-        tes3mp.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", false)
+        dreamweave.SendMessage(pid, "All the kill counts for creatures and NPCs have been reset.\n", false)
         
     elseif cmd[1] == "suicide" then
         if config.allowSuicideCommand == true then
-            tes3mp.SetHealthCurrent(pid, 0)
-            tes3mp.SendStatsDynamic(pid)
+            dreamweave.SetHealthCurrent(pid, 0)
+            dreamweave.SendStatsDynamic(pid)
         else
-            tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            dreamweave.SendMessage(pid, "That command is disabled on this server.\n", false)
         end
 
     elseif cmd[1] == "fixme" then
         if config.allowFixmeCommand == true then
             local currentTime = os.time()
 
-            if not tes3mp.IsInExterior(pid) then
+            if not dreamweave.IsInExterior(pid) then
                 local message = "Sorry! You can only use " .. color.Yellow .. "/fixme" ..
                     color.White .. " in exteriors.\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             elseif Players[pid].data.timestamps.lastFixMe == nil or
                 currentTime >= Players[pid].data.timestamps.lastFixMe + config.fixmeInterval then
 
                 logicHandler.RunConsoleCommandOnPlayer(pid, "fixme")
                 Players[pid].data.timestamps.lastFixMe = currentTime
-                tes3mp.SendMessage(pid, "You have fixed your position!\n", false)
+                dreamweave.SendMessage(pid, "You have fixed your position!\n", false)
             else
                 local remainingSeconds = Players[pid].data.timestamps.lastFixMe +
                     config.fixmeInterval - currentTime
@@ -871,10 +871,10 @@ function commandHandler.ProcessCommand(pid, cmd)
                 end
 
                 message = message .. "\n"
-                tes3mp.SendMessage(pid, message, false)
+                dreamweave.SendMessage(pid, message, false)
             end
         else
-            tes3mp.SendMessage(pid, "That command is disabled on this server.\n", false)
+            dreamweave.SendMessage(pid, "That command is disabled on this server.\n", false)
         end
 
     elseif cmd[1] == "storeconsole" and cmd[2] ~= nil and cmd[3] ~= nil and admin then
@@ -883,7 +883,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             local targetPid = tonumber(cmd[2])
             Players[targetPid].storedConsoleCommand = tableHelper.concatenateFromIndex(cmd, 3)
 
-            tes3mp.SendMessage(pid, "That console command is now stored for player " .. targetPid .. "\n", false)
+            dreamweave.SendMessage(pid, "That console command is now stored for player " .. targetPid .. "\n", false)
         end
 
     elseif cmd[1] == "runconsole" and cmd[2] ~= nil and admin then
@@ -892,7 +892,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             local targetPid = tonumber(cmd[2])
 
             if Players[targetPid].storedConsoleCommand == nil then
-                tes3mp.SendMessage(pid, "There is no console command stored for player " .. targetPid ..
+                dreamweave.SendMessage(pid, "There is no console command stored for player " .. targetPid ..
                     ". Please run /storeconsole on them first.\n", false)
             else
                 local consoleCommand = Players[targetPid].storedConsoleCommand
@@ -910,7 +910,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                     end
 
                     local loopIndex = tableHelper.getUnusedNumericalIndex(ObjectLoops)
-                    local timerId = tes3mp.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
+                    local timerId = dreamweave.CreateTimerEx("OnObjectLoopTimeExpiration", interval, "i", loopIndex)
 
                     ObjectLoops[loopIndex] = {
                         packetType = "console",
@@ -922,7 +922,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                         consoleCommand = consoleCommand
                     }
 
-                    tes3mp.StartTimer(timerId)
+                    dreamweave.StartTimer(timerId)
                 end
             end
         end
@@ -948,7 +948,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
         if not isValid then
             local validList = animHelper.GetValidList(pid)
-            tes3mp.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
+            dreamweave.SendMessage(pid, "That is not a valid animation. Try one of the following:\n" ..
                 validList .. "\n", false)
         end
 
@@ -964,11 +964,11 @@ function commandHandler.ProcessCommand(pid, cmd)
 
             if not isValid then
                 local validList = speechHelper.GetPrintableValidListForPid(pid)
-                tes3mp.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
+                dreamweave.SendMessage(pid, "That is not a valid speech. Try one of the following:\n"
                     .. validList .. "\n", false)
             end
         else
-            tes3mp.SendMessage(pid, "There are no speech lines for your race.")
+            dreamweave.SendMessage(pid, "There are no speech lines for your race.")
         end
 
     elseif cmd[1] == "confiscate" and moderator then
@@ -978,9 +978,9 @@ function commandHandler.ProcessCommand(pid, cmd)
             local targetPid = tonumber(cmd[2])
 
             if targetPid == pid then
-                tes3mp.SendMessage(pid, "You can't confiscate from yourself!\n", false)
+                dreamweave.SendMessage(pid, "You can't confiscate from yourself!\n", false)
             elseif Players[targetPid].data.customVariables.isConfiscationTarget then
-                tes3mp.SendMessage(pid, "Someone is already confiscating from that player\n", false)
+                dreamweave.SendMessage(pid, "Someone is already confiscating from that player\n", false)
             else
                 Players[pid].confiscationTargetName = Players[targetPid].accountName
 
@@ -1113,7 +1113,7 @@ function commandHandler.ProcessCommand(pid, cmd)
 
     else
         local message = "Not a valid command. Type /help for more info.\n"
-        tes3mp.SendMessage(pid, color.Error .. message .. color.Default, false)
+        dreamweave.SendMessage(pid, color.Error .. message .. color.Default, false)
     end
 end
 
@@ -1166,7 +1166,7 @@ function commandHandler.StoreRecord(pid, cmd)
             end
         end
 
-        tes3mp.CustomMessageBox(pid, config.customMenuIds.recordPrint, text, "Ok")
+        dreamweave.CustomMessageBox(pid, config.customMenuIds.recordPrint, text, "Ok")
     elseif inputSetting ~= nil then
 
         if inputSetting == "add" then
@@ -1291,6 +1291,7 @@ function commandHandler.StoreRecord(pid, cmd)
                 local redValue = tonumber(cmd[4])
                 local greenValue = tonumber(cmd[5])
                 local blueValue = tonumber(cmd[6])
+                local densityValue = tonumber (cmd[7])
 
                 if type(redValue) == "number" and type(greenValue) == "number" and type(blueValue) == "number" and
                     redValue > -1 and redValue < 256 and greenValue > -1 and greenValue < 256 and
@@ -1301,6 +1302,15 @@ function commandHandler.StoreRecord(pid, cmd)
                         inputSetting .. "\n")
                     return
                 end
+
+                if densityValue and type(densityValue) == "number" and densityValue > -1 and densityValue < 256 then
+                  storedTable[inputSetting].density = densityValue
+                else
+                  Players[pid]:Message("Please use three valid numerical values between 0 and 255 as the input for " ..
+                                       inputSetting .. "\n")
+                  return
+                end
+
             elseif tableHelper.containsValue(config.booleanRecordSettings, inputSetting) then
                 if inputValue == "true" or inputValue == "on" or tonumber(inputValue) == 1 then
                     storedTable[inputSetting] = true
@@ -1488,8 +1498,8 @@ function commandHandler.CreateRecord(pid, cmd)
 
     recordStore:QuicksaveToDrive()
 
-    tes3mp.ClearRecords()
-    tes3mp.SetRecordType(enumerations.recordType[string.upper(inputType)])
+    dreamweave.ClearRecords()
+    dreamweave.SetRecordType(enumerations.recordType[string.upper(inputType)])
 
     if inputType == "activator" then packetBuilder.AddActivatorRecord(id, savedTable)
     elseif inputType == "apparatus" then packetBuilder.AddApparatusRecord(id, savedTable)
@@ -1516,7 +1526,7 @@ function commandHandler.CreateRecord(pid, cmd)
     elseif inputType == "static" then packetBuilder.AddStaticRecord(id, savedTable)
     elseif inputType == "weapon" then packetBuilder.AddWeaponRecord(id, savedTable) end
 
-    tes3mp.SendRecordDynamic(pid, true, false)
+    dreamweave.SendRecordDynamic(pid, true, false)
 
     if not tableHelper.containsValue(config.unplaceableRecordTypes, inputType) then
         if inputType ~= "enchantment" then

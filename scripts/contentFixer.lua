@@ -20,25 +20,25 @@ function contentFixer.FixCell(pid, cellDescription)
 
         for action, refNumArray in pairs(fixesByCell[cellDescription]) do
 
-            tes3mp.ClearObjectList()
-            tes3mp.SetObjectListPid(pid)
-            tes3mp.SetObjectListCell(cellDescription)
+            dreamweave.ClearObjectList()
+            dreamweave.SetObjectListPid(pid)
+            dreamweave.SetObjectListCell(cellDescription)
 
             for arrayIndex, refNum in ipairs(refNumArray) do
-                tes3mp.SetObjectRefNum(refNum)
-                tes3mp.SetObjectMpNum(0)
-                tes3mp.SetObjectRefId("")
-                if action == "disable" then tes3mp.SetObjectState(false) end
-                if action == "unlock" then tes3mp.SetObjectLockLevel(0) end
-                tes3mp.AddObject()
+                dreamweave.SetObjectRefNum(refNum)
+                dreamweave.SetObjectMpNum(0)
+                dreamweave.SetObjectRefId("")
+                if action == "disable" then dreamweave.SetObjectState(false) end
+                if action == "unlock" then dreamweave.SetObjectLockLevel(0) end
+                dreamweave.AddObject()
             end
 
             if action == "delete" then
-                tes3mp.SendObjectDelete()
+                dreamweave.SendObjectDelete()
             elseif action == "disable" then
-                tes3mp.SendObjectState()
+                dreamweave.SendObjectState()
             elseif action == "unlock" then
-                tes3mp.SendObjectLock()
+                dreamweave.SendObjectLock()
             end
         end
     end
@@ -78,30 +78,30 @@ function contentFixer.AdjustSharedCorprusState(pid)
             tableHelper.removeValue(Players[pid].data.spellbook, corprusId)
             tableHelper.cleanNils(Players[pid].data.spellbook)
 
-            tes3mp.ClearSpellbookChanges(pid)
-            tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.REMOVE)
-            tes3mp.AddSpell(pid, corprusId)
-            tes3mp.SendSpellbookChanges(pid)
+            dreamweave.ClearSpellbookChanges(pid)
+            dreamweave.SetSpellbookChangesAction(pid, enumerations.spellbook.REMOVE)
+            dreamweave.AddSpell(pid, corprusId)
+            dreamweave.SendSpellbookChanges(pid)
 
-            tes3mp.ClearSpellbookChanges(pid)
-            tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
+            dreamweave.ClearSpellbookChanges(pid)
+            dreamweave.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
             for _, spellId in ipairs({"common disease immunity", "blight disease immunity","corprus immunity"}) do
                 table.insert(Players[pid].data.spellbook, spellId)
-                tes3mp.AddSpell(pid, spellId)
+                dreamweave.AddSpell(pid, spellId)
             end
-            tes3mp.SendSpellbookChanges(pid)
-            tes3mp.MessageBox(pid, -1, "You have been cured of corprus.")
+            dreamweave.SendSpellbookChanges(pid)
+            dreamweave.MessageBox(pid, -1, "You have been cured of corprus.")
         end
     elseif WorldInstance.data.customVariables.corprusGained == true then
         if tableHelper.containsValue(Players[pid].data.spellbook, corprusId) == false then
 
             table.insert(Players[pid].data.spellbook, corprusId)
 
-            tes3mp.ClearSpellbookChanges(pid)
-            tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
-            tes3mp.AddSpell(pid, corprusId)
-            tes3mp.SendSpellbookChanges(pid)
-            tes3mp.MessageBox(pid, -1, "You have been afflicted with corprus.")
+            dreamweave.ClearSpellbookChanges(pid)
+            dreamweave.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
+            dreamweave.AddSpell(pid, corprusId)
+            dreamweave.SendSpellbookChanges(pid)
+            dreamweave.MessageBox(pid, -1, "You have been afflicted with corprus.")
         end
     end
 end

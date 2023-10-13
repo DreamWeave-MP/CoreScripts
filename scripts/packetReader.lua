@@ -6,16 +6,16 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
 
     if packetType == "PlayerClass" then
         packetTable.character = {}
-        packetTable.character.defaultClassState = tes3mp.IsClassDefault(pid)
+        packetTable.character.defaultClassState = dreamweave.IsClassDefault(pid)
 
         if packetTable.character.defaultClassState == 1 then
-            packetTable.character.class = tes3mp.GetDefaultClass(pid)
+            packetTable.character.class = dreamweave.GetDefaultClass(pid)
         else
             packetTable.character.class = "custom"
             packetTable.customClass = {
-                name = tes3mp.GetClassName(pid),
-                description = tes3mp.GetClassDesc(pid):gsub("\n", "\\n"),
-                specialization = tes3mp.GetClassSpecialization(pid)
+                name = dreamweave.GetClassName(pid),
+                description = dreamweave.GetClassDesc(pid):gsub("\n", "\\n"),
+                specialization = dreamweave.GetClassSpecialization(pid)
             }
 
             local majorAttributes = {}
@@ -23,12 +23,12 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
             local minorSkills = {}
 
             for index = 0, 1, 1 do
-                majorAttributes[index + 1] = tes3mp.GetAttributeName(tonumber(tes3mp.GetClassMajorAttribute(pid, index)))
+                majorAttributes[index + 1] = dreamweave.GetAttributeName(tonumber(dreamweave.GetClassMajorAttribute(pid, index)))
             end
 
             for index = 0, 4, 1 do
-                majorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMajorSkill(pid, index)))
-                minorSkills[index + 1] = tes3mp.GetSkillName(tonumber(tes3mp.GetClassMinorSkill(pid, index)))
+                majorSkills[index + 1] = dreamweave.GetSkillName(tonumber(dreamweave.GetClassMajorSkill(pid, index)))
+                minorSkills[index + 1] = dreamweave.GetSkillName(tonumber(dreamweave.GetClassMinorSkill(pid, index)))
             end
 
             packetTable.customClass.majorAttributes = table.concat(majorAttributes, ", ")
@@ -37,100 +37,100 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
         end
     elseif packetType == "PlayerStatsDynamic" then
         packetTable.stats = {
-            healthBase = tes3mp.GetHealthBase(pid),
-            magickaBase = tes3mp.GetMagickaBase(pid),
-            fatigueBase = tes3mp.GetFatigueBase(pid),
-            healthCurrent = tes3mp.GetHealthCurrent(pid),
-            magickaCurrent = tes3mp.GetMagickaCurrent(pid),
-            fatigueCurrent = tes3mp.GetFatigueCurrent(pid)
+            healthBase = dreamweave.GetHealthBase(pid),
+            magickaBase = dreamweave.GetMagickaBase(pid),
+            fatigueBase = dreamweave.GetFatigueBase(pid),
+            healthCurrent = dreamweave.GetHealthCurrent(pid),
+            magickaCurrent = dreamweave.GetMagickaCurrent(pid),
+            fatigueCurrent = dreamweave.GetFatigueCurrent(pid)
         }
     elseif packetType == "PlayerAttribute" then
         packetTable.attributes = {}
 
-        for attributeIndex = 0, tes3mp.GetAttributeCount() - 1 do
-            local attributeName = tes3mp.GetAttributeName(attributeIndex)
+        for attributeIndex = 0, dreamweave.GetAttributeCount() - 1 do
+            local attributeName = dreamweave.GetAttributeName(attributeIndex)
 
             packetTable.attributes[attributeName] = {
-                base = tes3mp.GetAttributeBase(pid, attributeIndex),
-                damage = tes3mp.GetAttributeDamage(pid, attributeIndex),
-                skillIncrease = tes3mp.GetSkillIncrease(pid, attributeIndex),
-                modifier = tes3mp.GetAttributeModifier(pid, attributeIndex)
+                base = dreamweave.GetAttributeBase(pid, attributeIndex),
+                damage = dreamweave.GetAttributeDamage(pid, attributeIndex),
+                skillIncrease = dreamweave.GetSkillIncrease(pid, attributeIndex),
+                modifier = dreamweave.GetAttributeModifier(pid, attributeIndex)
             }
         end
     elseif packetType == "PlayerSkill" then
         packetTable.skills = {}
 
-        for skillIndex = 0, tes3mp.GetSkillCount() - 1 do
-            local skillName = tes3mp.GetSkillName(skillIndex)
+        for skillIndex = 0, dreamweave.GetSkillCount() - 1 do
+            local skillName = dreamweave.GetSkillName(skillIndex)
 
             packetTable.skills[skillName] = {
-                base = tes3mp.GetSkillBase(pid, skillIndex),
-                damage = tes3mp.GetSkillDamage(pid, skillIndex),
-                progress = tes3mp.GetSkillProgress(pid, skillIndex),
-                modifier = tes3mp.GetSkillModifier(pid, skillIndex)
+                base = dreamweave.GetSkillBase(pid, skillIndex),
+                damage = dreamweave.GetSkillDamage(pid, skillIndex),
+                progress = dreamweave.GetSkillProgress(pid, skillIndex),
+                modifier = dreamweave.GetSkillModifier(pid, skillIndex)
             }
         end
     elseif packetType == "PlayerLevel" then
         packetTable.stats = {
-            level = tes3mp.GetLevel(pid),
-            levelProgress = tes3mp.GetLevelProgress(pid)
+            level = dreamweave.GetLevel(pid),
+            levelProgress = dreamweave.GetLevelProgress(pid)
         }
     elseif packetType == "PlayerShapeshift" then
         packetTable.shapeshift = {
-            scale = tes3mp.GetScale(pid),
-            isWerewolf = tes3mp.IsWerewolf(pid)
+            scale = dreamweave.GetScale(pid),
+            isWerewolf = dreamweave.IsWerewolf(pid)
         }
     elseif packetType == "PlayerCellChange" then
         packetTable.location = {
-            cell = tes3mp.GetCell(pid),
-            posX = tes3mp.GetPosX(pid),
-            posY = tes3mp.GetPosY(pid),
-            posZ = tes3mp.GetPosZ(pid),
-            rotX = tes3mp.GetRotX(pid),
-            rotZ = tes3mp.GetRotZ(pid)
+            cell = dreamweave.GetCell(pid),
+            posX = dreamweave.GetPosX(pid),
+            posY = dreamweave.GetPosY(pid),
+            posZ = dreamweave.GetPosZ(pid),
+            rotX = dreamweave.GetRotX(pid),
+            rotZ = dreamweave.GetRotZ(pid)
         }
     elseif packetType == "PlayerEquipment" then
         packetTable.equipment = {}
 
-        for changesIndex = 0, tes3mp.GetEquipmentChangesSize(pid) - 1 do
-            local slot = tes3mp.GetEquipmentChangesSlot(pid, changesIndex)
+        for changesIndex = 0, dreamweave.GetEquipmentChangesSize(pid) - 1 do
+            local slot = dreamweave.GetEquipmentChangesSlot(pid, changesIndex)
 
             packetTable.equipment[slot] = {
-                refId = tes3mp.GetEquipmentItemRefId(pid, slot),
-                count = tes3mp.GetEquipmentItemCount(pid, slot),
-                charge = tes3mp.GetEquipmentItemCharge(pid, slot),
-                enchantmentCharge = tes3mp.GetEquipmentItemEnchantmentCharge(pid, slot)
+                refId = dreamweave.GetEquipmentItemRefId(pid, slot),
+                count = dreamweave.GetEquipmentItemCount(pid, slot),
+                charge = dreamweave.GetEquipmentItemCharge(pid, slot),
+                enchantmentCharge = dreamweave.GetEquipmentItemEnchantmentCharge(pid, slot)
             }
         end
     elseif packetType == "PlayerInventory" then
         packetTable.inventory = {}
-        packetTable.action = tes3mp.GetInventoryChangesAction(pid)
+        packetTable.action = dreamweave.GetInventoryChangesAction(pid)
 
-        for changesIndex = 0, tes3mp.GetInventoryChangesSize(pid) - 1 do
+        for changesIndex = 0, dreamweave.GetInventoryChangesSize(pid) - 1 do
             local item = {
-                refId = tes3mp.GetInventoryItemRefId(pid, changesIndex),
-                count = tes3mp.GetInventoryItemCount(pid, changesIndex),
-                charge = tes3mp.GetInventoryItemCharge(pid, changesIndex),
-                enchantmentCharge = tes3mp.GetInventoryItemEnchantmentCharge(pid, changesIndex),
-                soul = tes3mp.GetInventoryItemSoul(pid, changesIndex)
+                refId = dreamweave.GetInventoryItemRefId(pid, changesIndex),
+                count = dreamweave.GetInventoryItemCount(pid, changesIndex),
+                charge = dreamweave.GetInventoryItemCharge(pid, changesIndex),
+                enchantmentCharge = dreamweave.GetInventoryItemEnchantmentCharge(pid, changesIndex),
+                soul = dreamweave.GetInventoryItemSoul(pid, changesIndex)
             }
 
             table.insert(packetTable.inventory, item)
         end
     elseif packetType == "PlayerSpellbook" then
         packetTable.spellbook = {}
-        packetTable.action = tes3mp.GetSpellbookChangesAction(pid)
+        packetTable.action = dreamweave.GetSpellbookChangesAction(pid)
 
-        for changesIndex = 0, tes3mp.GetSpellbookChangesSize(pid) - 1 do
-            local spellId = tes3mp.GetSpellId(pid, changesIndex)
+        for changesIndex = 0, dreamweave.GetSpellbookChangesSize(pid) - 1 do
+            local spellId = dreamweave.GetSpellId(pid, changesIndex)
             table.insert(packetTable.spellbook, spellId)
         end
     elseif packetType == "PlayerSpellsActive" then
         packetTable.spellsActive = {}
-        packetTable.action = tes3mp.GetSpellsActiveChangesAction(pid)
+        packetTable.action = dreamweave.GetSpellsActiveChangesAction(pid)
 
-        for changesIndex = 0, tes3mp.GetSpellsActiveChangesSize(pid) - 1 do
-            local spellId = tes3mp.GetSpellsActiveId(pid, changesIndex)
+        for changesIndex = 0, dreamweave.GetSpellsActiveChangesSize(pid) - 1 do
+            local spellId = dreamweave.GetSpellsActiveId(pid, changesIndex)
 
             if packetTable.spellsActive[spellId] == nil then
                 packetTable.spellsActive[spellId] = {}
@@ -138,34 +138,34 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
 
             local spellInstance = {
                 effects = {},
-                displayName = tes3mp.GetSpellsActiveDisplayName(pid, changesIndex),
-                stackingState = tes3mp.GetSpellsActiveStackingState(pid, changesIndex),
+                displayName = dreamweave.GetSpellsActiveDisplayName(pid, changesIndex),
+                stackingState = dreamweave.GetSpellsActiveStackingState(pid, changesIndex),
                 startTime = os.time(),
                 caster = {}
             }
 
-            spellInstance.hasPlayerCaster = tes3mp.DoesSpellsActiveHavePlayerCaster(pid, changesIndex)
+            spellInstance.hasPlayerCaster = dreamweave.DoesSpellsActiveHavePlayerCaster(pid, changesIndex)
 
             if spellInstance.hasPlayerCaster == true then
-                local casterPid = tes3mp.GetSpellsActiveCasterPid(pid, changesIndex)
+                local casterPid = dreamweave.GetSpellsActiveCasterPid(pid, changesIndex)
                 spellInstance.caster.pid = casterPid
 
                 if Players[casterPid] ~= nil then
                     spellInstance.caster.playerName = Players[casterPid].accountName
                 end
             else
-                spellInstance.caster.uniqueIndex = tes3mp.GetSpellsActiveCasterRefNum(pid, changesIndex) ..
-                    "-" .. tes3mp.GetSpellsActiveCasterMpNum(pid, changesIndex)
-                spellInstance.caster.refId = tes3mp.GetSpellsActiveCasterRefId(pid, changesIndex)
+                spellInstance.caster.uniqueIndex = dreamweave.GetSpellsActiveCasterRefNum(pid, changesIndex) ..
+                    "-" .. dreamweave.GetSpellsActiveCasterMpNum(pid, changesIndex)
+                spellInstance.caster.refId = dreamweave.GetSpellsActiveCasterRefId(pid, changesIndex)
             end
 
-            for effectIndex = 0, tes3mp.GetSpellsActiveEffectCount(pid, changesIndex) - 1 do
+            for effectIndex = 0, dreamweave.GetSpellsActiveEffectCount(pid, changesIndex) - 1 do
                 local effect = {
-                    id = tes3mp.GetSpellsActiveEffectId(pid, changesIndex, effectIndex),
-                    magnitude = tes3mp.GetSpellsActiveEffectMagnitude(pid, changesIndex, effectIndex),
-                    duration = tes3mp.GetSpellsActiveEffectDuration(pid, changesIndex, effectIndex),
-                    timeLeft = tes3mp.GetSpellsActiveEffectTimeLeft(pid, changesIndex, effectIndex),
-                    arg = tes3mp.GetSpellsActiveEffectArg(pid, changesIndex, effectIndex)
+                    id = dreamweave.GetSpellsActiveEffectId(pid, changesIndex, effectIndex),
+                    magnitude = dreamweave.GetSpellsActiveEffectMagnitude(pid, changesIndex, effectIndex),
+                    duration = dreamweave.GetSpellsActiveEffectDuration(pid, changesIndex, effectIndex),
+                    timeLeft = dreamweave.GetSpellsActiveEffectTimeLeft(pid, changesIndex, effectIndex),
+                    arg = dreamweave.GetSpellsActiveEffectArg(pid, changesIndex, effectIndex)
                 }
 
                 if effect.timeLeft > 0 then
@@ -180,12 +180,12 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
     elseif packetType == "PlayerCooldowns" then
         packetTable.cooldowns = {}
 
-        for changesIndex = 0, tes3mp.GetCooldownChangesSize(pid) - 1 do
+        for changesIndex = 0, dreamweave.GetCooldownChangesSize(pid) - 1 do
 
             local cooldown = {
-                spellId = tes3mp.GetCooldownSpellId(pid, changesIndex),
-                startDay = tes3mp.GetCooldownStartDay(pid, changesIndex),
-                startHour = tes3mp.GetCooldownStartHour(pid, changesIndex)
+                spellId = dreamweave.GetCooldownSpellId(pid, changesIndex),
+                startDay = dreamweave.GetCooldownStartDay(pid, changesIndex),
+                startHour = dreamweave.GetCooldownStartHour(pid, changesIndex)
             }
             
             table.insert(packetTable.cooldowns, cooldown)
@@ -193,23 +193,23 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
     elseif packetType == "PlayerQuickKeys" then
         packetTable.quickKeys = {}
 
-        for changesIndex = 0, tes3mp.GetQuickKeyChangesSize(pid) - 1 do
+        for changesIndex = 0, dreamweave.GetQuickKeyChangesSize(pid) - 1 do
 
-            local slot = tes3mp.GetQuickKeySlot(pid, changesIndex)
+            local slot = dreamweave.GetQuickKeySlot(pid, changesIndex)
 
             packetTable.quickKeys[slot] = {
-                keyType = tes3mp.GetQuickKeyType(pid, changesIndex),
-                itemId = tes3mp.GetQuickKeyItemId(pid, changesIndex)
+                keyType = dreamweave.GetQuickKeyType(pid, changesIndex),
+                itemId = dreamweave.GetQuickKeyItemId(pid, changesIndex)
             }
         end
     elseif packetType == "PlayerJournal" then
         packetTable.journal = {}
 
-        for changesIndex = 0, tes3mp.GetJournalChangesSize(pid) - 1 do
+        for changesIndex = 0, dreamweave.GetJournalChangesSize(pid) - 1 do
             local journalItem = {
-                type = tes3mp.GetJournalItemType(pid, changesIndex),
-                index = tes3mp.GetJournalItemIndex(pid, changesIndex),
-                quest = tes3mp.GetJournalItemQuest(pid, changesIndex),
+                type = dreamweave.GetJournalItemType(pid, changesIndex),
+                index = dreamweave.GetJournalItemIndex(pid, changesIndex),
+                quest = dreamweave.GetJournalItemQuest(pid, changesIndex),
                 timestamp = {
                     daysPassed = WorldInstance.data.time.daysPassed,
                     month = WorldInstance.data.time.month,
@@ -218,7 +218,7 @@ packetReader.GetPlayerPacketTables = function(pid, packetType)
             }
 
             if journalItem.type == enumerations.journal.ENTRY then
-                journalItem.actorRefId = tes3mp.GetJournalItemActorRefId(pid, changesIndex)
+                journalItem.actorRefId = dreamweave.GetJournalItemActorRefId(pid, changesIndex)
             end
 
             table.insert(packetTable.journal, journalItem)
@@ -231,81 +231,81 @@ end
 packetReader.GetActorPacketTables = function(packetType)
     
     local packetTables = { actors = {} }
-    local actorListSize = tes3mp.GetActorListSize()
+    local actorListSize = dreamweave.GetActorListSize()
 
     if actorListSize == 0 then return packetTables end
 
     for packetIndex = 0, actorListSize - 1 do
         local actor = {}
-        local uniqueIndex = tes3mp.GetActorRefNum(packetIndex) .. "-" .. tes3mp.GetActorMpNum(packetIndex)
+        local uniqueIndex = dreamweave.GetActorRefNum(packetIndex) .. "-" .. dreamweave.GetActorMpNum(packetIndex)
         actor.uniqueIndex = uniqueIndex
 
         -- Only non-repetitive actor packets contain refId information
         if tableHelper.containsValue({"ActorList", "ActorDeath"}, packetType) then
-            actor.refId = tes3mp.GetActorRefId(packetIndex)
+            actor.refId = dreamweave.GetActorRefId(packetIndex)
         end
 
         if packetType == "ActorEquipment" then
 
             actor.equipment = {}
-            local equipmentSize = tes3mp.GetEquipmentSize()
+            local equipmentSize = dreamweave.GetEquipmentSize()
 
             for itemIndex = 0, equipmentSize - 1 do
-                local itemRefId = tes3mp.GetActorEquipmentItemRefId(packetIndex, itemIndex)
+                local itemRefId = dreamweave.GetActorEquipmentItemRefId(packetIndex, itemIndex)
 
                 if itemRefId ~= "" then
                     actor.equipment[itemIndex] = {
                         refId = itemRefId,
-                        count = tes3mp.GetActorEquipmentItemCount(packetIndex, itemIndex),
-                        charge = tes3mp.GetActorEquipmentItemCharge(packetIndex, itemIndex),
-                        enchantmentCharge = tes3mp.GetActorEquipmentItemEnchantmentCharge(packetIndex, itemIndex)
+                        count = dreamweave.GetActorEquipmentItemCount(packetIndex, itemIndex),
+                        charge = dreamweave.GetActorEquipmentItemCharge(packetIndex, itemIndex),
+                        enchantmentCharge = dreamweave.GetActorEquipmentItemEnchantmentCharge(packetIndex, itemIndex)
                     }
                 end
             end
         elseif packetType == "ActorSpellsActive" then
 
             actor.spellsActive = {}
-            local spellsActiveChangesSize = tes3mp.GetActorSpellsActiveChangesSize(packetIndex)
+            local spellsActiveChangesSize = dreamweave.GetActorSpellsActiveChangesSize(packetIndex)
 
             for spellIndex = 0, spellsActiveChangesSize - 1 do
 
-                local spellId = tes3mp.GetActorSpellsActiveId(packetIndex, spellIndex)
+                local spellId = dreamweave.GetActorSpellsActiveId(packetIndex, spellIndex)
 
                 if actor.spellsActive[spellId] == nil then
                     actor.spellsActive[spellId] = {}
                 end
 
-                actor.spellActiveChangesAction = tes3mp.GetActorSpellsActiveChangesAction(packetIndex)
+                actor.spellActiveChangesAction = dreamweave.GetActorSpellsActiveChangesAction(packetIndex)
 
                 local spellInstance = {
                     effects = {},
-                    displayName = tes3mp.GetActorSpellsActiveDisplayName(packetIndex, spellIndex),
-                    stackingState = tes3mp.GetActorSpellsActiveStackingState(packetIndex, spellIndex),
+                    displayName = dreamweave.GetActorSpellsActiveDisplayName(packetIndex, spellIndex),
+                    stackingState = dreamweave.GetActorSpellsActiveStackingState(packetIndex, spellIndex),
                     startTime = os.time(),
                     caster = {}
                 }
 
-                spellInstance.hasPlayerCaster = tes3mp.DoesActorSpellsActiveHavePlayerCaster(packetIndex, spellIndex)
+                spellInstance.hasPlayerCaster = dreamweave.DoesActorSpellsActiveHavePlayerCaster(packetIndex, spellIndex)
 
                 if spellInstance.hasPlayerCaster == true then
-                    spellInstance.caster.pid = tes3mp.GetActorSpellsActiveCasterPid(packetIndex, spellIndex)
+                    spellInstance.caster.pid = dreamweave.GetActorSpellsActiveCasterPid(packetIndex, spellIndex)
 
                     if Players[spellInstance.caster.pid] ~= nil then
                         spellInstance.caster.playerName = Players[spellInstance.caster.pid].accountName
                     end
                 else
-                    spellInstance.caster.uniqueIndex = tes3mp.GetActorSpellsActiveCasterRefNum(packetIndex, spellIndex) ..
-                        "-" .. tes3mp.GetSpellsActiveCasterMpNum(packetIndex, spellIndex)
-                    spellInstance.caster.refId = tes3mp.GetActorSpellsActiveCasterRefId(packetIndex, spellIndex)
+                    spellInstance.caster.uniqueIndex = dreamweave.GetActorSpellsActiveCasterRefNum(packetIndex, spellIndex) ..
+                        "-" .. dreamweave.GetSpellsActiveCasterMpNum(packetIndex, spellIndex)
+                    spellInstance.caster.refId = dreamweave.GetActorSpellsActiveCasterRefId(packetIndex, spellIndex)
                 end
 
-                for effectIndex = 0, tes3mp.GetActorSpellsActiveEffectCount(packetIndex, spellIndex) - 1 do
+                for effectIndex = 0, dreamweave.GetActorSpellsActiveEffectCount(packetIndex, spellIndex) - 1 do
                     local effect = {
-                        id = tes3mp.GetActorSpellsActiveEffectId(packetIndex, spellIndex, effectIndex),
-                        magnitude = tes3mp.GetActorSpellsActiveEffectMagnitude(packetIndex, spellIndex, effectIndex),
-                        duration = tes3mp.GetActorSpellsActiveEffectDuration(packetIndex, spellIndex, effectIndex),
-                        timeLeft = tes3mp.GetActorSpellsActiveEffectTimeLeft(packetIndex, spellIndex, effectIndex),
-                        arg = tes3mp.GetActorSpellsActiveEffectArg(packetIndex, spellIndex, effectIndex)
+                        id = dreamweave.GetActorSpellsActiveEffectId(packetIndex, spellIndex, effectIndex),
+                        magnitude = dreamweave.GetActorSpellsActiveEffectMagnitude(packetIndex, spellIndex, effectIndex),
+                        duration = dreamweave.GetActorSpellsActiveEffectDuration(packetIndex, spellIndex, effectIndex),
+                        timeLeft = dreamweave.GetActorSpellsActiveEffectTimeLeft(packetIndex, spellIndex, effectIndex),
+                        arg = dreamweave.GetActorSpellsActiveEffectArg(packetIndex, spellIndex, effectIndex)
                     }
 
                     if effect.timeLeft > 0 then
@@ -319,61 +319,61 @@ packetReader.GetActorPacketTables = function(packetType)
             end
         elseif packetType == "ActorDeath" then
 
-            actor.deathState = tes3mp.GetActorDeathState(packetIndex)
+            actor.deathState = dreamweave.GetActorDeathState(packetIndex)
             actor.killer = {}
 
-            local doesActorHavePlayerKiller = tes3mp.DoesActorHavePlayerKiller(packetIndex)
+            local doesActorHavePlayerKiller = dreamweave.DoesActorHavePlayerKiller(packetIndex)
 
             if doesActorHavePlayerKiller then
-                actor.killer.pid = tes3mp.GetActorKillerPid(packetIndex)
+                actor.killer.pid = dreamweave.GetActorKillerPid(packetIndex)
 
                 if Players[actor.killer.pid] ~= nil then
                     actor.killer.playerName = Players[actor.killer.pid].accountName
                 end
             else
-                actor.killer.refId = tes3mp.GetActorKillerRefId(packetIndex)
-                actor.killer.name = tes3mp.GetActorKillerName(packetIndex)
-                actor.killer.uniqueIndex = tes3mp.GetActorKillerRefNum(packetIndex) ..
-                    "-" .. tes3mp.GetActorKillerMpNum(packetIndex)
+                actor.killer.refId = dreamweave.GetActorKillerRefId(packetIndex)
+                actor.killer.name = dreamweave.GetActorKillerName(packetIndex)
+                actor.killer.uniqueIndex = dreamweave.GetActorKillerRefNum(packetIndex) ..
+                    "-" .. dreamweave.GetActorKillerMpNum(packetIndex)
             end
         elseif packetType == "ActorAI" then
             actor.ai = {}
 
-            local action = tes3mp.GetActorAIAction(packetIndex)
+            local action = dreamweave.GetActorAIAction(packetIndex)
             actor.ai.action = action
 
             if action == enumerations.ai.ACTIVATE or action == enumerations.ai.COMBAT or action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW then
                 actor.ai.target = {}
-                local doesActorAIHavePlayerTarget = tes3mp.DoesActorAIHavePlayerTarget(packetIndex)
+                local doesActorAIHavePlayerTarget = dreamweave.DoesActorAIHavePlayerTarget(packetIndex)
 
                 if doesActorAIHavePlayerTarget then
-                    actor.ai.target.pid = tes3mp.GetActorAITargetPid(packetIndex)
+                    actor.ai.target.pid = dreamweave.GetActorAITargetPid(packetIndex)
     
                     if Players[actor.ai.target.pid] ~= nil then
                         actor.ai.target.playerName = Players[actor.ai.target.pid].accountName
                     end
                 else
-                    actor.ai.target.refId = tes3mp.GetActorAITargetRefId(packetIndex)
-                    actor.ai.target.name = tes3mp.GetActorAITargetName(packetIndex)
-                    actor.ai.target.uniqueIndex = tes3mp.GetActorAITargetRefNum(packetIndex) ..
-                        "-" .. tes3mp.GetActorAITargetMpNum(packetIndex)
+                    actor.ai.target.refId = dreamweave.GetActorAITargetRefId(packetIndex)
+                    actor.ai.target.name = dreamweave.GetActorAITargetName(packetIndex)
+                    actor.ai.target.uniqueIndex = dreamweave.GetActorAITargetRefNum(packetIndex) ..
+                        "-" .. dreamweave.GetActorAITargetMpNum(packetIndex)
                 end
             end
 
             if action == enumerations.ai.TRAVEL or action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW then
                 actor.ai.destination = {}
-                actor.ai.destination.posX = tes3mp.GetActorAICoordinateX(packetIndex)
-                actor.ai.destination.posY = tes3mp.GetActorAICoordinateY(packetIndex)
-                actor.ai.destination.posZ = tes3mp.GetActorAICoordinateZ(packetIndex)
+                actor.ai.destination.posX = dreamweave.GetActorAICoordinateX(packetIndex)
+                actor.ai.destination.posY = dreamweave.GetActorAICoordinateY(packetIndex)
+                actor.ai.destination.posZ = dreamweave.GetActorAICoordinateZ(packetIndex)
             end
 
             if action == enumerations.ai.WANDER then
-                actor.ai.distance = tes3mp.GetActorAIDistance(packetIndex)
-                actor.ai.repetition = tes3mp.GetActorAIRepetition(packetIndex)
+                actor.ai.distance = dreamweave.GetActorAIDistance(packetIndex)
+                actor.ai.repetition = dreamweave.GetActorAIRepetition(packetIndex)
             end
 
             if action == enumerations.ai.ESCORT or action == enumerations.ai.FOLLOW or action == enumerations.ai.WANDER then
-                actor.ai.duration = tes3mp.GetActorAIDuration(packetIndex)
+                actor.ai.duration = dreamweave.GetActorAIDuration(packetIndex)
             end
         end
 
@@ -386,7 +386,7 @@ end
 packetReader.GetObjectPacketTables = function(packetType)
 
     local packetTables = { objects = {}, players = {} }
-    local objectListSize = tes3mp.GetObjectListSize()
+    local objectListSize = dreamweave.GetObjectListSize()
 
     if objectListSize == 0 then return packetTables end
 
@@ -395,21 +395,21 @@ packetReader.GetObjectPacketTables = function(packetType)
         
         if tableHelper.containsValue({"ObjectActivate", "ObjectHit", "ObjectSound", "ConsoleCommand"}, packetType) then
 
-            local isObjectPlayer = tes3mp.IsObjectPlayer(packetIndex)
+            local isObjectPlayer = dreamweave.IsObjectPlayer(packetIndex)
 
             if isObjectPlayer then
-                pid = tes3mp.GetObjectPid(packetIndex)
+                pid = dreamweave.GetObjectPid(packetIndex)
                 player = Players[pid]
             else
                 object = {}
-                uniqueIndex = tes3mp.GetObjectRefNum(packetIndex) .. "-" .. tes3mp.GetObjectMpNum(packetIndex)
-                object.refId = tes3mp.GetObjectRefId(packetIndex)
+                uniqueIndex = dreamweave.GetObjectRefNum(packetIndex) .. "-" .. dreamweave.GetObjectMpNum(packetIndex)
+                object.refId = dreamweave.GetObjectRefId(packetIndex)
                 object.uniqueIndex = uniqueIndex
             end
 
             if packetType == "ObjectSound" then
 
-                local soundId = tes3mp.GetObjectSoundId(packetIndex)
+                local soundId = dreamweave.GetObjectSoundId(packetIndex)
 
                 if isObjectPlayer then
                     if player ~= nil then
@@ -421,23 +421,23 @@ packetReader.GetObjectPacketTables = function(packetType)
 
             elseif packetType == "ObjectActivate" then
 
-                local doesObjectHaveActivatingPlayer = tes3mp.DoesObjectHavePlayerActivating(packetIndex)
+                local doesObjectHaveActivatingPlayer = dreamweave.DoesObjectHavePlayerActivating(packetIndex)
 
                 if doesObjectHaveActivatingPlayer then
-                    local activatingPid = tes3mp.GetObjectActivatingPid(packetIndex)
+                    local activatingPid = dreamweave.GetObjectActivatingPid(packetIndex)
 
                     if isObjectPlayer then
                         if player ~= nil then
                             player.activatingPid = activatingPid
-                            player.drawState = tes3mp.GetDrawState(activatingPid) -- for backwards compatibility
+                            player.drawState = dreamweave.GetDrawState(activatingPid) -- for backwards compatibility
                         end
                     else
                         object.activatingPid = activatingPid
                     end
                 else
-                    local activatingRefId = tes3mp.GetObjectActivatingRefId(packetIndex)
-                    local activatingUniqueIndex = tes3mp.GetObjectActivatingRefNum(packetIndex) ..
-                        "-" .. tes3mp.GetObjectActivatingMpNum(packetIndex)
+                    local activatingRefId = dreamweave.GetObjectActivatingRefId(packetIndex)
+                    local activatingUniqueIndex = dreamweave.GetObjectActivatingRefNum(packetIndex) ..
+                        "-" .. dreamweave.GetObjectActivatingMpNum(packetIndex)
 
                     if isObjectPlayer then
                         if player ~= nil then
@@ -453,10 +453,10 @@ packetReader.GetObjectPacketTables = function(packetType)
             elseif packetType == "ObjectHit" then
 
                 local hit = {
-                    success = tes3mp.GetObjectHitSuccess(packetIndex),
-                    damage = tes3mp.GetObjectHitDamage(packetIndex),
-                    block = tes3mp.GetObjectHitBlock(packetIndex),
-                    knockdown = tes3mp.GetObjectHitKnockdown(packetIndex)
+                    success = dreamweave.GetObjectHitSuccess(packetIndex),
+                    damage = dreamweave.GetObjectHitDamage(packetIndex),
+                    block = dreamweave.GetObjectHitBlock(packetIndex),
+                    knockdown = dreamweave.GetObjectHitKnockdown(packetIndex)
                 }
 
                 if isObjectPlayer then
@@ -467,10 +467,10 @@ packetReader.GetObjectPacketTables = function(packetType)
                     object.hit = hit
                 end
 
-                local doesObjectHaveHittingPlayer = tes3mp.DoesObjectHavePlayerHitting(packetIndex)
+                local doesObjectHaveHittingPlayer = dreamweave.DoesObjectHavePlayerHitting(packetIndex)
 
                 if doesObjectHaveHittingPlayer then
-                    local hittingPid = tes3mp.GetObjectHittingPid(packetIndex)
+                    local hittingPid = dreamweave.GetObjectHittingPid(packetIndex)
 
                     if isObjectPlayer then
                         if player ~= nil then
@@ -482,9 +482,9 @@ packetReader.GetObjectPacketTables = function(packetType)
                         object.hittingPid = hittingPid
                     end
                 else
-                    local hittingRefId = tes3mp.GetObjectHittingRefId(packetIndex)
-                    local hittingUniqueIndex = tes3mp.GetObjectHittingRefNum(packetIndex) ..
-                        "-" .. tes3mp.GetObjectHittingMpNum(packetIndex)
+                    local hittingRefId = dreamweave.GetObjectHittingRefId(packetIndex)
+                    local hittingUniqueIndex = dreamweave.GetObjectHittingRefNum(packetIndex) ..
+                        "-" .. dreamweave.GetObjectHittingMpNum(packetIndex)
 
                     if isObjectPlayer then
                         if player ~= nil then
@@ -500,88 +500,88 @@ packetReader.GetObjectPacketTables = function(packetType)
             end
         else
             object = {}
-            uniqueIndex = tes3mp.GetObjectRefNum(packetIndex) .. "-" .. tes3mp.GetObjectMpNum(packetIndex)
-            object.refId = tes3mp.GetObjectRefId(packetIndex)
+            uniqueIndex = dreamweave.GetObjectRefNum(packetIndex) .. "-" .. dreamweave.GetObjectMpNum(packetIndex)
+            object.refId = dreamweave.GetObjectRefId(packetIndex)
             object.uniqueIndex = uniqueIndex
 
             if tableHelper.containsValue({"ObjectPlace", "ObjectSpawn"}, packetType) then
                 
                 object.location = {
-                    posX = tes3mp.GetObjectPosX(packetIndex), posY = tes3mp.GetObjectPosY(packetIndex),
-                    posZ = tes3mp.GetObjectPosZ(packetIndex), rotX = tes3mp.GetObjectRotX(packetIndex),
-                    rotY = tes3mp.GetObjectRotY(packetIndex), rotZ = tes3mp.GetObjectRotZ(packetIndex)
+                    posX = dreamweave.GetObjectPosX(packetIndex), posY = dreamweave.GetObjectPosY(packetIndex),
+                    posZ = dreamweave.GetObjectPosZ(packetIndex), rotX = dreamweave.GetObjectRotX(packetIndex),
+                    rotY = dreamweave.GetObjectRotY(packetIndex), rotZ = dreamweave.GetObjectRotZ(packetIndex)
                 }
 
                 if packetType == "ObjectPlace" then
-                    object.count = tes3mp.GetObjectCount(packetIndex)
-                    object.charge = tes3mp.GetObjectCharge(packetIndex)
-                    object.enchantmentCharge = tes3mp.GetObjectEnchantmentCharge(packetIndex)
-                    object.soul = tes3mp.GetObjectSoul(packetIndex)
-                    object.goldValue = tes3mp.GetObjectGoldValue(packetIndex)
-                    object.hasContainer = tes3mp.DoesObjectHaveContainer(packetIndex)
-                    object.droppedByPlayer = tes3mp.IsObjectDroppedByPlayer(packetIndex)
+                    object.count = dreamweave.GetObjectCount(packetIndex)
+                    object.charge = dreamweave.GetObjectCharge(packetIndex)
+                    object.enchantmentCharge = dreamweave.GetObjectEnchantmentCharge(packetIndex)
+                    object.soul = dreamweave.GetObjectSoul(packetIndex)
+                    object.goldValue = dreamweave.GetObjectGoldValue(packetIndex)
+                    object.hasContainer = dreamweave.DoesObjectHaveContainer(packetIndex)
+                    object.droppedByPlayer = dreamweave.IsObjectDroppedByPlayer(packetIndex)
                 elseif packetType == "ObjectSpawn" then
-                    local summonState = tes3mp.GetObjectSummonState(packetIndex)
+                    local summonState = dreamweave.GetObjectSummonState(packetIndex)
 
                     if summonState == true then
                         object.summon = {}
-                        object.summon.effectId = tes3mp.GetObjectSummonEffectId(packetIndex)
-                        object.summon.spellId = tes3mp.GetObjectSummonSpellId(packetIndex)
-                        object.summon.duration = tes3mp.GetObjectSummonDuration(packetIndex)
+                        object.summon.effectId = dreamweave.GetObjectSummonEffectId(packetIndex)
+                        object.summon.spellId = dreamweave.GetObjectSummonSpellId(packetIndex)
+                        object.summon.duration = dreamweave.GetObjectSummonDuration(packetIndex)
                         object.summon.startTime = os.time()
                         object.summon.summoner = {}
-                        object.summon.hasPlayerSummoner = tes3mp.DoesObjectHavePlayerSummoner(packetIndex)
+                        object.summon.hasPlayerSummoner = dreamweave.DoesObjectHavePlayerSummoner(packetIndex)
 
                         if object.summon.hasPlayerSummoner == true then
-                            object.summon.summoner.pid = tes3mp.GetObjectSummonerPid(packetIndex)
+                            object.summon.summoner.pid = dreamweave.GetObjectSummonerPid(packetIndex)
 
                             if Players[object.summon.summoner.pid] ~= nil then
                                 object.summon.summoner.playerName = Players[object.summon.summoner.pid].accountName
                             end
                         else
-                            object.summon.summoner.refId = tes3mp.GetObjectSummonerRefId(packetIndex)
-                            object.summon.summoner.uniqueIndex = tes3mp.GetObjectSummonerRefNum(packetIndex) ..
-                                "-" .. tes3mp.GetObjectSummonerMpNum(packetIndex)
+                            object.summon.summoner.refId = dreamweave.GetObjectSummonerRefId(packetIndex)
+                            object.summon.summoner.uniqueIndex = dreamweave.GetObjectSummonerRefNum(packetIndex) ..
+                                "-" .. dreamweave.GetObjectSummonerMpNum(packetIndex)
                         end
                     end
                 end
 
             elseif packetType == "ObjectLock" then
-                object.lockLevel = tes3mp.GetObjectLockLevel(packetIndex)
+                object.lockLevel = dreamweave.GetObjectLockLevel(packetIndex)
             elseif packetType == "ObjectTrap" then
-                object.trapSpellId = tes3mp.GetObjectTrapSpellId(packetIndex)
-                object.trapAction = tes3mp.GetObjectTrapAction(packetIndex)
+                object.trapSpellId = dreamweave.GetObjectTrapSpellId(packetIndex)
+                object.trapAction = dreamweave.GetObjectTrapAction(packetIndex)
             elseif packetType == "ObjectDialogueChoice" then
-                object.dialogueChoiceType = tes3mp.GetObjectDialogueChoiceType(packetIndex)
+                object.dialogueChoiceType = dreamweave.GetObjectDialogueChoiceType(packetIndex)
 
                 if object.dialogueChoiceType == enumerations.dialogueChoice.TOPIC then
-                    object.dialogueTopic = tes3mp.GetObjectDialogueChoiceTopic(packetIndex)
+                    object.dialogueTopic = dreamweave.GetObjectDialogueChoiceTopic(packetIndex)
                 end
             elseif packetType == "ObjectMiscellaneous" then
-                object.goldPool = tes3mp.GetObjectGoldPool(packetIndex)
-                object.lastGoldRestockHour = tes3mp.GetObjectLastGoldRestockHour(packetIndex)
-                object.lastGoldRestockDay = tes3mp.GetObjectLastGoldRestockDay(packetIndex)
+                object.goldPool = dreamweave.GetObjectGoldPool(packetIndex)
+                object.lastGoldRestockHour = dreamweave.GetObjectLastGoldRestockHour(packetIndex)
+                object.lastGoldRestockDay = dreamweave.GetObjectLastGoldRestockDay(packetIndex)
             elseif packetType == "ObjectScale" then
-                object.scale = tes3mp.GetObjectScale(packetIndex)
+                object.scale = dreamweave.GetObjectScale(packetIndex)
             elseif packetType == "ObjectState" then
-                object.state = tes3mp.GetObjectState(packetIndex)
+                object.state = dreamweave.GetObjectState(packetIndex)
             elseif packetType == "DoorState" then
-                object.doorState = tes3mp.GetObjectDoorState(packetIndex)
+                object.doorState = dreamweave.GetObjectDoorState(packetIndex)
             elseif packetType =="ClientScriptLocal" then
 
                 local variables = {}
-                local variableCount = tes3mp.GetClientLocalsSize(packetIndex)
+                local variableCount = dreamweave.GetClientLocalsSize(packetIndex)
 
                 for variableIndex = 0, variableCount - 1 do
-                    local internalIndex = tes3mp.GetClientLocalInternalIndex(packetIndex, variableIndex)
-                    local variableType = tes3mp.GetClientLocalVariableType(packetIndex, variableIndex)
+                    local internalIndex = dreamweave.GetClientLocalInternalIndex(packetIndex, variableIndex)
+                    local variableType = dreamweave.GetClientLocalVariableType(packetIndex, variableIndex)
                     local value
 
                     if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
                         variableType) then
-                        value = tes3mp.GetClientLocalIntValue(packetIndex, variableIndex)
+                        value = dreamweave.GetClientLocalIntValue(packetIndex, variableIndex)
                     elseif variableType == enumerations.variableType.FLOAT then
-                        value = tes3mp.GetClientLocalFloatValue(packetIndex, variableIndex)
+                        value = dreamweave.GetClientLocalFloatValue(packetIndex, variableIndex)
                     end
 
                     if variables[variableType] == nil then
@@ -608,12 +608,12 @@ end
 packetReader.GetWorldMapTileArray = function()
 
     local mapTileArray = {}
-    local mapTileCount = tes3mp.GetMapChangesSize()
+    local mapTileCount = dreamweave.GetMapChangesSize()
 
     for index = 0, mapTileCount - 1 do
         mapTile = {
-            cellX = tes3mp.GetMapTileCellX(index),
-            cellY = tes3mp.GetMapTileCellY(index),
+            cellX = dreamweave.GetMapTileCellX(index),
+            cellY = dreamweave.GetMapTileCellY(index),
         }
 
         mapTile.filename = mapTile.cellX .. ", " .. mapTile.cellY .. ".png"
@@ -627,17 +627,17 @@ end
 packetReader.GetClientScriptGlobalPacketTable = function()
 
     local variables = {}
-    local variableCount = tes3mp.GetClientGlobalsSize()
+    local variableCount = dreamweave.GetClientGlobalsSize()
 
     for index = 0, variableCount - 1 do
-        local id = tes3mp.GetClientGlobalId(index)
-        local variable = { variableType = tes3mp.GetClientGlobalVariableType(index) }
+        local id = dreamweave.GetClientGlobalId(index)
+        local variable = { variableType = dreamweave.GetClientGlobalVariableType(index) }
 
         if tableHelper.containsValue({enumerations.variableType.SHORT, enumerations.variableType.LONG},
             variable.variableType) then
-            variable.intValue = tes3mp.GetClientGlobalIntValue(index)
+            variable.intValue = dreamweave.GetClientGlobalIntValue(index)
         elseif variable.variableType == enumerations.variableType.FLOAT then
-            variable.floatValue = tes3mp.GetClientGlobalFloatValue(index)
+            variable.floatValue = dreamweave.GetClientGlobalFloatValue(index)
         end
 
         variables[id] = variable
@@ -649,51 +649,51 @@ end
 packetReader.GetRecordDynamicArray = function(pid)
 
     local recordArray = {}
-    local recordCount = tes3mp.GetRecordCount(pid)
-    local recordNumericalType = tes3mp.GetRecordType(pid)
+    local recordCount = dreamweave.GetRecordCount(pid)
+    local recordNumericalType = dreamweave.GetRecordType(pid)
 
     for recordIndex = 0, recordCount - 1 do
         local record = {}
 
         if recordNumericalType ~= enumerations.recordType.ENCHANTMENT then
-            record.name = tes3mp.GetRecordName(recordIndex)
+            record.name = dreamweave.GetRecordName(recordIndex)
         end
 
         if recordNumericalType == enumerations.recordType.SPELL then
-            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
-            record.cost = tes3mp.GetRecordCost(recordIndex)
-            record.flags = tes3mp.GetRecordFlags(recordIndex)
+            record.subtype = dreamweave.GetRecordSubtype(recordIndex)
+            record.cost = dreamweave.GetRecordCost(recordIndex)
+            record.flags = dreamweave.GetRecordFlags(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
         elseif recordNumericalType == enumerations.recordType.POTION then
-            record.weight = math.floor(tes3mp.GetRecordWeight(recordIndex) * 100) / 100
-            record.value = tes3mp.GetRecordValue(recordIndex)
-            record.autoCalc = tes3mp.GetRecordAutoCalc(recordIndex)
-            record.icon = tes3mp.GetRecordIcon(recordIndex)
-            record.model = tes3mp.GetRecordModel(recordIndex)
-            record.script = tes3mp.GetRecordScript(recordIndex)
+            record.weight = math.floor(dreamweave.GetRecordWeight(recordIndex) * 100) / 100
+            record.value = dreamweave.GetRecordValue(recordIndex)
+            record.autoCalc = dreamweave.GetRecordAutoCalc(recordIndex)
+            record.icon = dreamweave.GetRecordIcon(recordIndex)
+            record.model = dreamweave.GetRecordModel(recordIndex)
+            record.script = dreamweave.GetRecordScript(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
             -- Temporary data that should be discarded afterwards
-            record.quantity = tes3mp.GetRecordQuantity(recordIndex)
+            record.quantity = dreamweave.GetRecordQuantity(recordIndex)
 
         elseif recordNumericalType == enumerations.recordType.ENCHANTMENT then
-            record.subtype = tes3mp.GetRecordSubtype(recordIndex)
-            record.cost = tes3mp.GetRecordCost(recordIndex)
-            record.charge = tes3mp.GetRecordCharge(recordIndex)
-            record.flags = tes3mp.GetRecordFlags(recordIndex)
+            record.subtype = dreamweave.GetRecordSubtype(recordIndex)
+            record.cost = dreamweave.GetRecordCost(recordIndex)
+            record.charge = dreamweave.GetRecordCharge(recordIndex)
+            record.flags = dreamweave.GetRecordFlags(recordIndex)
             record.effects = packetReader.GetRecordPacketEffectArray(recordIndex)
 
             -- Temporary data that should be discarded afterwards
-            record.clientsideEnchantmentId = tes3mp.GetRecordId(recordIndex)
+            record.clientsideEnchantmentId = dreamweave.GetRecordId(recordIndex)
 
         else
-            record.baseId = tes3mp.GetRecordBaseId(recordIndex)
-            record.enchantmentCharge = tes3mp.GetRecordEnchantmentCharge(recordIndex)
+            record.baseId = dreamweave.GetRecordBaseId(recordIndex)
+            record.enchantmentCharge = dreamweave.GetRecordEnchantmentCharge(recordIndex)
 
             -- Temporary data that should be discarded afterwards
             if recordNumericalType == enumerations.recordType.WEAPON then
-                record.quantity = tes3mp.GetRecordQuantity(recordIndex)
+                record.quantity = dreamweave.GetRecordQuantity(recordIndex)
             else
                 record.quantity = 1
             end
@@ -701,7 +701,7 @@ packetReader.GetRecordDynamicArray = function(pid)
             -- Enchanted item records always have client-set ids for their enchantments
             -- when received by us, so we need to check for the server-set ids matching
             -- them in the player's unresolved enchantments
-            local clientEnchantmentId = tes3mp.GetRecordEnchantmentId(recordIndex)
+            local clientEnchantmentId = dreamweave.GetRecordEnchantmentId(recordIndex)
             record.enchantmentId = Players[pid].unresolvedEnchantments[clientEnchantmentId]
 
             -- Stop tracking this as an unresolved enchantment, assuming the enchantment
@@ -720,19 +720,19 @@ end
 packetReader.GetRecordPacketEffectArray = function(recordIndex)
 
     local effectArray = {}
-    local effectCount = tes3mp.GetRecordEffectCount(recordIndex)
+    local effectCount = dreamweave.GetRecordEffectCount(recordIndex)
 
     for effectIndex = 0, effectCount - 1 do
 
         local effect = {
-            id = tes3mp.GetRecordEffectId(recordIndex, effectIndex),
-            attribute = tes3mp.GetRecordEffectAttribute(recordIndex, effectIndex),
-            skill = tes3mp.GetRecordEffectSkill(recordIndex, effectIndex),
-            rangeType = tes3mp.GetRecordEffectRangeType(recordIndex, effectIndex),
-            area = tes3mp.GetRecordEffectArea(recordIndex, effectIndex),
-            duration = tes3mp.GetRecordEffectDuration(recordIndex, effectIndex),
-            magnitudeMin = tes3mp.GetRecordEffectMagnitudeMin(recordIndex, effectIndex),
-            magnitudeMax = tes3mp.GetRecordEffectMagnitudeMax(recordIndex, effectIndex)
+            id = dreamweave.GetRecordEffectId(recordIndex, effectIndex),
+            attribute = dreamweave.GetRecordEffectAttribute(recordIndex, effectIndex),
+            skill = dreamweave.GetRecordEffectSkill(recordIndex, effectIndex),
+            rangeType = dreamweave.GetRecordEffectRangeType(recordIndex, effectIndex),
+            area = dreamweave.GetRecordEffectArea(recordIndex, effectIndex),
+            duration = dreamweave.GetRecordEffectDuration(recordIndex, effectIndex),
+            magnitudeMin = dreamweave.GetRecordEffectMagnitudeMin(recordIndex, effectIndex),
+            magnitudeMax = dreamweave.GetRecordEffectMagnitudeMax(recordIndex, effectIndex)
         }
 
         table.insert(effectArray, effect)

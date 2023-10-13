@@ -44,8 +44,8 @@ function RecordStore:LoadFromDrive()
     self.data = jsonInterface.load("recordstore/" .. self.recordstoreFile)
 
     if self.data == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, "recordstore/" .. self.recordstoreFile .. " cannot be read!")
-        tes3mp.StopServer(2)
+        dreamweave.LogMessage(enumerations.log.ERROR, "recordstore/" .. self.recordstoreFile .. " cannot be read!")
+        dreamweave.StopServer(2)
     else
         -- JSON doesn't allow numerical keys, but we use them, so convert
         -- all string number keys into numerical keys

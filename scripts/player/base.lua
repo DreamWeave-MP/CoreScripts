@@ -97,8 +97,8 @@ function BasePlayer:__init(pid, playerName)
         customVariables = {}
     }
 
-    for index = 0, (tes3mp.GetAttributeCount() - 1) do
-        local attributeName = tes3mp.GetAttributeName(index)
+    for index = 0, (dreamweave.GetAttributeCount() - 1) do
+        local attributeName = dreamweave.GetAttributeName(index)
         self.data.attributes[attributeName] = {
             base = 1,
             damage = 0,
@@ -106,8 +106,8 @@ function BasePlayer:__init(pid, playerName)
         }
     end
 
-    for index = 0, (tes3mp.GetSkillCount() - 1) do
-        local skillName = tes3mp.GetSkillName(index)
+    for index = 0, (dreamweave.GetSkillCount() - 1) do
+        local skillName = dreamweave.GetSkillName(index)
         self.data.skills[skillName] = {
             base = 1,
             damage = 0,
@@ -116,7 +116,7 @@ function BasePlayer:__init(pid, playerName)
     end
 
     if playerName == nil then
-        self.accountName = tes3mp.GetName(pid)
+        self.accountName = dreamweave.GetName(pid)
     else
         self.accountName = playerName
     end
@@ -139,7 +139,7 @@ end
 
 function BasePlayer:Destroy()
     if self.loginTimerId ~= nil then
-        tes3mp.StopTimer(self.loginTimerId)
+        dreamweave.StopTimer(self.loginTimerId)
         self.loginTimerId = nil
     end
 
@@ -149,19 +149,19 @@ end
 
 function BasePlayer:Kick()
     self:Destroy()
-    tes3mp.Kick(self.pid)
+    dreamweave.Kick(self.pid)
 end
 
 function BasePlayer:GenerateSaltedHash(inputString)
-    self.data.login.passwordSalt = tes3mp.GenerateRandomString(64)
-    self.data.login.passwordHash = tes3mp.GetSHA256Hash(inputString .. self.data.login.passwordSalt)
+    self.data.login.passwordSalt = dreamweave.GenerateRandomString(64)
+    self.data.login.passwordHash = dreamweave.GetSHA256Hash(inputString .. self.data.login.passwordSalt)
 end
 
 -- Replace any plaintext passwords with an unpredictable serverside
 -- salted hash of a predictable clientside salted hash
 function BasePlayer:ConvertPlaintextPassword()
-    local inputHash = tes3mp.GetSHA256Hash(self.data.login.password)
-    inputHash = tes3mp.GetSHA256Hash(inputHash .. tes3mp.GetSHA256Hash(tes3mp.GetSHA256Hash(inputHash)))
+    local inputHash = dreamweave.GetSHA256Hash(self.data.login.password)
+    inputHash = dreamweave.GetSHA256Hash(inputHash .. dreamweave.GetSHA256Hash(dreamweave.GetSHA256Hash(inputHash)))
     self:GenerateSaltedHash(inputHash)
     self.data.login.password = nil
 end
@@ -173,7 +173,7 @@ function BasePlayer:Register(clientPasswordHash)
     self.data.settings.consoleAllowed = "default"
 
     if not self.hasAccount then
-        tes3mp.SetCharGenStage(self.pid, 1, 4)
+        dreamweave.SetCharGenStage(self.pid, 1, 4)
     end
 end
 
@@ -387,17 +387,17 @@ function BasePlayer:EndCharGen()
 	end	
 
     if spawnUsed ~= nil and spawnUsed.cellDescription ~= nil then
-        tes3mp.SetCell(self.pid, spawnUsed.cellDescription)
-        tes3mp.SendCell(self.pid)
+        dreamweave.SetCell(self.pid, spawnUsed.cellDescription)
+        dreamweave.SendCell(self.pid)
 
         if spawnUsed.position ~= nil and spawnUsed.rotation ~= nil then
-            tes3mp.SetPos(self.pid, spawnUsed.position[1], spawnUsed.position[2], spawnUsed.position[3])
-            tes3mp.SetRot(self.pid, spawnUsed.rotation[1], spawnUsed.rotation[2])
-            tes3mp.SendPos(self.pid)
+            dreamweave.SetPos(self.pid, spawnUsed.position[1], spawnUsed.position[2], spawnUsed.position[3])
+            dreamweave.SetRot(self.pid, spawnUsed.rotation[1], spawnUsed.rotation[2])
+            dreamweave.SendPos(self.pid)
         end
 
         if spawnUsed.text then
-            tes3mp.MessageBox(self.pid, -1, spawnUsed.text)
+            dreamweave.MessageBox(self.pid, -1, spawnUsed.text)
         end
 
         if spawnUsed.items then
@@ -477,23 +477,23 @@ function BasePlayer:RemoveLinkToRecord(storeType, recordId)
 end
 
 function BasePlayer:GetHealthCurrent()
-    self.data.stats.healthCurrent = tes3mp.GetHealthCurrent(self.pid)
+    self.data.stats.healthCurrent = dreamweave.GetHealthCurrent(self.pid)
     return self.data.stats.healthCurrent
 end
 
 function BasePlayer:SetHealthCurrent(health)
     self.data.stats.healthCurrent = health
-    tes3mp.SetHealthCurrent(self.pid, health)
+    dreamweave.SetHealthCurrent(self.pid, health)
 end
 
 function BasePlayer:GetHealthBase()
-    self.data.stats.healthBase = tes3mp.GetHealthBase(self.pid)
+    self.data.stats.healthBase = dreamweave.GetHealthBase(self.pid)
     return self.data.stats.healthBase
 end
 
 function BasePlayer:SetHealthBase(health)
     self.data.stats.healthBase = health
-    tes3mp.SetHealthBase(self.pid, health)
+    dreamweave.SetHealthBase(self.pid, health)
 end
 
 function BasePlayer:HasAccount()
@@ -501,7 +501,7 @@ function BasePlayer:HasAccount()
 end
 
 function BasePlayer:Message(message)
-    tes3mp.SendMessage(self.pid, message, false)
+    dreamweave.SendMessage(self.pid, message, false)
 end
 
 function BasePlayer:CreateAccount()
@@ -517,7 +517,7 @@ function BasePlayer:LoadFromDrive()
 end
 
 function BasePlayer:SaveLogin()
-    self.data.login.name = tes3mp.GetName(self.pid)
+    self.data.login.name = dreamweave.GetName(self.pid)
 end
 
 function BasePlayer:SaveIpAddress()
@@ -525,7 +525,7 @@ function BasePlayer:SaveIpAddress()
         self.data.ipAddresses = {}
     end
 
-    local ipAddress = tes3mp.GetIP(self.pid)
+    local ipAddress = dreamweave.GetIP(self.pid)
 
     if not tableHelper.containsValue(self.data.ipAddresses, ipAddress) then
         table.insert(self.data.ipAddresses, ipAddress)
@@ -539,14 +539,14 @@ function BasePlayer:ProcessDeath()
 
     local deathReason = "committed suicide"
 
-    if tes3mp.DoesPlayerHavePlayerKiller(self.pid) then
-        local killerPid = tes3mp.GetPlayerKillerPid(self.pid)
+    if dreamweave.DoesPlayerHavePlayerKiller(self.pid) then
+        local killerPid = dreamweave.GetPlayerKillerPid(self.pid)
 
         if self.pid ~= killerPid then
             deathReason = "was killed by player " .. logicHandler.GetChatName(killerPid)
         end
     else
-        local killerName = tes3mp.GetPlayerKillerName(self.pid)
+        local killerName = dreamweave.GetPlayerKillerName(self.pid)
 
         if killerName ~= "" then
             deathReason = "was killed by " .. killerName
@@ -555,14 +555,14 @@ function BasePlayer:ProcessDeath()
 
     local message = logicHandler.GetChatName(self.pid) .. " " .. deathReason .. ".\n"
 
-    tes3mp.SendMessage(self.pid, message, true)
+    dreamweave.SendMessage(self.pid, message, true)
 
     if config.playersRespawn then
-        self.resurrectTimerId = tes3mp.CreateTimerEx("OnDeathTimeExpiration",
+        self.resurrectTimerId = dreamweave.CreateTimerEx("OnDeathTimeExpiration",
             time.seconds(config.deathTime), "is", self.pid, self.accountName)
-        tes3mp.StartTimer(self.resurrectTimerId)
+        dreamweave.StartTimer(self.resurrectTimerId)
     else
-        tes3mp.SendMessage(self.pid, "You have died permanently.", false)
+        dreamweave.SendMessage(self.pid, "You have died permanently.", false)
     end
 end
 
@@ -587,14 +587,14 @@ function BasePlayer:Resurrect()
     elseif type(config.defaultRespawn) == "table" and config.defaultRespawn.cellDescription ~= nil then
         currentResurrectType = enumerations.resurrect.REGULAR
 
-        tes3mp.SetCell(self.pid, config.defaultRespawn.cellDescription)
-        tes3mp.SendCell(self.pid)
+        dreamweave.SetCell(self.pid, config.defaultRespawn.cellDescription)
+        dreamweave.SendCell(self.pid)
 
         if config.defaultRespawn.position ~= nil and config.defaultRespawn.rotation ~= nil then
-            tes3mp.SetPos(self.pid, config.defaultRespawn.position[1],
+            dreamweave.SetPos(self.pid, config.defaultRespawn.position[1],
                 config.defaultRespawn.position[2], config.defaultRespawn.position[3])
-            tes3mp.SetRot(self.pid, config.defaultRespawn.rotation[1], config.defaultRespawn.rotation[2])
-            tes3mp.SendPos(self.pid)
+            dreamweave.SetRot(self.pid, config.defaultRespawn.rotation[1], config.defaultRespawn.rotation[2])
+            dreamweave.SendPos(self.pid)
         end
     end
 
@@ -617,7 +617,7 @@ function BasePlayer:Resurrect()
     -- infinite death loop
     contentFixer.UnequipDeadlyItems(self.pid)
 
-    tes3mp.Resurrect(self.pid, currentResurrectType)
+    dreamweave.Resurrect(self.pid, currentResurrectType)
 
     if config.deathPenaltyJailDays > 0 or config.bountyDeathPenalty then
         local jailTime = 0
@@ -625,7 +625,7 @@ function BasePlayer:Resurrect()
             "but your skills have been affected by "
 
         if config.bountyDeathPenalty then
-            local currentBounty = tes3mp.GetBounty(self.pid)
+            local currentBounty = dreamweave.GetBounty(self.pid)
 
             if currentBounty > 0 then
                 jailTime = jailTime + math.floor(currentBounty / 100)
@@ -643,23 +643,23 @@ function BasePlayer:Resurrect()
         end
 
         resurrectionText = resurrectionText .. ".\n"
-        tes3mp.Jail(self.pid, jailTime, true, true, "Recovering", resurrectionText)
+        dreamweave.Jail(self.pid, jailTime, true, true, "Recovering", resurrectionText)
     end
 
     if config.bountyResetOnDeath then
-        tes3mp.SetBounty(self.pid, 0)
-        tes3mp.SendBounty(self.pid)
+        dreamweave.SetBounty(self.pid, 0)
+        dreamweave.SendBounty(self.pid)
         self:SaveBounty()
     end
 
-    tes3mp.SendMessage(self.pid, message, false)
+    dreamweave.SendMessage(self.pid, message, false)
 end
 
 function BasePlayer:DeleteSummons()
 
     if self.summons ~= nil then
         for summonUniqueIndex, summonRefId in pairs(self.summons) do
-            tes3mp.LogAppend(enumerations.log.INFO, "- removing player's summon " .. summonUniqueIndex ..
+            dreamweave.LogAppend(enumerations.log.INFO, "- removing player's summon " .. summonUniqueIndex ..
                 ", refId " .. summonRefId)
 
             local cell = logicHandler.GetCellContainingActor(summonUniqueIndex)
@@ -695,58 +695,58 @@ function BasePlayer:SaveDataByPacketType(packetType, playerPacket)
 end
 
 function BasePlayer:LoadCharacter()
-    tes3mp.SetRace(self.pid, self.data.character.race)
-    tes3mp.SetHead(self.pid, self.data.character.head)
-    tes3mp.SetHair(self.pid, self.data.character.hair)
-    tes3mp.SetIsMale(self.pid, self.data.character.gender)
+    dreamweave.SetRace(self.pid, self.data.character.race)
+    dreamweave.SetHead(self.pid, self.data.character.head)
+    dreamweave.SetHair(self.pid, self.data.character.hair)
+    dreamweave.SetIsMale(self.pid, self.data.character.gender)
     if self.data.character.modelOverride ~= nil then
-        tes3mp.SetModel(self.pid, self.data.character.modelOverride)
+        dreamweave.SetModel(self.pid, self.data.character.modelOverride)
     end
-    tes3mp.SetBirthsign(self.pid, self.data.character.birthsign)
+    dreamweave.SetBirthsign(self.pid, self.data.character.birthsign)
 
-    tes3mp.SendBaseInfo(self.pid)
+    dreamweave.SendBaseInfo(self.pid)
 end
 
 function BasePlayer:SaveCharacter()
-    self.data.character.race = tes3mp.GetRace(self.pid)
-    self.data.character.head = tes3mp.GetHead(self.pid)
-    self.data.character.hair = tes3mp.GetHair(self.pid)
-    self.data.character.gender = tes3mp.GetIsMale(self.pid)
-    self.data.character.modelOverride = tes3mp.GetModel(self.pid)
-    self.data.character.birthsign = tes3mp.GetBirthsign(self.pid)
+    self.data.character.race = dreamweave.GetRace(self.pid)
+    self.data.character.head = dreamweave.GetHead(self.pid)
+    self.data.character.hair = dreamweave.GetHair(self.pid)
+    self.data.character.gender = dreamweave.GetIsMale(self.pid)
+    self.data.character.modelOverride = dreamweave.GetModel(self.pid)
+    self.data.character.birthsign = dreamweave.GetBirthsign(self.pid)
 end
 
 function BasePlayer:LoadClass()
     if self.data.character.class ~= "custom" then
-        tes3mp.SetDefaultClass(self.pid, self.data.character.class)
+        dreamweave.SetDefaultClass(self.pid, self.data.character.class)
     elseif self.data.customClass ~= nil then
-        tes3mp.SetClassName(self.pid, self.data.customClass.name)
-        tes3mp.SetClassSpecialization(self.pid, self.data.customClass.specialization)
+        dreamweave.SetClassName(self.pid, self.data.customClass.name)
+        dreamweave.SetClassSpecialization(self.pid, self.data.customClass.specialization)
 
         if self.data.customClass.description ~= nil then
-            tes3mp.SetClassDesc(self.pid, self.data.customClass.description)
+            dreamweave.SetClassDesc(self.pid, self.data.customClass.description)
         end
 
         local index = 0
         for value in string.gmatch(self.data.customClass.majorAttributes, patterns.commaSplit) do
-            tes3mp.SetClassMajorAttribute(self.pid, index, tes3mp.GetAttributeId(value))
+            dreamweave.SetClassMajorAttribute(self.pid, index, dreamweave.GetAttributeId(value))
             index = index + 1
         end
 
         index = 0
         for value in string.gmatch(self.data.customClass.majorSkills, patterns.commaSplit) do
-            tes3mp.SetClassMajorSkill(self.pid, index, tes3mp.GetSkillId(value))
+            dreamweave.SetClassMajorSkill(self.pid, index, dreamweave.GetSkillId(value))
             index = index + 1
         end
 
         index = 0
         for value in string.gmatch(self.data.customClass.minorSkills, patterns.commaSplit) do
-            tes3mp.SetClassMinorSkill(self.pid, index, tes3mp.GetSkillId(value))
+            dreamweave.SetClassMinorSkill(self.pid, index, dreamweave.GetSkillId(value))
             index = index + 1
         end
     end
 
-    tes3mp.SendClass(self.pid)
+    dreamweave.SendClass(self.pid)
 end
 
 function BasePlayer:SaveClass(playerPacket)
@@ -764,20 +764,20 @@ function BasePlayer:LoadStatsDynamic()
 
     local healthBase
 
-    if tes3mp.IsWerewolf(self.pid) then
+    if dreamweave.IsWerewolf(self.pid) then
         healthBase = self.data.shapeshift.werewolfHealthBase
     else
         healthBase = self.data.stats.healthBase
     end
 
-    tes3mp.SetHealthBase(self.pid, healthBase)
-    tes3mp.SetMagickaBase(self.pid, self.data.stats.magickaBase)
-    tes3mp.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
-    tes3mp.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
-    tes3mp.SetMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
-    tes3mp.SetFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
+    dreamweave.SetHealthBase(self.pid, healthBase)
+    dreamweave.SetMagickaBase(self.pid, self.data.stats.magickaBase)
+    dreamweave.SetFatigueBase(self.pid, self.data.stats.fatigueBase)
+    dreamweave.SetHealthCurrent(self.pid, self.data.stats.healthCurrent)
+    dreamweave.SetMagickaCurrent(self.pid, self.data.stats.magickaCurrent)
+    dreamweave.SetFatigueCurrent(self.pid, self.data.stats.fatigueCurrent)
 
-    tes3mp.SendStatsDynamic(self.pid)
+    dreamweave.SendStatsDynamic(self.pid)
 end
 
 function BasePlayer:SaveStatsDynamic(playerPacket)
@@ -788,7 +788,7 @@ function BasePlayer:SaveStatsDynamic(playerPacket)
     -- use this temporary fix until we figure out why
     if healthBase > 1 then
 
-        if tes3mp.IsWerewolf(self.pid) then
+        if dreamweave.IsWerewolf(self.pid) then
             self.data.shapeshift.werewolfHealthBase = healthBase
         else
             self.data.stats.healthBase = healthBase
@@ -805,27 +805,27 @@ end
 function BasePlayer:LoadAttributes()
 
     for attributeName, value in pairs(self.data.attributes) do
-        local attributeId = tes3mp.GetAttributeId(attributeName)
+        local attributeId = dreamweave.GetAttributeId(attributeName)
 
         if type(value) == "table" then
-            tes3mp.SetAttributeBase(self.pid, attributeId, value.base)
-            tes3mp.SetAttributeDamage(self.pid, attributeId, value.damage)
-            tes3mp.SetSkillIncrease(self.pid, attributeId, value.skillIncrease)
+            dreamweave.SetAttributeBase(self.pid, attributeId, value.base)
+            dreamweave.SetAttributeDamage(self.pid, attributeId, value.damage)
+            dreamweave.SetSkillIncrease(self.pid, attributeId, value.skillIncrease)
 
         -- Maintain backwards compatibility with the old way of storing skills
         elseif type(value) == "number" then
-            tes3mp.SetAttributeBase(self.pid, attributeId, value)
+            dreamweave.SetAttributeBase(self.pid, attributeId, value)
         end
     end
 
-    tes3mp.SendAttributes(self.pid)
+    dreamweave.SendAttributes(self.pid)
 end
 
 function BasePlayer:SaveAttributes(playerPacket)
 
     for attributeName in pairs(self.data.attributes) do
 
-        local attributeId = tes3mp.GetAttributeId(attributeName)
+        local attributeId = dreamweave.GetAttributeId(attributeName)
         local attribute = playerPacket.attributes[attributeName]
         local maxAttributeValue = config.maxAttributeValue
 
@@ -838,14 +838,14 @@ function BasePlayer:SaveAttributes(playerPacket)
 
             local message = "Your base " .. attributeName .. " has exceeded the maximum allowed value " ..
                 "and been reset to its last recorded one.\n"
-            tes3mp.SendMessage(self.pid, message)
+            dreamweave.SendMessage(self.pid, message)
         elseif (attribute.base + attribute.modifier) > maxAttributeValue and not config.ignoreModifierWithMaxAttribute then
-            tes3mp.ClearAttributeModifier(self.pid, attributeId)
-            tes3mp.SendAttributes(self.pid)
+            dreamweave.ClearAttributeModifier(self.pid, attributeId)
+            dreamweave.SendAttributes(self.pid)
 
             local message = "Your " .. attributeName .. " fortification has exceeded the maximum allowed " ..
                 "value and been removed.\n"
-            tes3mp.SendMessage(self.pid, message)
+            dreamweave.SendMessage(self.pid, message)
         else
             self.data.attributes[attributeName] = {
                 base = attribute.base,
@@ -860,27 +860,27 @@ function BasePlayer:LoadSkills()
 
     for skillName, value in pairs(self.data.skills) do
 
-        local skillId = tes3mp.GetSkillId(skillName)
+        local skillId = dreamweave.GetSkillId(skillName)
 
         if type(value) == "table" then
-            tes3mp.SetSkillBase(self.pid, skillId, value.base)
-            tes3mp.SetSkillDamage(self.pid, skillId, value.damage)
-            tes3mp.SetSkillProgress(self.pid, skillId, value.progress)
+            dreamweave.SetSkillBase(self.pid, skillId, value.base)
+            dreamweave.SetSkillDamage(self.pid, skillId, value.damage)
+            dreamweave.SetSkillProgress(self.pid, skillId, value.progress)
 
         -- Maintain backwards compatibility with the old way of storing skills
         elseif type(value) == "number" then
-            tes3mp.SetSkillBase(self.pid, skillId, value)
+            dreamweave.SetSkillBase(self.pid, skillId, value)
         end
     end
 
-    tes3mp.SendSkills(self.pid)
+    dreamweave.SendSkills(self.pid)
 end
 
 function BasePlayer:SaveSkills(playerPacket)
 
     for skillName in pairs(self.data.skills) do
 
-        local skillId = tes3mp.GetSkillId(skillName)
+        local skillId = dreamweave.GetSkillId(skillName)
         local skill = playerPacket.skills[skillName]
         local maxSkillValue = config.maxSkillValue
 
@@ -893,14 +893,14 @@ function BasePlayer:SaveSkills(playerPacket)
 
             local message = "Your base " .. skillName .. " has exceeded the maximum allowed value " ..
                 "and been reset to its last recorded one.\n"
-            tes3mp.SendMessage(self.pid, message)
+            dreamweave.SendMessage(self.pid, message)
         elseif (skill.base + skill.modifier) > maxSkillValue and not config.ignoreModifierWithMaxSkill then
-            tes3mp.ClearSkillModifier(self.pid, skillId)
-            tes3mp.SendSkills(self.pid)
+            dreamweave.ClearSkillModifier(self.pid, skillId)
+            dreamweave.SendSkills(self.pid)
 
             local message = "Your " .. skillName .. " fortification has exceeded the maximum allowed " ..
                 "value and been removed.\n"
-            tes3mp.SendMessage(self.pid, message)
+            dreamweave.SendMessage(self.pid, message)
         else
             self.data.skills[skillName] = {
                 base = skill.base,
@@ -916,9 +916,9 @@ function BasePlayer:LoadLevel()
     if self.data.stats.level == nil then self.data.stats.level = 1 end
     if self.data.stats.levelProgress == nil then self.data.stats.levelProgress = 0 end
 
-    tes3mp.SetLevel(self.pid, self.data.stats.level)
-    tes3mp.SetLevelProgress(self.pid, self.data.stats.levelProgress)
-    tes3mp.SendLevel(self.pid)
+    dreamweave.SetLevel(self.pid, self.data.stats.level)
+    dreamweave.SetLevelProgress(self.pid, self.data.stats.levelProgress)
+    dreamweave.SendLevel(self.pid)
 end
 
 function BasePlayer:SaveLevel(playerPacket)
@@ -934,11 +934,11 @@ function BasePlayer:LoadShapeshift()
     if self.data.shapeshift.creatureRefId == nil then self.data.shapeshift.creatureRefId = "" end
     if self.data.shapeshift.displayCreatureName == nil then self.data.shapeshift.displayCreatureName = false end
 
-    tes3mp.SetScale(self.pid, self.data.shapeshift.scale)
-    tes3mp.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
-    tes3mp.SetCreatureRefId(self.pid, self.data.shapeshift.creatureRefId)
-    tes3mp.SetCreatureNameDisplayState(self.pid, self.data.shapeshift.displayCreatureName)
-    tes3mp.SendShapeshift(self.pid)
+    dreamweave.SetScale(self.pid, self.data.shapeshift.scale)
+    dreamweave.SetWerewolfState(self.pid, self.data.shapeshift.isWerewolf)
+    dreamweave.SetCreatureRefId(self.pid, self.data.shapeshift.creatureRefId)
+    dreamweave.SetCreatureNameDisplayState(self.pid, self.data.shapeshift.displayCreatureName)
+    dreamweave.SendShapeshift(self.pid)
 end
 
 function BasePlayer:SaveShapeshift(playerPacket)
@@ -948,7 +948,7 @@ function BasePlayer:SaveShapeshift(playerPacket)
     local newScale = playerPacket.shapeshift.scale
 
     if newScale ~= self.data.shapeshift.scale then
-        tes3mp.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) ..
+        dreamweave.LogMessage(enumerations.log.INFO, "Player " .. logicHandler.GetChatName(self.pid) ..
             " has changed their scale to " .. newScale)
         self.data.shapeshift.scale = newScale
     end
@@ -963,21 +963,21 @@ function BasePlayer:LoadCell()
 
         if newCell ~= nil then
 
-            tes3mp.SetCell(self.pid, newCell)
+            dreamweave.SetCell(self.pid, newCell)
 
             local pos = { self.data.location.posX, self.data.location.posY, self.data.location.posZ }
             local rot = { self.data.location.rotX, self.data.location.rotZ }
 
             if pos[1] ~= nil and pos[2] ~= nil and pos[3] ~= nil then
-                tes3mp.SetPos(self.pid, pos[1], pos[2], pos[3])
+                dreamweave.SetPos(self.pid, pos[1], pos[2], pos[3])
             end
 
             if rot[1] ~= nil and rot[2] ~= nil then
-                tes3mp.SetRot(self.pid, rot[1], rot[2])
+                dreamweave.SetRot(self.pid, rot[1], rot[2])
             end
 
-            tes3mp.SendCell(self.pid)
-            tes3mp.SendPos(self.pid)
+            dreamweave.SendCell(self.pid)
+            dreamweave.SendPos(self.pid)
 
             local regionName = self.data.location.regionName
 
@@ -1007,7 +1007,7 @@ end
 
 function BasePlayer:LoadEquipment()
 
-    for index = 0, tes3mp.GetEquipmentSize() - 1 do
+    for index = 0, dreamweave.GetEquipmentSize() - 1 do
 
         local currentItem = self.data.equipment[index]
 
@@ -1016,10 +1016,10 @@ function BasePlayer:LoadEquipment()
                 currentItem.enchantmentCharge = -1
             end
 
-            tes3mp.EquipItem(self.pid, index, currentItem.refId, currentItem.count,
+            dreamweave.EquipItem(self.pid, index, currentItem.refId, currentItem.count,
                 currentItem.charge, currentItem.enchantmentCharge)
         else
-            tes3mp.UnequipItem(self.pid, index)
+            dreamweave.UnequipItem(self.pid, index)
         end
     end
 
@@ -1027,7 +1027,7 @@ function BasePlayer:LoadEquipment()
     -- equipment item's count, charge or enchantmentCharge have changed
     self.previousEquipment = tableHelper.deepCopy(self.data.equipment)
 
-    tes3mp.SendEquipment(self.pid)
+    dreamweave.SendEquipment(self.pid)
 end
 
 function BasePlayer:SaveEquipment(playerPacket)
@@ -1106,8 +1106,8 @@ end
 --       self.data.inventory separately
 function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
 
-    tes3mp.ClearInventoryChanges(self.pid)
-    tes3mp.SetInventoryChangesAction(self.pid, inventoryAction)
+    dreamweave.ClearInventoryChanges(self.pid)
+    dreamweave.SetInventoryChangesAction(self.pid, inventoryAction)
 
     for index, currentItem in pairs(itemArray) do
 
@@ -1116,34 +1116,34 @@ function BasePlayer:LoadItemChanges(itemArray, inventoryAction)
         end
     end
 
-    tes3mp.SendInventoryChanges(self.pid)
+    dreamweave.SendInventoryChanges(self.pid)
 end
 
 function BasePlayer:LoadInventory()
 
     if self.data.inventory == nil then self.data.inventory = {} end
 
-    tes3mp.ClearInventoryChanges(self.pid)
-    tes3mp.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
+    dreamweave.ClearInventoryChanges(self.pid)
+    dreamweave.SetInventoryChangesAction(self.pid, enumerations.inventory.SET)
 
     for index, currentItem in pairs(self.data.inventory) do
 
         if currentItem.count ~= nil and currentItem.count > 0 then
             packetBuilder.AddPlayerInventoryItemChange(self.pid, currentItem)
         else
-            tes3mp.LogMessage(enumerations.log.INFO, "Caught nil or empty item in inventory for player " .. self.name .. " with item " .. tostring(currentItem) .. ", purging from data store.")
+            dreamweave.LogMessage(enumerations.log.INFO, "Caught nil or empty item in inventory for player " .. self.name .. " with item " .. tostring(currentItem) .. ", purging from data store.")
             self.data.inventory[index] = nil
         end
     end
 
-    tes3mp.SendInventoryChanges(self.pid)
+    dreamweave.SendInventoryChanges(self.pid)
 end
 
 function BasePlayer:SaveInventory(playerPacket)
 
     local action = playerPacket.action
 
-    tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. tableHelper.getCount(playerPacket.inventory) ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Saving " .. tableHelper.getCount(playerPacket.inventory) ..
         " item(s) to inventory with action " .. tableHelper.getIndexByValue(enumerations.inventory, action))
 
     if action == enumerations.inventory.SET then self.data.inventory = {} end
@@ -1151,7 +1151,7 @@ function BasePlayer:SaveInventory(playerPacket)
     for itemIndex, item in pairs(playerPacket.inventory) do
         if item.refId ~= "" then
 
-            tes3mp.LogAppend(enumerations.log.INFO, "- id: " .. item.refId .. ", count: " .. item.count ..
+            dreamweave.LogAppend(enumerations.log.INFO, "- id: " .. item.refId .. ", count: " .. item.count ..
                 ", charge: " .. item.charge .. ", enchantmentCharge: " .. item.enchantmentCharge ..
                 ", soul: " .. item.soul)
 
@@ -1198,7 +1198,7 @@ function BasePlayer:CleanSpellbook()
     local recordStore = RecordStores["spell"]
 
     for index, spellId in pairs(self.data.spellbook) do
-
+      -- This is legacy code, maybe we should remove it?
         -- Make sure we skip over old spell tables from previous versions of TES3MP
         if type(spellId) ~= "table" and logicHandler.IsGeneratedRecord(spellId) then
 
@@ -1217,8 +1217,8 @@ function BasePlayer:LoadSpellbook()
 
     if self.data.spellbook == nil then self.data.spellbook = {} end
 
-    tes3mp.ClearSpellbookChanges(self.pid)
-    tes3mp.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
+    dreamweave.ClearSpellbookChanges(self.pid)
+    dreamweave.SetSpellbookChangesAction(self.pid, enumerations.spellbook.SET)
 
     for index, spellId in pairs(self.data.spellbook) do
 
@@ -1229,10 +1229,10 @@ function BasePlayer:LoadSpellbook()
             self.data.spellbook[index] = spellId
         end
 
-        tes3mp.AddSpell(self.pid, spellId)
+        dreamweave.AddSpell(self.pid, spellId)
     end
 
-    tes3mp.SendSpellbookChanges(self.pid)
+    dreamweave.SendSpellbookChanges(self.pid)
 end
 
 function BasePlayer:SaveSpellbook(playerPacket)
@@ -1247,14 +1247,14 @@ function BasePlayer:SaveSpellbook(playerPacket)
         if action == enumerations.spellbook.SET or action == enumerations.spellbook.ADD then
             -- Only add new spell if we don't already have it
             if not tableHelper.containsValue(self.data.spellbook, spellId) then
-                tes3mp.LogMessage(enumerations.log.INFO, "Adding spellbook spell " .. spellId .. " to " ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Adding spellbook spell " .. spellId .. " to " ..
                     logicHandler.GetChatName(self.pid))
                 table.insert(self.data.spellbook, spellId)
             end
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if tableHelper.containsValue(self.data.spellbook, spellId) == true then
-                tes3mp.LogMessage(enumerations.log.INFO, "Removing spellbook spell " .. spellId .. " from " ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Removing spellbook spell " .. spellId .. " from " ..
                     logicHandler.GetChatName(self.pid))
                 local foundIndex = tableHelper.getIndexByValue(self.data.spellbook, spellId)
                 self.data.spellbook[foundIndex] = nil
@@ -1317,7 +1317,7 @@ function BasePlayer:LoadSpellsActive()
         packetBuilder.AddPlayerSpellsActive(self.pid, self.data.spellsActive, enumerations.spellbook.SET)
 
         -- Send this to all players, or they'll only know about active spells added afterwards
-        tes3mp.SendSpellsActiveChanges(self.pid, true)
+        dreamweave.SendSpellsActiveChanges(self.pid, true)
     end
 end
 
@@ -1338,7 +1338,7 @@ function BasePlayer:SaveSpellsActive(playerPacket)
 
             for _, spellInstanceValues in pairs(spellInstances) do
 
-                tes3mp.LogMessage(enumerations.log.INFO, "Adding instance of active spell " .. spellId .. " to " ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Adding instance of active spell " .. spellId .. " to " ..
                     logicHandler.GetChatName(self.pid))
 
                 local spellInstanceIndex
@@ -1369,7 +1369,7 @@ function BasePlayer:SaveSpellsActive(playerPacket)
         elseif action == enumerations.spellbook.REMOVE then
             -- Only print spell removal if the spell actually exists
             if self.data.spellsActive[spellId] ~= nil then
-                tes3mp.LogMessage(enumerations.log.INFO, "Removing active spell " .. spellId .. " from " ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Removing active spell " .. spellId .. " from " ..
                     logicHandler.GetChatName(self.pid))
                 self.data.spellsActive[spellId][1] = nil
             end
@@ -1386,13 +1386,13 @@ function BasePlayer:LoadCooldowns()
     if self.data.cooldowns == nil then self.data.cooldowns = {} end
 
     if tableHelper.getCount(self.data.cooldowns) > 0 then
-        tes3mp.ClearCooldownChanges(self.pid)
+        dreamweave.ClearCooldownChanges(self.pid)
 
         for _, cooldown in pairs(self.data.cooldowns) do
-            tes3mp.AddCooldownSpell(self.pid, cooldown.spellId, cooldown.startDay, cooldown.startHour)
+            dreamweave.AddCooldownSpell(self.pid, cooldown.spellId, cooldown.startDay, cooldown.startHour)
         end
 
-        tes3mp.SendCooldownChanges(self.pid)
+        dreamweave.SendCooldownChanges(self.pid)
     end
 end
 
@@ -1407,16 +1407,16 @@ function BasePlayer:LoadQuickKeys()
 
     if self.data.quickKeys == nil then self.data.quickKeys = {} end
 
-    tes3mp.ClearQuickKeyChanges(self.pid)
+    dreamweave.ClearQuickKeyChanges(self.pid)
 
     for slot, currentQuickKey in pairs(self.data.quickKeys) do
 
         if currentQuickKey ~= nil then
-            tes3mp.AddQuickKey(self.pid, slot, currentQuickKey.keyType, currentQuickKey.itemId)
+            dreamweave.AddQuickKey(self.pid, slot, currentQuickKey.keyType, currentQuickKey.itemId)
         end
     end
 
-    tes3mp.SendQuickKeyChanges(self.pid)
+    dreamweave.SendQuickKeyChanges(self.pid)
 end
 
 function BasePlayer:SaveQuickKeys(playerPacket)
@@ -1499,13 +1499,13 @@ function BasePlayer:LoadKills(pid, forEveryone)
         self.data.kills = {}
     end    
     
-    tes3mp.ClearKillChanges()
+    dreamweave.ClearKillChanges()
     
     for refId, killCount in pairs(self.data.kills) do
-        tes3mp.AddKill(refId, killCount)
+        dreamweave.AddKill(refId, killCount)
     end
 
-    tes3mp.SendWorldKillCount(pid, forEveryone)
+    dreamweave.SendWorldKillCount(pid, forEveryone)
 end
 
 function BasePlayer:LoadDestinationOverrides(pid)
@@ -1520,40 +1520,40 @@ function BasePlayer:LoadAllies()
     
     if self.data.alliedPlayers == nil then self.data.alliedPlayers = {} end
 
-    tes3mp.ClearAlliedPlayersForPlayer(self.pid)
+    dreamweave.ClearAlliedPlayersForPlayer(self.pid)
 
     for _, otherAccountName in ipairs(self.data.alliedPlayers) do
         if logicHandler.IsPlayerNameLoggedIn(otherAccountName) then
             local otherPlayer = logicHandler.GetPlayerByName(otherAccountName)
-            tes3mp.AddAlliedPlayerForPlayer(self.pid, otherPlayer.pid)
+            dreamweave.AddAlliedPlayerForPlayer(self.pid, otherPlayer.pid)
         end
     end
 
-    tes3mp.SendAlliedPlayers(self.pid, true)
+    dreamweave.SendAlliedPlayers(self.pid, true)
 end
 
 function BasePlayer:LoadBooks()
 
     if self.data.books == nil then self.data.books = {} end
 
-    tes3mp.ClearBookChanges(self.pid)
+    dreamweave.ClearBookChanges(self.pid)
 
     for index, bookId in pairs(self.data.books) do
 
-        tes3mp.AddBook(self.pid, bookId)
+        dreamweave.AddBook(self.pid, bookId)
     end
 
-    tes3mp.SendBookChanges(self.pid)
+    dreamweave.SendBookChanges(self.pid)
 end
 
 function BasePlayer:AddBooks()
 
-    for index = 0, tes3mp.GetBookChangesSize(self.pid) - 1 do
-        local bookId = tes3mp.GetBookId(self.pid, index)
+    for index = 0, dreamweave.GetBookChangesSize(self.pid) - 1 do
+        local bookId = dreamweave.GetBookId(self.pid, index)
 
         -- Only add new book if we don't already have it
         if not tableHelper.containsValue(self.data.books, bookId, false) then
-            tes3mp.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " ..
+            dreamweave.LogMessage(enumerations.log.INFO, "Adding book " .. bookId .. " to " ..
                 logicHandler.GetChatName(self.pid))
             table.insert(self.data.books, bookId)
         end
@@ -1566,10 +1566,10 @@ function BasePlayer:LoadMarkLocation()
 
     if self.data.miscellaneous.markLocation ~= nil then
         local markLocation = self.data.miscellaneous.markLocation
-        tes3mp.SetMarkCell(self.pid, markLocation.cell)
-        tes3mp.SetMarkPos(self.pid, markLocation.posX, markLocation.posY, markLocation.posZ)
-        tes3mp.SetMarkRot(self.pid, markLocation.rotX, markLocation.rotZ)
-        tes3mp.SendMarkLocation(self.pid)
+        dreamweave.SetMarkCell(self.pid, markLocation.cell)
+        dreamweave.SetMarkPos(self.pid, markLocation.posX, markLocation.posY, markLocation.posZ)
+        dreamweave.SetMarkRot(self.pid, markLocation.rotX, markLocation.rotZ)
+        dreamweave.SendMarkLocation(self.pid)
     end
 end
 
@@ -1578,12 +1578,12 @@ function BasePlayer:SaveMarkLocation()
     if self.data.miscellaneous == nil then self.data.miscellaneous = {} end
 
     self.data.miscellaneous.markLocation = {
-        cell = tes3mp.GetMarkCell(self.pid),
-        posX = tes3mp.GetMarkPosX(self.pid),
-        posY = tes3mp.GetMarkPosY(self.pid),
-        posZ = tes3mp.GetMarkPosZ(self.pid),
-        rotX = tes3mp.GetMarkRotX(self.pid),
-        rotZ = tes3mp.GetMarkRotZ(self.pid)
+        cell = dreamweave.GetMarkCell(self.pid),
+        posX = dreamweave.GetMarkPosX(self.pid),
+        posY = dreamweave.GetMarkPosY(self.pid),
+        posZ = dreamweave.GetMarkPosZ(self.pid),
+        rotX = dreamweave.GetMarkRotX(self.pid),
+        rotZ = dreamweave.GetMarkRotZ(self.pid)
     }
 end
 
@@ -1594,8 +1594,8 @@ function BasePlayer:LoadSelectedSpell()
     end
 
     if self.data.miscellaneous.selectedSpell ~= nil then
-        tes3mp.SetSelectedSpellId(self.pid, self.data.miscellaneous.selectedSpell)
-        tes3mp.SendSelectedSpell(self.pid)
+        dreamweave.SetSelectedSpellId(self.pid, self.data.miscellaneous.selectedSpell)
+        dreamweave.SendSelectedSpell(self.pid)
     end
 end
 
@@ -1603,7 +1603,7 @@ function BasePlayer:SaveSelectedSpell()
 
     if self.data.miscellaneous == nil then self.data.miscellaneous = {} end
 
-    self.data.miscellaneous.selectedSpell = tes3mp.GetSelectedSpellId(self.pid)
+    self.data.miscellaneous.selectedSpell = dreamweave.GetSelectedSpellId(self.pid)
 end
 
 function BasePlayer:GetDifficulty()
@@ -1642,8 +1642,8 @@ function BasePlayer:SetDifficulty(difficulty)
         self.data.settings.difficulty = difficulty
     end
 
-    tes3mp.SetDifficulty(self.pid, difficulty)
-    tes3mp.LogMessage(enumerations.log.INFO, "Set difficulty to " .. tostring(difficulty) .. " for " ..
+    dreamweave.SetDifficulty(self.pid, difficulty)
+    dreamweave.LogMessage(enumerations.log.INFO, "Set difficulty to " .. tostring(difficulty) .. " for " ..
         logicHandler.GetChatName(self.pid))
 end
 
@@ -1655,8 +1655,8 @@ function BasePlayer:SetEnforcedLogLevel(enforcedLogLevel)
         self.data.settings.enforcedLogLevel = enforcedLogLevel
     end
 
-    tes3mp.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
-    tes3mp.LogMessage(enumerations.log.INFO, "Set enforced log level to " .. tostring(enforcedLogLevel) ..
+    dreamweave.SetEnforcedLogLevel(self.pid, enforcedLogLevel)
+    dreamweave.LogMessage(enumerations.log.INFO, "Set enforced log level to " .. tostring(enforcedLogLevel) ..
         " for " .. logicHandler.GetChatName(self.pid))
 end
 
@@ -1668,8 +1668,8 @@ function BasePlayer:SetPhysicsFramerate(physicsFramerate)
         self.data.settings.physicsFramerate = physicsFramerate
     end
 
-    tes3mp.SetPhysicsFramerate(self.pid, physicsFramerate)
-    tes3mp.LogMessage(enumerations.log.INFO, "Set physics framerate to " .. tostring(physicsFramerate) ..
+    dreamweave.SetPhysicsFramerate(self.pid, physicsFramerate)
+    dreamweave.LogMessage(enumerations.log.INFO, "Set physics framerate to " .. tostring(physicsFramerate) ..
         " for " .. logicHandler.GetChatName(self.pid))
 end
 
@@ -1681,7 +1681,7 @@ function BasePlayer:SetConsoleAllowed(state)
         self.data.settings.consoleAllowed = state
     end
 
-    tes3mp.SetConsoleAllowed(self.pid, state)
+    dreamweave.SetConsoleAllowed(self.pid, state)
 end
 
 function BasePlayer:SetBedRestAllowed(state)
@@ -1692,7 +1692,7 @@ function BasePlayer:SetBedRestAllowed(state)
         self.data.settings.bedRestAllowed = state
     end
 
-    tes3mp.SetBedRestAllowed(self.pid, state)
+    dreamweave.SetBedRestAllowed(self.pid, state)
 end
 
 function BasePlayer:SetWildernessRestAllowed(state)
@@ -1703,7 +1703,7 @@ function BasePlayer:SetWildernessRestAllowed(state)
         self.data.settings.wildernessRestAllowed = state
     end
 
-    tes3mp.SetWildernessRestAllowed(self.pid, state)
+    dreamweave.SetWildernessRestAllowed(self.pid, state)
 end
 
 function BasePlayer:SetWaitAllowed(state)
@@ -1714,21 +1714,21 @@ function BasePlayer:SetWaitAllowed(state)
         self.data.settings.waitAllowed = state
     end
 
-    tes3mp.SetWaitAllowed(self.pid, state)
+    dreamweave.SetWaitAllowed(self.pid, state)
 end
 
 function BasePlayer:SetWerewolfState(state)
     self.data.shapeshift.isWerewolf = state
 
-    tes3mp.SetWerewolfState(self.pid, state)
-    tes3mp.SendShapeshift(self.pid)
+    dreamweave.SetWerewolfState(self.pid, state)
+    dreamweave.SendShapeshift(self.pid)
 end
 
 function BasePlayer:SetScale(scale)
     self.data.shapeshift.scale = scale
 
-    tes3mp.SetScale(self.pid, scale)
-    tes3mp.SendShapeshift(self.pid)
+    dreamweave.SetScale(self.pid, scale)
+    dreamweave.SendShapeshift(self.pid)
 end
 
 function BasePlayer:SetConfiscationState(state)
@@ -1740,12 +1740,12 @@ function BasePlayer:SetConfiscationState(state)
         if state == true then
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "disableplayercontrols")
-            tes3mp.MessageBox(self.pid, -1, "You are immobilized while an item is being confiscated from you")
+            dreamweave.MessageBox(self.pid, -1, "You are immobilized while an item is being confiscated from you")
         elseif not state then
             self.data.customVariables.isConfiscationTarget = nil
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "tm")
             logicHandler.RunConsoleCommandOnPlayer(self.pid, "enableplayercontrols")
-            tes3mp.MessageBox(self.pid, -1, "You are free to move again")
+            dreamweave.MessageBox(self.pid, -1, "You are free to move again")
         end
     end
 end
@@ -1766,19 +1766,19 @@ function BasePlayer:LoadSettings()
     self:SetEnforcedLogLevel(self.data.settings.enforcedLogLevel)
     self:SetPhysicsFramerate(self.data.settings.physicsFramerate)
 
-    tes3mp.ClearGameSettingValues(self.pid)
+    dreamweave.ClearGameSettingValues(self.pid)
 
     for _, settingPairTable in pairs(config.gameSettings) do
-        tes3mp.SetGameSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
+        dreamweave.SetGameSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
     end
 
-    tes3mp.ClearVRSettingValues(self.pid)
+    dreamweave.ClearVRSettingValues(self.pid)
 
     for _, settingPairTable in pairs(config.vrSettings) do
-        tes3mp.SetVRSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
+        dreamweave.SetVRSettingValue(self.pid, settingPairTable.name, tostring(settingPairTable.value))
     end
 
-    tes3mp.SendSettings(self.pid)
+    dreamweave.SendSettings(self.pid)
 end
 
 function BasePlayer:LoadSpecialStates()
@@ -1802,11 +1802,11 @@ function BasePlayer:RemoveCellLoaded(cellDescription)
 end
 
 function BasePlayer:RunPlayerSpecificStartupScripts()
-    tes3mp.LogMessage(enumerations.log.INFO, "Running player-specific startup scripts for " ..
+    dreamweave.LogMessage(enumerations.log.INFO, "Running player-specific startup scripts for " ..
         logicHandler.GetChatName(self.pid) .. ":")
 
     for _, scriptName in pairs(config.playerStartupScripts) do
-        tes3mp.LogAppend(enumerations.log.INFO, "- " .. scriptName)
+        dreamweave.LogAppend(enumerations.log.INFO, "- " .. scriptName)
         logicHandler.RunConsoleCommandOnPlayer(self.pid, "startscript " .. scriptName, false)
     end
 end

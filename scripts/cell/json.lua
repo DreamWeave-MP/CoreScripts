@@ -11,7 +11,7 @@ function Cell:__init(cellDescription)
     -- Ensure filename is valid
     self.entryName = fileHelper.fixFilename(cellDescription)
 
-    self.entryFile = tes3mp.GetCaseInsensitiveFilename(config.dataPath .. "/cell/", self.entryName .. ".json")
+    self.entryFile = dreamweave.GetCaseInsensitiveFilename(config.dataPath .. "/cell/", self.entryName .. ".json")
 
     if self.entryFile == "invalid" then
         self.hasEntry = false
@@ -25,10 +25,10 @@ function Cell:CreateEntry()
     self.hasEntry = jsonInterface.save("cell/" .. self.entryFile, self.data)
 
     if self.hasEntry then
-        tes3mp.LogMessage(enumerations.log.INFO, "Successfully created JSON file for cell " .. self.entryName)
+        dreamweave.LogMessage(enumerations.log.INFO, "Successfully created JSON file for cell " .. self.entryName)
     else
         local message = "Failed to create JSON file for " .. self.entryName
-        tes3mp.SendMessage(self.pid, message, true)
+        dreamweave.SendMessage(self.pid, message, true)
     end
 end
 
@@ -49,8 +49,8 @@ function Cell:LoadFromDrive()
     self.data = jsonInterface.load("cell/" .. self.entryFile)
 
     if self.data == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, "cell/" .. self.entryFile .. " cannot be read!")
-        tes3mp.StopServer(2)
+        dreamweave.LogMessage(enumerations.log.ERROR, "cell/" .. self.entryFile .. " cannot be read!")
+        dreamweave.StopServer(2)
     else
         -- JSON doesn't allow numerical keys, but we use them, so convert
         -- all string number keys into numerical keys

@@ -53,8 +53,8 @@ function World:LoadFromDrive()
     self.data = jsonInterface.load("world/" .. self.worldFile)
 
     if self.data == nil then
-        tes3mp.LogMessage(enumerations.log.ERROR, "world/" .. self.worldFile .. " cannot be read!")
-        tes3mp.StopServer(2)
+        dreamweave.LogMessage(enumerations.log.ERROR, "world/" .. self.worldFile .. " cannot be read!")
+        dreamweave.StopServer(2)
     else
         -- JSON doesn't allow numerical keys, but we use them, so convert
         -- all string number keys into numerical keys

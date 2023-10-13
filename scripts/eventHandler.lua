@@ -22,7 +22,7 @@ eventHandler.InitializeDefaultValidators = function()
             if tableHelper.containsValue(unusableContainerUniqueIndexes, uniqueIndex) then
                 return customEventHooks.makeEventStatus(false, false)
             elseif tableHelper.containsValue(config.disallowedDeleteRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at deleting " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at deleting " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -35,7 +35,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedCreateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at creating " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at creating " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -51,7 +51,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if object.scale >= config.maximumObjectScale then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at setting scale of " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at setting scale of " .. object.refId .. 
                     " " .. object.uniqueIndex .. " to " .. object.scale .. " because it exceeds the server's " ..
                     "maximum of " .. config.maximumObjectScale)
                 return customEventHooks.makeEventStatus(false, false)
@@ -65,7 +65,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedLockRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing lock for " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing lock for " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -78,7 +78,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedTrapRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing trap for " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing trap for " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -91,7 +91,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedStateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing state for " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing state for " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -104,7 +104,7 @@ eventHandler.InitializeDefaultValidators = function()
         for uniqueIndex, object in pairs(objects) do
 
             if tableHelper.containsValue(config.disallowedDoorStateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing door state for " .. object.refId .. 
+                dreamweave.LogAppend(enumerations.log.INFO, "- Rejected attempt at changing door state for " .. object.refId .. 
                     " " .. object.uniqueIndex .. " because it is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -128,15 +128,15 @@ eventHandler.InitializeDefaultValidators = function()
             -- If this is a preexisting object from the data files, make sure it doesn't
             -- have a Delete packet recorded for it
             if refNum ~= 0 and tableHelper.containsValue(LoadedCells[cellDescription].data.packets.delete, uniqueIndex) then
-                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a preexisting object that is already "
+                dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. " is a preexisting object that is already "
                     .. "tracked as being deleted")
                 return customEventHooks.makeEventStatus(false, false)
             elseif mpNum ~= 0 and LoadedCells[cellDescription].data.objectData[uniqueIndex] == nil then
-                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is a server-created object that is "
+                dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. " is a server-created object that is "
                     .. "no longer supposed to exist")
                 return customEventHooks.makeEventStatus(false, false)
             elseif tableHelper.containsValue(config.disallowedActivateRefIds, object.refId) then
-                tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. " is disallowed in the server config")
+                dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. " is disallowed in the server config")
                 return customEventHooks.makeEventStatus(false, false)
             end
         end
@@ -147,7 +147,7 @@ eventHandler.InitializeDefaultValidators = function()
 
         for id, variable in pairs(variables) do
             if tableHelper.containsValue(clientVariableScopes.globals.ignored, id) then
-                tes3mp.LogAppend(enumerations.log.INFO, "- Ignoring attempt at setting global variable " .. id ..
+                dreamweave.LogAppend(enumerations.log.INFO, "- Ignoring attempt at setting global variable " .. id ..
                     " because it is listed as an ignored variable in clientVariableScopes")
                 return customEventHooks.makeEventStatus(false, false)
             end
@@ -166,8 +166,8 @@ eventHandler.InitializeDefaultValidators = function()
                 " about " .. cellDescription .. " and kicked them due to them not being allowed to" ..
                 " use the console"
             debugMessage = debugMessage .. "\n- consoleCommand: " .. consoleCommand
-            tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
-            tes3mp.Kick(pid)
+            dreamweave.LogMessage(enumerations.log.INFO, debugMessage)
+            dreamweave.Kick(pid)
             return customEventHooks.makeEventStatus(false, false)
         end
     end)
@@ -186,7 +186,7 @@ eventHandler.InitializeDefaultHandlers = function()
 
         local cell = LoadedCells[cellDescription]
 
-        tes3mp.ClearKillChanges()
+        dreamweave.ClearKillChanges()
 		
 		if config.shareKills == true then
 
@@ -197,12 +197,12 @@ eventHandler.InitializeDefaultHandlers = function()
 
 				WorldInstance.data.kills[actor.refId] = WorldInstance.data.kills[actor.refId] + 1
 				WorldInstance:QuicksaveToDrive()
-				tes3mp.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
+				dreamweave.AddKill(actor.refId, WorldInstance.data.kills[actor.refId])
 
 				table.insert(cell.unusableContainerUniqueIndexes, uniqueIndex)
 			end
 
-			tes3mp.SendWorldKillCount(pid, true)
+			dreamweave.SendWorldKillCount(pid, true)
 
 		else
 			
@@ -224,7 +224,7 @@ eventHandler.InitializeDefaultHandlers = function()
 				end
 				tableHelper.insertValueIfMissing(sendKills[uniqueIndex].playersName, string.lower(Players[pid].accountName))
 
-				tes3mp.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
+				dreamweave.AddKill(actor.refId, Players[pid].data.kills[actor.refId])
 				for _, alliedName in ipairs(Players[pid].data.alliedPlayers) do	
 
 					if logicHandler.GetPlayerByName(alliedName) then
@@ -258,7 +258,7 @@ eventHandler.InitializeDefaultHandlers = function()
 					local targetPid = logicHandler.GetPlayerByName(targetName).pid
 
 					if Players[targetPid] ~= nil and Players[targetPid]:IsLoggedIn() then
-						tes3mp.SendWorldKillCount(targetPid, false)
+						dreamweave.SendWorldKillCount(targetPid, false)
 					end
 
 				end
@@ -318,12 +318,12 @@ eventHandler.InitializeDefaultHandlers = function()
                     -- Kick a player that continues the spam
                     if player.stateSpam[uniqueIndex] >= 25 then
                         player:Kick()
-                        tes3mp.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
+                        dreamweave.LogAppend(enumerations.log.INFO, "- Kicked player " .. logicHandler.GetChatName(pid) ..
                             " for continuing state spam")
                     -- If the player has sent 5 false object states for the same uniqueIndex, delete the object
                     elseif player.stateSpam[uniqueIndex] >= 5 then
                         logicHandler.DeleteObjectForPlayer(pid, cellDescription, uniqueIndex)
-                        tes3mp.LogAppend(enumerations.log.INFO, "- Deleting state spam object")
+                        dreamweave.LogAppend(enumerations.log.INFO, "- Deleting state spam object")
                     end
                 end
             end
@@ -347,7 +347,7 @@ eventHandler.InitializeDefaultHandlers = function()
                 debugMessage = debugMessage .. logicHandler.GetChatName(object.activatingPid)
             end
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+            dreamweave.LogAppend(enumerations.log.INFO, debugMessage)
         end
 
         for targetPid, targetPlayer in pairs(targetPlayers) do
@@ -360,16 +360,16 @@ eventHandler.InitializeDefaultHandlers = function()
                 debugMessage = debugMessage .. logicHandler.GetChatName(targetPlayer.activatingPid)
             end
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+            dreamweave.LogAppend(enumerations.log.INFO, debugMessage)
         end
 
-        tes3mp.CopyReceivedObjectListToStore()
+        dreamweave.CopyReceivedObjectListToStore()
         -- Objects can't be activated clientside without the server's approval, so we send
         -- the packet back to the player who sent it, but we avoid sending it to other
         -- players because OpenMW barely has any code for handling activations not from
         -- the local player
         -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-        tes3mp.SendObjectActivate(false, false)
+        dreamweave.SendObjectActivate(false, false)
     end)
 
     -- Print object hits
@@ -413,7 +413,7 @@ eventHandler.InitializeDefaultHandlers = function()
 
             debugMessage = debugMessage .. object.refId .. " " .. uniqueIndex
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+            dreamweave.LogAppend(enumerations.log.INFO, debugMessage)
         end
 
         for targetPid, targetPlayer in pairs(targetPlayers) do
@@ -433,7 +433,7 @@ eventHandler.InitializeDefaultHandlers = function()
 
             debugMessage = debugMessage .. logicHandler.GetChatName(targetPid)
 
-            tes3mp.LogAppend(enumerations.log.VERBOSE, debugMessage)
+            dreamweave.LogAppend(enumerations.log.VERBOSE, debugMessage)
         end
     end)
 
@@ -447,20 +447,20 @@ eventHandler.InitializeDefaultHandlers = function()
         for uniqueIndex, object in pairs(objects) do
             debugMessage = "- " .. uniqueIndex .. " played sound " .. object.soundId
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage)
+            dreamweave.LogAppend(enumerations.log.INFO, debugMessage)
         end
 
         for targetPid, targetPlayer in pairs(targetPlayers) do
             debugMessage = "- " .. logicHandler.GetChatName(targetPid) .. " played sound " .. targetPlayer.soundId
 
-            tes3mp.LogAppend(enumerations.log.INFO, debugMessage) 
+            dreamweave.LogAppend(enumerations.log.INFO, debugMessage) 
         end
 
-        tes3mp.CopyReceivedObjectListToStore()
+        dreamweave.CopyReceivedObjectListToStore()
         -- Sounds are played unilaterally clientside before being sent to the server, so we
         -- send the packet to other players, but we avoid sending it to the original player
         -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
-        tes3mp.SendObjectSound(true, true)
+        dreamweave.SendObjectSound(true, true)
     end)
 
     -- Print object restocking and send an ObjectRestock packet back to the player
@@ -471,16 +471,16 @@ eventHandler.InitializeDefaultHandlers = function()
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
-            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting restock request for " .. object.refId .. " " .. uniqueIndex)
+            dreamweave.LogAppend(enumerations.log.INFO, "- Accepting restock request for " .. object.refId .. " " .. uniqueIndex)
         end
 
-        tes3mp.CopyReceivedObjectListToStore()
+        dreamweave.CopyReceivedObjectListToStore()
         -- Objects can't be restocked clientside without the server's approval, so we send
         -- the packet back to the player who sent it, but we avoid sending it to other
         -- players because the Container packet resulting from the restocking will get
         -- sent to them instead
         -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-        tes3mp.SendObjectRestock(false, false)
+        dreamweave.SendObjectRestock(false, false)
     end)
 
     -- Print object dialogue choice and send an ObjectDialogueChoice packet back to the player
@@ -491,21 +491,21 @@ eventHandler.InitializeDefaultHandlers = function()
         local debugMessage = nil
 
         for uniqueIndex, object in pairs(objects) do
-            tes3mp.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice type " ..
+            dreamweave.LogAppend(enumerations.log.INFO, "- Accepting dialogue choice type " ..
                 tableHelper.getIndexByValue(enumerations.dialogueChoice, object.dialogueChoiceType) ..
                 " for " .. object.refId .. " " .. uniqueIndex)
 
             if object.dialogueChoiceType == enumerations.dialogueChoice.TOPIC then
-                tes3mp.LogAppend(enumerations.log.INFO, "- topic was " .. object.dialogueTopic)
+                dreamweave.LogAppend(enumerations.log.INFO, "- topic was " .. object.dialogueTopic)
             end
         end
 
-        tes3mp.CopyReceivedObjectListToStore()
+        dreamweave.CopyReceivedObjectListToStore()
         -- Dialogue choices cannot be triggered clientside without the server's approval,
         -- so we send the packet back to the player who sent it, but we avoid sending it to
         -- other players
         -- i.e. sendToOtherPlayers is false and skipAttachedPlayer is false
-        tes3mp.SendObjectDialogueChoice(false, false)
+        dreamweave.SendObjectDialogueChoice(false, false)
     end)
 
 end
@@ -525,10 +525,10 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
             local originalCellDescription = spawnUsed.cellDescription
             spawnUsed.cellDescription = originalCellDescription .. " - Instance for " .. playerName
 
-            tes3mp.ClearRecords()
-            tes3mp.SetRecordType(enumerations.recordType["CELL"])
+            dreamweave.ClearRecords()
+            dreamweave.SetRecordType(enumerations.recordType["CELL"])
             packetBuilder.AddCellRecord(spawnUsed.cellDescription, {baseId = originalCellDescription})
-            tes3mp.SendRecordDynamic(pid, false, false)
+            dreamweave.SendRecordDynamic(pid, false, false)
         end
 
         -- Load high priority permanent records
@@ -540,22 +540,22 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
                 tableHelper.getArrayFromIndexes(recordStore.data.permanentRecords))
         end
 
-        tes3mp.SetDifficulty(pid, config.difficulty)
-        tes3mp.SetConsoleAllowed(pid, config.allowConsole)
-        tes3mp.SetBedRestAllowed(pid, config.allowBedRest)
-        tes3mp.SetWildernessRestAllowed(pid, config.allowWildernessRest)
-        tes3mp.SetWaitAllowed(pid, config.allowWait)
-        tes3mp.SetPhysicsFramerate(pid, config.physicsFramerate)
-        tes3mp.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
-        tes3mp.SendSettings(pid)
+        dreamweave.SetDifficulty(pid, config.difficulty)
+        dreamweave.SetConsoleAllowed(pid, config.allowConsole)
+        dreamweave.SetBedRestAllowed(pid, config.allowBedRest)
+        dreamweave.SetWildernessRestAllowed(pid, config.allowWildernessRest)
+        dreamweave.SetWaitAllowed(pid, config.allowWait)
+        dreamweave.SetPhysicsFramerate(pid, config.physicsFramerate)
+        dreamweave.SetEnforcedLogLevel(pid, config.enforcedLogLevel)
+        dreamweave.SendSettings(pid)
 
         logicHandler.SendClientScriptDisables(pid, false)
         logicHandler.SendClientScriptSettings(pid, false)
 
-        tes3mp.SetPlayerCollisionState(config.enablePlayerCollision)
-        tes3mp.SetActorCollisionState(config.enableActorCollision)
-        tes3mp.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
-        tes3mp.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
+        dreamweave.SetPlayerCollisionState(config.enablePlayerCollision)
+        dreamweave.SetActorCollisionState(config.enableActorCollision)
+        dreamweave.SetPlacedObjectCollisionState(config.enablePlacedObjectCollision)
+        dreamweave.UseActorCollisionForPlacedObjects(config.useActorCollisionForPlacedObjects)
 
         logicHandler.SendConfigCollisionOverrides(pid, false)
 
@@ -563,7 +563,7 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
 
         local message = logicHandler.GetChatName(pid) .. " has joined the server"
 
-        local ipAddress = tes3mp.GetIP(pid)
+        local ipAddress = dreamweave.GetIP(pid)
         Players[pid].ipAddress = ipAddress
 
         if pidsByIpAddress[ipAddress] == nil then pidsByIpAddress[ipAddress] = {} end
@@ -579,13 +579,13 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
         end
 
         message = message .. ".\n"
-        tes3mp.SendMessage(pid, message, true)
+        dreamweave.SendMessage(pid, message, true)
 
         if tableHelper.getCount(pidsByIpAddress[ipAddress]) + 1 > config.maxClientsPerIP then
             message = logicHandler.GetChatName(pid) .. " has been kicked because this server allows a maximum of " ..
                 config.maxClientsPerIP .. " clients from the same IP address.\n"
-            tes3mp.SendMessage(pid, message, true)            
-            tes3mp.Kick(pid)
+            dreamweave.SendMessage(pid, message, true)            
+            dreamweave.Kick(pid)
             Players[pid] = nil
             return
         else
@@ -603,11 +603,11 @@ eventHandler.OnPlayerConnect = function(pid, playerName)
             guiHelper.ShowRegister(pid)
         end
 
-        tes3mp.SendMessage(pid, message, false)
+        dreamweave.SendMessage(pid, message, false)
 
-        Players[pid].loginTimerId = tes3mp.CreateTimerEx("OnLoginTimeExpiration",
+        Players[pid].loginTimerId = dreamweave.CreateTimerEx("OnLoginTimeExpiration",
             time.seconds(config.loginTime), "is", pid, Players[pid].accountName)
-        tes3mp.StartTimer(Players[pid].loginTimerId)
+        dreamweave.StartTimer(Players[pid].loginTimerId)
     end
     
     customEventHooks.triggerHandlers("OnPlayerConnect", eventStatus, {pid})
@@ -616,11 +616,11 @@ end
 eventHandler.OnPlayerDisconnect = function(pid)
 
     local message = logicHandler.GetChatName(pid) .. " has left the server.\n"
-    tes3mp.SendMessage(pid, message, true)
+    dreamweave.SendMessage(pid, message, true)
 
     -- If this player has disconnected before properly logging in, remove their pid
     -- from the table tracking IP addresses
-    if tes3mp.GetIP(pid) == "UNASSIGNED_SYSTEM_ADDRESS" then
+    if dreamweave.GetIP(pid) == "UNASSIGNED_SYSTEM_ADDRESS" then
         for ipAddress, pids in pairs(pidsByIpAddress) do
             if tableHelper.containsValue(pids, pid) then
                 tableHelper.removeValue(pids, pid)
@@ -657,7 +657,7 @@ eventHandler.OnPlayerDisconnect = function(pid)
 
                 Players[pid]:SaveCell(packetReader.GetPlayerPacketTables(pid, "PlayerCellChange"))
                 Players[pid]:SaveStatsDynamic(packetReader.GetPlayerPacketTables(pid, "PlayerStatsDynamic"))
-                tes3mp.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
+                dreamweave.LogMessage(enumerations.log.INFO, "Saving player " .. logicHandler.GetChatName(pid))
                 Players[pid]:SaveToDrive()
 
                 -- Unload every cell for this player
@@ -772,7 +772,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     Players[pid]:LoadFromDrive()
                     local passwordSalt = Players[pid].data.login.passwordSalt
 
-                    if Players[pid].data.login.passwordHash ~= tes3mp.GetSHA256Hash(data .. passwordSalt) then
+                    if Players[pid].data.login.passwordHash ~= dreamweave.GetSHA256Hash(data .. passwordSalt) then
                         Players[pid]:Message("Incorrect password!\n")
                         guiHelper.ShowLogin(pid)
                         return
@@ -783,7 +783,7 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                         Players[pid]:SaveIpAddress()
 
                         Players[pid]:Message(Players[pid].accountName .. " is banned from this server.\n")
-                        tes3mp.BanAddress(tes3mp.GetIP(pid))
+                        dreamweave.BanAddress(dreamweave.GetIP(pid))
                     else
                         Players[pid]:FinishLogin()
                         Players[pid]:Message("You have successfully logged in.\n" .. config.chatWindowInstructions)
@@ -794,11 +794,11 @@ eventHandler.OnGUIAction = function(pid, idGui, data)
                     end
                 elseif idGui == guiHelper.ID.REGISTER then
                     if Players[pid]:HasAccount() then
-                        tes3mp.LogMessage(enumerations.log.ERROR, "Warning! " .. logicHandler.GetChatName(pid) ..
+                        dreamweave.LogMessage(enumerations.log.ERROR, "Warning! " .. logicHandler.GetChatName(pid) ..
                             " replied to login for existing account with registration attempt and has been banned")
                         table.insert(banList.ipAddresses, ipAddress)
                         SaveBanList()
-                        tes3mp.BanAddress(tes3mp.GetIP(pid))
+                        dreamweave.BanAddress(dreamweave.GetIP(pid))
                         return
                     elseif data == nil then
                         Players[pid]:Message("Password can not be empty\n")
@@ -824,7 +824,7 @@ end
 eventHandler.OnPlayerSendMessage = function(pid, message)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
+        dreamweave.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
 
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSendMessage", {pid, message})
             
@@ -849,7 +849,7 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
                     end
                 end
 
-                tes3mp.SendMessage(pid, message, true)
+                dreamweave.SendMessage(pid, message, true)
             end
         end
         
@@ -926,7 +926,7 @@ eventHandler.OnPlayerSpellsActive = function(pid)
 
             -- Send this PlayerSpellsActive packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-            tes3mp.SendSpellsActiveChanges(pid, true, true)
+            dreamweave.SendSpellsActiveChanges(pid, true, true)
         end
         customEventHooks.triggerHandlers("OnPlayerSpellsActive", eventStatus, {pid, playerPacket})
     end
@@ -947,8 +947,8 @@ eventHandler.OnPlayerCellChange = function(pid)
             if eventStatus.validDefaultHandler then
                 -- If this player is changing their region, add them to the visitors of the new
                 -- region while removing them from the visitors of their old region
-                if tes3mp.IsChangingRegion(pid) then
-                    local regionName = string.lower(tes3mp.GetRegion(pid))
+                if dreamweave.IsChangingRegion(pid) then
+                    local regionName = string.lower(dreamweave.GetRegion(pid))
 
                     if regionName ~= "" then
 
@@ -970,7 +970,7 @@ eventHandler.OnPlayerCellChange = function(pid)
                         end
 
                         debugMessage = debugMessage .. " to region " .. regionName .. "\n"
-                        tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
+                        dreamweave.LogMessage(enumerations.log.INFO, debugMessage)
 
                         logicHandler.LoadRegionForPlayer(pid, regionName, isTeleported)
                     end
@@ -1003,11 +1003,11 @@ eventHandler.OnPlayerCellChange = function(pid)
             customEventHooks.triggerHandlers("OnPlayerCellChange", eventStatus,
                 {pid, playerPacket, previousCellDescription})
         else
-            Players[pid].data.location.posX = tes3mp.GetPreviousCellPosX(pid)
-            Players[pid].data.location.posY = tes3mp.GetPreviousCellPosY(pid)
-            Players[pid].data.location.posZ = tes3mp.GetPreviousCellPosZ(pid)
+            Players[pid].data.location.posX = dreamweave.GetPreviousCellPosX(pid)
+            Players[pid].data.location.posY = dreamweave.GetPreviousCellPosY(pid)
+            Players[pid].data.location.posZ = dreamweave.GetPreviousCellPosZ(pid)
             Players[pid]:LoadCell()
-            tes3mp.MessageBox(pid, -1, "You are forbidden from entering that area.")
+            dreamweave.MessageBox(pid, -1, "You are forbidden from entering that area.")
         end
     end
 end
@@ -1034,7 +1034,7 @@ eventHandler.OnPlayerJournal = function(pid)
 
                 -- Send this PlayerJournal packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                tes3mp.SendJournalChanges(pid, true, true)
+                dreamweave.SendJournalChanges(pid, true, true)
             else
                 Players[pid]:SaveJournal(playerPacket)
             end
@@ -1046,7 +1046,7 @@ end
 eventHandler.OnPlayerFaction = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        local action = tes3mp.GetFactionChangesAction(pid)
+        local action = dreamweave.GetFactionChangesAction(pid)
         
         local eventStatus = customEventHooks.triggerValidators("OnPlayerFaction", {pid, action})
         
@@ -1057,7 +1057,7 @@ eventHandler.OnPlayerFaction = function(pid)
                     WorldInstance:SaveFactionRanks(pid)
                     -- Send this PlayerFaction packet to other players (sendToOthersPlayers is true),
                     -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                    tes3mp.SendFactionChanges(pid, true, true)
+                    dreamweave.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionRanks()
                 end
@@ -1066,7 +1066,7 @@ eventHandler.OnPlayerFaction = function(pid)
 
                     WorldInstance:SaveFactionExpulsion(pid)
                     -- As above, send this to everyone other than the original sender
-                    tes3mp.SendFactionChanges(pid, true, true)
+                    dreamweave.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionExpulsion()
                 end
@@ -1075,7 +1075,7 @@ eventHandler.OnPlayerFaction = function(pid)
                     WorldInstance:SaveFactionReputation(pid)
 
                     -- As above, send this to everyone other than the original sender
-                    tes3mp.SendFactionChanges(pid, true, true)
+                    dreamweave.SendFactionChanges(pid, true, true)
                 else
                     Players[pid]:SaveFactionReputation()
                 end
@@ -1095,7 +1095,7 @@ eventHandler.OnPlayerTopic = function(pid)
                 WorldInstance:SaveTopics(pid)
                 -- Send this PlayerTopic packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                tes3mp.SendTopicChanges(pid, true, true)
+                dreamweave.SendTopicChanges(pid, true, true)
             else
                 Players[pid]:SaveTopics()
             end
@@ -1121,12 +1121,12 @@ eventHandler.OnPlayerBounty = function(pid)
                 -- To set the same bounty for each LocalPlayer, we need
                 -- to separately set each player as the target and
                 -- send the packet
-                local bountyValue = tes3mp.GetBounty(pid)
+                local bountyValue = dreamweave.GetBounty(pid)
 
                 for playerIndex, player in pairs(Players) do
                     if player.pid ~= pid then
-                        tes3mp.SetBounty(player.pid, bountyValue)
-                        tes3mp.SendBounty(player.pid)
+                        dreamweave.SetBounty(player.pid, bountyValue)
+                        dreamweave.SendBounty(player.pid)
                     end
                 end
             else
@@ -1148,7 +1148,7 @@ eventHandler.OnPlayerReputation = function(pid)
                 WorldInstance:SaveReputation(pid)
                 -- Send this PlayerReputation packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                tes3mp.SendReputation(pid, true, true)
+                dreamweave.SendReputation(pid, true, true)
             else
                 Players[pid]:SaveReputation()
             end
@@ -1170,15 +1170,15 @@ end
 
 eventHandler.OnPlayerItemUse = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local itemRefId = tes3mp.GetUsedItemRefId(pid)
+        local itemRefId = dreamweave.GetUsedItemRefId(pid)
         local eventStatus = customEventHooks.triggerValidators("OnPlayerItemUse", {pid, itemRefId})
         
         if eventStatus.validDefaultHandler then
-            tes3mp.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. " used inventory item " .. itemRefId)
+            dreamweave.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. " used inventory item " .. itemRefId)
 
             -- Unilateral use of items is disabled on clients, so we need to send
             -- this packet back to the player before they can use the item
-            tes3mp.SendItemUse(pid)
+            dreamweave.SendItemUse(pid)
         end
         customEventHooks.triggerHandlers("OnPlayerItemUse", eventStatus, {pid, itemRefId})
     end
@@ -1186,7 +1186,7 @@ end
 
 eventHandler.OnPlayerMiscellaneous = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        local changeType = tes3mp.GetMiscellaneousChangeType(pid)
+        local changeType = dreamweave.GetMiscellaneousChangeType(pid)
 
         if changeType == enumerations.miscellaneous.MARK_LOCATION then
             local eventStatus = customEventHooks.triggerValidators("OnPlayerMarkLocation", {pid})
@@ -1212,7 +1212,7 @@ eventHandler.OnCellLoad = function(pid, cellDescription)
         end
         customEventHooks.triggerHandlers("OnCellLoad", eventStatus, {pid, cellDescription})
     else
-        tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: invalid player " .. pid ..
+        dreamweave.LogMessage(enumerations.log.WARN, "Undefined behavior: invalid player " .. pid ..
             " loaded cell " .. cellDescription)
     end
 end
@@ -1240,7 +1240,7 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
 
-            tes3mp.ReadReceivedActorList()
+            dreamweave.ReadReceivedActorList()
             local actors = packetReader.GetActorPacketTables(packetType).actors
 
             local eventStatus = customEventHooks.triggerValidators("On" .. packetType,
@@ -1248,7 +1248,7 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
 
             if eventStatus.validDefaultHandler then
 
-                tes3mp.LogMessage(enumerations.log.INFO, "Saving " .. packetType ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Saving " .. packetType ..
                     " from " .. logicHandler.GetChatName(pid) .. " about " .. cellDescription)
 
                 LoadedCells[cellDescription]:SaveActorsByPacketType(packetType, actors)
@@ -1256,11 +1256,11 @@ eventHandler.OnGenericActorEvent = function(pid, cellDescription, packetType)
             customEventHooks.triggerHandlers("On" .. packetType, eventStatus,
                 {pid, cellDescription, actors})
         else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent " .. packetType .. " for unloaded " .. cellDescription)
         end
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
@@ -1279,28 +1279,28 @@ end
 eventHandler.OnActorAI = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
-            tes3mp.ReadReceivedActorList()
+            dreamweave.ReadReceivedActorList()
             local actors = packetReader.GetActorPacketTables("ActorAI").actors
 
             local eventStatus = customEventHooks.triggerValidators("OnActorAI", {pid, cellDescription, actors})
 
             if eventStatus.validDefaultHandler then
-                tes3mp.CopyReceivedActorListToStore()
+                dreamweave.CopyReceivedActorListToStore()
 
                 -- Actor AI packages are currently enabled unilaterally on the client
                 -- that has sent them, so we only need to send them to other players,
                 -- and can skip the original sender
                 -- i.e. sendToOtherVisitors is true and skipAttachedPlayer is true
-                tes3mp.SendActorAI(true, true)
+                dreamweave.SendActorAI(true, true)
             end
             customEventHooks.triggerHandlers("OnActorAI", eventStatus, {pid, cellDescription, actors})
             
         else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorAI for unloaded " .. cellDescription)
         end
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
@@ -1309,14 +1309,14 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         if LoadedCells[cellDescription] ~= nil then
 
-            tes3mp.ReadReceivedActorList()
+            dreamweave.ReadReceivedActorList()
             local actors = packetReader.GetActorPacketTables("ActorDeath").actors
 
             local eventStatus = customEventHooks.triggerValidators("OnActorDeath", {pid, cellDescription, actors})
 
             if eventStatus.validDefaultHandler then
 
-                tes3mp.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
+                dreamweave.LogMessage(enumerations.log.INFO, "Saving ActorDeath from " .. logicHandler.GetChatName(pid) ..
                     " about " .. cellDescription)
 
                 for uniqueIndex, actor in pairs(actors) do
@@ -1329,14 +1329,14 @@ eventHandler.OnActorDeath = function(pid, cellDescription)
                         deathReason = "killed by actor " .. actor.killer.refId .. " " .. actor.killer.uniqueIndex
                     end
 
-                    tes3mp.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)
+                    dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. deathReason)
                 end
 
                 LoadedCells[cellDescription]:SaveActorsByPacketType("ActorDeath", actors)
             end
             customEventHooks.triggerHandlers("OnActorDeath", eventStatus, {pid, cellDescription, actors})
         else
-            tes3mp.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Undefined behavior: " .. logicHandler.GetChatName(pid) ..
                 " sent ActorDeath for unloaded " .. cellDescription)
         end
     end
@@ -1360,7 +1360,7 @@ eventHandler.OnActorCellChange = function(pid, cellDescription)
             logicHandler.UnloadCell(cellDescription)
         end
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
@@ -1368,25 +1368,25 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
 
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
+        dreamweave.ReadReceivedObjectList()
+        local packetOrigin = dreamweave.GetObjectListOrigin()
         local clientScript
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
+        dreamweave.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            dreamweave.Kick(pid)
+            dreamweave.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
         elseif logicHandler.IsPacketFromClientScript(packetOrigin) then
-            clientScript = tes3mp.GetObjectListClientScript()
-            tes3mp.LogAppend(enumerations.log.INFO, "- clientScript was " .. clientScript)
+            clientScript = dreamweave.GetObjectListClientScript()
+            dreamweave.LogAppend(enumerations.log.INFO, "- clientScript was " .. clientScript)
         end
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
         if not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid " .. packetType ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Invalid " .. packetType ..
                 logicHandler.GetChatName(pid) .. " used impossible packetOrigin for unloaded " .. cellDescription)
             return
         end
@@ -1425,7 +1425,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
                     debugMessage = debugMessage .. "players: " .. tableHelper.concatenateArrayValues(chatNames, 1, ", ")
                 end
 
-                tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
+                dreamweave.LogMessage(enumerations.log.INFO, debugMessage)
                 
                 LoadedCells[cellDescription]:SaveObjectsByPacketType(packetType, objects)
                 LoadedCells[cellDescription]:LoadObjectsByPacketType(packetType, pid, objects,
@@ -1440,7 +1440,7 @@ eventHandler.OnGenericObjectEvent = function(pid, cellDescription, packetType)
             end
         end
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
@@ -1507,12 +1507,12 @@ end
 eventHandler.OnConsoleCommand = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedObjectList()
+        dreamweave.ReadReceivedObjectList()
 
         local packetTables = packetReader.GetObjectPacketTables("ConsoleCommand")
         local objects = packetTables.objects
         local targetPlayers = packetTables.players
-        local consoleCommand = tes3mp.GetObjectListConsoleCommand()
+        local consoleCommand = dreamweave.GetObjectListConsoleCommand()
 
         local eventStatus = customEventHooks.triggerValidators("OnConsoleCommand", {pid, cellDescription, consoleCommand,
             objects, targetPlayers})
@@ -1548,34 +1548,34 @@ eventHandler.OnConsoleCommand = function(pid, cellDescription)
                 debugMessage = debugMessage .. "\n- was a console command executed unilaterally from the client"
             end
 
-            tes3mp.LogMessage(enumerations.log.INFO, debugMessage)
+            dreamweave.LogMessage(enumerations.log.INFO, debugMessage)
         end
 
         customEventHooks.triggerHandlers("OnConsoleCommand", eventStatus, {pid, cellDescription, consoleCommand,
             objects, targetPlayers})
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
 eventHandler.OnContainer = function(pid, cellDescription)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
+        dreamweave.ReadReceivedObjectList()
+        local packetOrigin = dreamweave.GetObjectListOrigin()
+        dreamweave.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            dreamweave.Kick(pid)
+            dreamweave.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
         end
 
         local isCellLoaded = LoadedCells[cellDescription] ~= nil
 
         if not config.allowOnContainerForUnloadedCells and  not isCellLoaded and logicHandler.DoesPacketOriginRequireLoadedCell(packetOrigin) then
-            tes3mp.LogMessage(enumerations.log.WARN, "Invalid Container: " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Invalid Container: " .. logicHandler.GetChatName(pid) ..
                 " used impossible packetOrigin for unloaded " .. cellDescription)
             return
         end
@@ -1594,20 +1594,20 @@ eventHandler.OnContainer = function(pid, cellDescription)
             unusableContainerUniqueIndexes = LoadedCells[cellDescription].unusableContainerUniqueIndexes
         end
 
-        local subAction = tes3mp.GetObjectListContainerSubAction()
+        local subAction = dreamweave.GetObjectListContainerSubAction()
         
         local objects = {}
 
-        for index = 0, tes3mp.GetObjectListSize() - 1 do
+        for index = 0, dreamweave.GetObjectListSize() - 1 do
             local object = {}
-            object.refId = tes3mp.GetObjectRefId(index)
-            object.uniqueIndex = tes3mp.GetObjectRefNum(index) .. "-" .. tes3mp.GetObjectMpNum(index)            
+            object.refId = dreamweave.GetObjectRefId(index)
+            object.uniqueIndex = dreamweave.GetObjectRefNum(index) .. "-" .. dreamweave.GetObjectMpNum(index)            
 
             if tableHelper.containsValue(unusableContainerUniqueIndexes, object.uniqueIndex) then
 
                 if subAction == enumerations.containerSub.REPLY_TO_REQUEST then
                     tableHelper.removeValue(unusableContainerUniqueIndexes, object.uniqueIndex)
-                    tes3mp.LogMessage(enumerations.log.INFO, "Making container " .. object.uniqueIndex ..
+                    dreamweave.LogMessage(enumerations.log.INFO, "Making container " .. object.uniqueIndex ..
                         " usable as a result of request reply")
                     table.insert(objects, object)
                 else
@@ -1641,44 +1641,44 @@ eventHandler.OnContainer = function(pid, cellDescription)
             end
             customEventHooks.triggerHandlers("OnContainer", eventStatus, {pid, cellDescription, objects})
         else
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected Container from " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.INFO, "Rejected Container from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedObjects, 1, ", "))
         end
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
 eventHandler.OnVideoPlay = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedObjectList()
-        local packetOrigin = tes3mp.GetObjectListOrigin()
-        tes3mp.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
+        dreamweave.ReadReceivedObjectList()
+        local packetOrigin = dreamweave.GetObjectListOrigin()
+        dreamweave.LogAppend(enumerations.log.INFO, "- packetOrigin was " ..
             tableHelper.getIndexByValue(enumerations.packetOrigin, packetOrigin))
 
         if logicHandler.IsPacketFromConsole(packetOrigin) and not logicHandler.IsPlayerAllowedConsole(pid) then
-            tes3mp.Kick(pid)
-            tes3mp.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
+            dreamweave.Kick(pid)
+            dreamweave.SendMessage(pid, logicHandler.GetChatName(pid) .. consoleKickMessage, true)
             return
         end
 
         if config.shareVideos == true then
-            tes3mp.LogMessage(enumerations.log.INFO, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
+            dreamweave.LogMessage(enumerations.log.INFO, "Sharing VideoPlay from " .. logicHandler.GetChatName(pid))
             
             local videos = {}
 
-            for i = 0, tes3mp.GetObjectListSize() - 1 do
-                local videoFilename = tes3mp.GetVideoFilename(i)
+            for i = 0, dreamweave.GetObjectListSize() - 1 do
+                local videoFilename = dreamweave.GetVideoFilename(i)
                 table.insert(videos, videoFilename)
-                tes3mp.LogAppend(enumerations.log.WARN, "- videoFilename " .. videoFilename)
+                dreamweave.LogAppend(enumerations.log.WARN, "- videoFilename " .. videoFilename)
             end
             local eventStatus = customEventHooks.triggerValidators("OnVideoPlay", {pid, videos})
             if eventStatus.validDefaultHandler then
-                tes3mp.CopyReceivedObjectListToStore()
+                dreamweave.CopyReceivedObjectListToStore()
                 -- Send this VideoPlay packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                tes3mp.SendVideoPlay(true, true)
+                dreamweave.SendVideoPlay(true, true)
             end
             customEventHooks.triggerHandlers("OnVideoPlay", eventStatus, {pid, videos})
         end
@@ -1687,9 +1687,9 @@ end
 
 eventHandler.OnRecordDynamic = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
-        tes3mp.ReadReceivedWorldstate()
+        dreamweave.ReadReceivedWorldstate()
 
-        local recordNumericalType = tes3mp.GetRecordType(pid)
+        local recordNumericalType = dreamweave.GetRecordType(pid)
 
         -- Iterate through the records in the RecordDynamic packet and only sync and save them
         -- if all their names are allowed
@@ -1710,7 +1710,7 @@ eventHandler.OnRecordDynamic = function(pid)
         end
 
         if not isAllowed then
-            tes3mp.LogMessage(enumerations.log.INFO, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) ..
+            dreamweave.LogMessage(enumerations.log.INFO, "Rejected RecordDynamic from " .. logicHandler.GetChatName(pid) ..
                 " about " .. tableHelper.concatenateArrayValues(rejectedRecords, 1, ", "))
             return
         end
@@ -1720,7 +1720,7 @@ eventHandler.OnRecordDynamic = function(pid)
         local isEnchantable
 
         if recordStore == nil then
-            tes3mp.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " ..
+            dreamweave.LogMessage(enumerations.log.WARN, "Rejected RecordDynamic for invalid record store of type " ..
                 recordNumericalType)
             return
         else
@@ -1780,19 +1780,19 @@ eventHandler.OnRecordDynamic = function(pid)
             -- Add the final spell to the player's spellbook
             if storeType == "spell" then
 
-                tes3mp.ClearSpellbookChanges(pid)
-                tes3mp.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
+                dreamweave.ClearSpellbookChanges(pid)
+                dreamweave.SetSpellbookChangesAction(pid, enumerations.spellbook.ADD)
 
                 for recordId, record in pairs(recordTable) do
                     table.insert(Players[pid].data.spellbook, recordId)
-                    tes3mp.AddSpell(pid, recordId)
+                    dreamweave.AddSpell(pid, recordId)
 
                     Players[pid]:AddLinkToRecord(storeType, recordId)
                 end
 
                 recordStore:QuicksaveToDrive()
                 Players[pid]:QuicksaveToDrive()
-                tes3mp.SendSpellbookChanges(pid)
+                dreamweave.SendSpellbookChanges(pid)
 
             -- Add the final items to the player's inventory
             elseif storeType == "potion" or isEnchantable then
@@ -1837,11 +1837,11 @@ eventHandler.OnWorldKillCount = function(pid)
         local eventStatus = customEventHooks.triggerValidators("OnWorldKillCount", {pid})
         if eventStatus.validDefaultHandler then
             WorldInstance:SaveKills(pid)
-            tes3mp.CopyReceivedWorldstateToStore()
+            dreamweave.CopyReceivedWorldstateToStore()
 
             -- Send this WorldKillCount packet to other players (sendToOthersPlayers is true),
             -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-            tes3mp.SendWorldKillCount(pid, true, true)
+            dreamweave.SendWorldKillCount(pid, true, true)
         end
         customEventHooks.triggerHandlers("OnWorldKillCount", eventStatus, {pid})
         
@@ -1851,7 +1851,7 @@ end
 eventHandler.OnWorldMap = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedWorldstate()
+        dreamweave.ReadReceivedWorldstate()
         local mapTileArray = packetReader.GetWorldMapTileArray()
 
         local eventStatus = customEventHooks.triggerValidators("OnWorldMap", {pid, mapTileArray})
@@ -1859,11 +1859,11 @@ eventHandler.OnWorldMap = function(pid)
             WorldInstance:SaveMapTiles(mapTileArray)
 
             if config.shareMapExploration == true then
-                tes3mp.CopyReceivedWorldstateToStore()
+                dreamweave.CopyReceivedWorldstateToStore()
 
                 -- Send this WorldMap packet to other players (sendToOthersPlayers is true),
                 -- but skip sending it to the player we got it from (skipAttachedPlayer is true)
-                tes3mp.SendWorldMap(pid, true, true)
+                dreamweave.SendWorldMap(pid, true, true)
             end
         end
         customEventHooks.triggerHandlers("OnWorldMap", eventStatus, {pid, mapTileArray})
@@ -1874,9 +1874,9 @@ eventHandler.OnWorldWeather = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         local eventStatus = customEventHooks.triggerValidators("OnWorldWeather", {pid})
         if eventStatus.validDefaultHandler then
-            tes3mp.ReadReceivedWorldstate()
+            dreamweave.ReadReceivedWorldstate()
 
-            local regionName = string.lower(tes3mp.GetWeatherRegion())
+            local regionName = string.lower(dreamweave.GetWeatherRegion())
 
             -- Track current weather in each region
             if WorldInstance.storedRegions[regionName] ~= nil then
@@ -1909,7 +1909,7 @@ end
 eventHandler.OnClientScriptGlobal = function(pid)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
 
-        tes3mp.ReadReceivedWorldstate()
+        dreamweave.ReadReceivedWorldstate()
 
         local variables = packetReader.GetClientScriptGlobalPacketTable()
         local eventStatus = customEventHooks.triggerValidators("OnClientScriptGlobal", {pid, variables})
@@ -1955,19 +1955,19 @@ eventHandler.OnClientScriptGlobal = function(pid)
             end
 
             if shouldSync then
-                tes3mp.CopyReceivedWorldstateToStore()
+                dreamweave.CopyReceivedWorldstateToStore()
                 -- The client already has this global value on their client, so we
                 -- only send it to other players
                 -- i.e. sendToOtherPlayers is true and skipAttachedPlayer is true
-                tes3mp.SendClientScriptGlobal(pid, true, true)
-                tes3mp.LogMessage(enumerations.log.INFO, "Synchronized ClientScriptGlobal from " ..
+                dreamweave.SendClientScriptGlobal(pid, true, true)
+                dreamweave.LogMessage(enumerations.log.INFO, "Synchronized ClientScriptGlobal from " ..
                     logicHandler.GetChatName(pid) .. " about " .. tableHelper.concatenateTableIndexes(variables, ", "))
             end
         end
         
         customEventHooks.triggerHandlers("OnClientScriptGlobal", eventStatus, {pid, variables})
     else
-        tes3mp.Kick(pid)
+        dreamweave.Kick(pid)
     end
 end
 
@@ -2018,7 +2018,7 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
 
                 if loop.count > 0 then
                     ObjectLoops[loopIndex] = loop
-                    tes3mp.RestartTimer(loop.timerId, loop.interval)
+                    dreamweave.RestartTimer(loop.timerId, loop.interval)
                 else
                     loopEnded = true
                 end
