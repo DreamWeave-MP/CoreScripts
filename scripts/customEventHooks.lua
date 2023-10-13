@@ -3,9 +3,13 @@ local ScriptLoader = require('scriptLoader')
 ---@class CustomEventHooks
 ---@field validators table<string, table<string, function[]>> Map of event to source to callbacks
 ---@field handlers table<string, table<string, function[]>> Map of event to source to callbacks
+---@field flattenedValidators table<string, function[]>
+---@field flattenedHandlers table<string, function[]>
 local customEventHooks = {
     validators = {},
     handlers = {},
+    flattenedHandlers = {},
+    flattenedValidators = {},
 }
 
 --TODO: currently, this is hard coupled to scriptloader. Determine if this is okay
@@ -53,6 +57,7 @@ function customEventHooks.registerValidator(event, callback)
     end
 
     table.insert(validatorMap, callback)
+    table.insert(customEventHooks.flattenedValidators[event], callback)
 
     return scriptId
 end
@@ -74,6 +79,7 @@ function customEventHooks.registerHandler(event, callback)
     end
 
     table.insert(handlerMap, callback)
+    table.insert(customEventHooks.flattenedHandlers[event], callback)
 
     return scriptId
 end
@@ -82,10 +88,8 @@ end
 function customEventHooks.triggerValidators(event, args)
     local eventStatus = customEventHooks.makeEventStatus(true, true)
     if customEventHooks.validators[event] ~= nil then
-        for _, scriptId in ipairs(customEventHooks.validators[event]) do
-            for _, callback in ipairs(customEventHooks.validators[event][scriptId]) do
-                eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
-            end
+        for _, callback in ipairs(customEventHooks.flattenedValidators[event]) do
+            eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
         end
     end
     return eventStatus
@@ -94,10 +98,8 @@ end
 -- TODO: why is this not useing varargs?
 function customEventHooks.triggerHandlers(event, eventStatus, args)
     if customEventHooks.handlers[event] ~= nil then
-        for _, scriptId in ipairs(customEventHooks.handlers[event]) do
-            for _, callback in ipairs(customEventHooks.handlers[event][scriptId]) do
-                eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
-            end
+        for _, callback in ipairs(customEventHooks.flattenedHandlers[event]) do
+            eventStatus = customEventHooks.updateEventStatus(eventStatus, callback(eventStatus, unpack(args)))
         end
     end
 end
@@ -106,6 +108,13 @@ function customEventHooks.unregisterValidatorsByScriptId(scriptId)
     for _, event in ipairs(customEventHooks.validators) do
         if customEventHooks.validators[event][scriptId] then
             customEventHooks.validators[event][scriptId] = nil
+
+            customEventHooks.flattenedValidators[event] = {}
+            for _, scriptId in ipairs(customEventHooks.validators[event]) do
+                for _, callback in ipairs(customEventHooks.validators[event][scriptId]) do
+                    table.insert(customEventHooks.flattenedValidators[event], callback)
+                end
+            end
         end
     end
 end
@@ -114,6 +123,13 @@ function customEventHooks.unregisterHandlersByScriptId(scriptId)
     for _, event in ipairs(customEventHooks.handlers) do
         if customEventHooks.handlers[event][scriptId] then
             customEventHooks.handlers[event][scriptId] = nil
+
+            customEventHooks.flattenedHandlers[event] = {}
+            for _, scriptId in ipairs(customEventHooks.handlers[event]) do
+                for _, callback in ipairs(customEventHooks.handlers[event][scriptId]) do
+                    table.insert(customEventHooks.flattenedHandlers[event], callback)
+                end
+            end
         end
     end
 end
