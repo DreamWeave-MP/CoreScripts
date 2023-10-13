@@ -1,0 +1,6 @@
+{
+    "Lua.diagnostics.globals": [
+        "dreamweave",
+        "tes3mp"
+    ]
+}

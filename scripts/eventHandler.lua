@@ -1,3 +1,5 @@
+local ScriptLoader = require("scriptLoader")
+
 local eventHandler = {}
 
 commandHandler = require("commandHandler")
@@ -2031,6 +2033,56 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
         if loopEnded == true then
             ObjectLoops[loopIndex] = nil
         end
+    end
+end
+
+function eventHandler.LoadScript(pid, scriptId)
+    local canLoadScript, errorMessage = ScriptLoader.canLoadScript(scriptId)
+    if not canLoadScript then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " will not be loaded because: " .. errorMessage .. "\n" .. color.Default)
+        return
+    end
+
+    local eventStatus = customEventHooks.triggerValidators("OnScriptLoad", { scriptId, pid })
+
+    local result = false
+    if eventStatus.validDefaultHandler then
+        result = ScriptLoader.loadScript(scriptId)
+        -- Trigger init hack here
+    end
+
+    if eventStatus.validCustomHandlers then
+        customEventHooks.triggerHandlers("OnScriptLoad", eventStatus, { scriptId, result })
+    end
+
+    if result then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was successfully loaded.\n".. color.Default)
+    else
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was not loaded.\n" .. color.Default)
+    end
+end
+
+function eventHandler.UnloadScript(pid, scriptId)
+    if not ScriptLoader.isScriptLoaded(scriptId) then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " script is not loaded\n" .. color.Default)
+        return
+    end
+    local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", { scriptId, pid })
+
+    local result = false
+    if eventStatus.validDefaultHandler then
+        customEventHooks.unregisterAllByScriptId(scriptId)
+        ScriptLoader.unloadScript(scriptId)
+    end
+
+    if eventStatus.validCustomHandlers then
+        customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, { scriptId, result })
+    end
+
+    if result then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was successfully unloaded.\n".. color.Default)
+    else
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was not unloaded.\n" .. color.Default)
     end
 end
 
