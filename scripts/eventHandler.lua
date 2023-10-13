@@ -1,3 +1,5 @@
+local ScriptLoader = require("scriptLoader")
+
 local eventHandler = {}
 
 commandHandler = require("commandHandler")
@@ -2033,5 +2035,37 @@ eventHandler.OnObjectLoopTimeExpiration = function(loopIndex)
         end
     end
 end
+
+function eventHandler.LoadScript(pid, scriptId)
+    local canLoadScript, errorMessage = ScriptLoader.canLoadScript(scriptId)
+    if not canLoadScript then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " will not be laoded because: " .. errorMessage .. "\n" .. color.Default)
+        return
+    end
+
+    local eventStatus = customEventHooks.triggerValidators("OnScriptLoad", { scriptId, pid })
+
+    local result = false
+    if eventStatus.validDefaultHandler then
+        result = ScriptLoader.loadScript(scriptId)
+    end
+
+    if eventStatus.validCustomHandlers then
+        customEventHooks.triggerHandlers("OnScriptLoad", eventStatus, { scriptId, result })
+    end
+
+    if result then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was successfully loaded.\n".. color.Default)
+    else
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was not loaded.\n" .. color.Default)
+    end
+end
+
+customEventHooks.registerValidator("OnScriptLoad", function(eventStatus, pid, scriptId)
+    return eventStatus
+end)
+
+customEventHooks.registerHandler("OnScriptLoad", function(_, pid, scriptId)
+end)
 
 return eventHandler
