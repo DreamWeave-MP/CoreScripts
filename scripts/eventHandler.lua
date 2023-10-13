@@ -2061,11 +2061,28 @@ function eventHandler.LoadScript(pid, scriptId)
     end
 end
 
-customEventHooks.registerValidator("OnScriptLoad", function(eventStatus, pid, scriptId)
-    return eventStatus
-end)
+function eventHandler.UnloadScript(pid, scriptId)
+    if not ScriptLoader.isScriptLoaded(scriptId) then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray  .. " script is not loaded\n" .. color.Default)
+        return
+    end
+    local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", { scriptId, pid })
 
-customEventHooks.registerHandler("OnScriptLoad", function(_, pid, scriptId)
-end)
+    local result = false
+    if eventStatus.validDefaultHandler then
+        customEventHooks.unregisterAllByScriptId(scriptId)
+        ScriptLoader.unloadScript(scriptId)
+    end
+
+    if eventStatus.validCustomHandlers then
+        customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, { scriptId, result })
+    end
+
+    if result then
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was successfully unloaded.\n".. color.Default)
+    else
+        Players[pid]:Message(color.GoldenRod  .. scriptId .. color.LightGray .. " was not unloaded.\n" .. color.Default)
+    end
+end
 
 return eventHandler

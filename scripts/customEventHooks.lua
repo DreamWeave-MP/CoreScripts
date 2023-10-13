@@ -38,7 +38,7 @@ end
 
 function customEventHooks.registerValidator(event, callback)
     local filePath = debug.getinfo(2, "S").source:sub(2):normalizePath()
-    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptID(filePath)
+    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptId(filePath)
 
     local validatorMap = customEventHooks.validators[event][scriptId]
     if not validatorMap then
@@ -53,7 +53,7 @@ end
 
 function customEventHooks.registerHandler(event, callback)
     local filePath = debug.getinfo(2, "S").source:sub(2):normalizePath()
-    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptID(filePath)
+    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptId(filePath)
 
     local handlerMap = customEventHooks.handlers[event][scriptId]
     if not handlerMap then
@@ -122,7 +122,7 @@ function customEventHooks.unregisterHandlersByScriptId(scriptId)
     end
 end
 
-function customEventHooks.unregisterAllByScriptID(scriptId)
+function customEventHooks.unregisterAllByScriptId(scriptId)
   dreamweave.LogMessage(enumerations.log.INFO, "[customEventHooks]: Unregistering all events for scriptID: " .. scriptId)
   customEventHooks.unregisterValidatorsByScriptId(scriptId)
   customEventHooks.unregisterHandlersByScriptId(scriptId)

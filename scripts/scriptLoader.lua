@@ -1,10 +1,6 @@
 --ScriptLoader Singleton
 ---@class ScriptLoader
 local ScriptLoader = {
-    previousValidatorEvents = {},
-    previousHandlerEvents = {},
-    previousValidatorFilePath = nil,
-    previousHandlerFilePath = nil,
     ScriptData = {
         Handlers = {},
         Validators = {},
@@ -15,7 +11,7 @@ local template = "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 
 ---@param filePath string File path to load
 ---@return string|nil ScriptID
-function ScriptLoader.generateScriptID(filePath)
+function ScriptLoader.generateScriptId(filePath)
     if not string.match(filePath, "%S") then
         return "" -- should throw, this is bad if we fail this?
     end
@@ -34,6 +30,12 @@ function ScriptLoader.generateScriptID(filePath)
     return scriptID
 end
 
+function ScriptLoader.isScriptLoaded(filePath)
+    if package.loaded[filePath] then
+        return true
+    end
+    return false
+end
 
 ---@param filePath string
 ---@return boolean isValid If script can be loaded
@@ -59,48 +61,6 @@ function ScriptLoader.loadScript(filePath)
     end
 end
 
-function ScriptLoader.unloadScript(filePath)
-    -- Local objects that use functions from the script we are reloading
-    -- will keep their references to the old versions of those functions if
-    -- we do this:
-    --
-    -- package.loaded[scriptName] = nil
-    -- require(scriptName)
-    --
-    -- To get around that, we load up the script with dofile() instead and
-    -- then update the function references in package.loaded[scriptName], which
-    -- in turn also changes them in the local objects
-    --
-    local scriptPath = package.searchpath(filePath, package.path)
-    local scriptID = ScriptLoader.getScriptID(filePath)
-    if not scriptID then
-        scriptID = ScriptLoader.generateScriptID(filePath)
-    end
-
-    -- Trigger OnScriptUnload event
-    local eventStatus = ScriptLoader.triggerValidators("OnScriptUnload", {scriptID})
-
-    if eventStatus.validDefaultHandler then
-        ScriptLoader.unregisterAllByScriptID(scriptID)
-    end
-
-    ScriptLoader.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
-
-    local result = dofile(scriptPath)
-
-    for key, value in pairs(package.loaded[filePath]) do
-        if result[key] == nil then
-            package.loaded[filePath][key] = nil
-        end
-    end
-
-    for key, value in pairs(result) do
-        package.loaded[filePath][key] = value
-    end
-
-    ScriptLoader.triggerInit(scriptID)
-end
-
 function ScriptLoader.getScriptId(filePath)
     if not filePath then
         return ""
@@ -117,19 +77,49 @@ function ScriptLoader.getScriptId(filePath)
      end
 end
 
+-- TODO: figure out wtf this was supposed to be doing
+function ScriptLoader.unloadScript(filePath)
+    -- Local objects that use functions from the script we are reloading
+    -- will keep their references to the old versions of those functions if
+    -- we do this:
+    --
+    -- package.loaded[scriptName] = nil
+    -- require(scriptName)
+    --
+    -- To get around that, we load up the script with dofile() instead and
+    -- then update the function references in package.loaded[scriptName], which
+    -- in turn also changes them in the local objects
+    --
+    local scriptPath = package.searchpath(filePath, package.path)
+    local scriptId = ScriptLoader.getScriptId(filePath) or ScriptLoader.generateScriptId(filePath)
+
+    local result = dofile(scriptPath)
+
+    for key, value in pairs(package.loaded[filePath]) do
+        if result[key] == nil then
+            package.loaded[filePath][key] = nil
+        end
+    end
+
+    for key, value in pairs(result) do
+        package.loaded[filePath][key] = value
+    end
+
+    ScriptLoader.triggerInit(scriptID)
+end
+
 function ScriptLoader.triggerInit(scriptID)
     if not ScriptLoader.handlers["OnScriptLoad"] then print("No OnScriptLoad Handlers defined!") return end
-  
+
     if not ScriptLoader.ScriptData[scriptID] then print ("Unable to find script to init!") return end
-  
+
     local registeredScriptHandlers = ScriptLoader.ScriptData[scriptID].Handlers
-  
+
     for _, callback in ipairs(registeredScriptHandlers) do
       if callback[1] == "OnScriptLoad" then
         eventStatus = ScriptLoader.updateEventStatus(eventStatus, callback[2](eventStatus))
       end
     end
-  
-  end
+end
 
 return ScriptLoader

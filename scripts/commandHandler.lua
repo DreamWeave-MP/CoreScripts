@@ -716,7 +716,7 @@ function commandHandler.ProcessCommand(pid, cmd)
                 local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
     
                 if eventStatus.validDefaultHandler then
-                    customEventHooks.unregisterAllByScriptID(scriptID)
+                    customEventHooks.unregisterAllByScriptId(scriptID)
                 end
     
                 customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
@@ -738,7 +738,7 @@ function commandHandler.ProcessCommand(pid, cmd)
             local eventStatus = customEventHooks.triggerValidators("OnScriptUnload", {scriptID})
 
             if eventStatus.validDefaultHandler then
-            customEventHooks.unregisterAllByScriptID(scriptID)
+            customEventHooks.unregisterAllByScriptId(scriptID)
             Players[pid]:Message(color.LightGray .. scriptID .. " was unloaded." .. "\n" .. color.Default)
             end
             customEventHooks.triggerHandlers("OnScriptUnload", eventStatus, {scriptID})
