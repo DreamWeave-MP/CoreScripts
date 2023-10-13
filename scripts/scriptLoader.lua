@@ -51,8 +51,6 @@ end
 function ScriptLoader.loadScript(filePath)
     local result = prequire(filePath)
     if result then
-        -- TODO: implement
-        eventHandler.OnScriptLoad(filePath)
         return true
     else
         return false
