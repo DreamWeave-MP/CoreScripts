@@ -296,6 +296,7 @@ end
 
 function OnServerScriptCrash(errorMessage)
     dreamweave.LogMessage(enumerations.log.ERROR, "Server crash from script error!")
+    debug.traceback()
     customEventHooks.triggerHandlers("OnServerExit", customEventHooks.makeEventStatus(true, true), {errorMessage})
 end
 
