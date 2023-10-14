@@ -1,32 +1,29 @@
--- Place clientside variables in different categories to decide how they are synchronized,
--- saved and loaded
---
--- Note: Currently, only global variables are handled, not local or member variables
---
--- Descriptions:
--- * "ignored" is where you place variables that clients should not send packets about,
---   either because they are already handled in other packets or because they would cause
---   unnecessary packet spam
--- * "personal" is where you place variables that are always exclusive to specific players
---   and that should not be shared regardless of other server options
--- * "quest" is where you place variables that should be synchronized and shared across
---   players based on the value of config.shareJournal
--- * "kills" is where you place variables that should be handled the same as kill counts
---   and should be cleared whenever the regular kill counts are
--- * "factionRanks" is where you place variables that should be synchronized and shared across
---   players based on the value of config.shareFactionRanks
--- * "factionExpulsion" is where you place variables that should be synchronized and shared across
---   players based on the value of config.shareFactionExpulsion
--- * "worldwide" is where you place variables that are always shared across all players
---   because they affect the physical world in a way that should be visible to everyone,
---   i.e. they affect structures, mechanism states, water levels, and so on
+--- @class TypedVariableScopes
+--- @field ignored? string[] Variables which never send traffic
+--- @field personal? string[] Variables exclusive to specific players
+--- @field quest? string[] Variables that should synchronized if config.shareJournal is enabled
+--- @field kills? string[] Variables that are handled like killcounts, if config.shareKills is enabled
+--- @field factionRanks? string[] Variables related to faction ranks which are shared if config.shareFactionRanks is enabled
+--- @field factionExpulsion? string[] Variables for faction expulsion which sync if config.shareFactionExpulsion is enabled
+--- @field worldwide? string[] Variables always shared across all players
+--- @field unknown? string[] Unknown handling
+
+--- Place clientside variables in different categories to decide how they are synchronized, saved and loaded
+--- Master table containing all variable types, and a table with named scopes
+--- containing a list of variables and their respective sync states
+--- NOTE: Does not actually sync member or local variables currently
+--- @class ClientVariableScopes
+--- @field globals TypedVariableScopes Global MWScript variables
+--- @field locals? TypedVariableScopes  Local MWScript variables
+--- @field members? TypedVariableScopes Actually I'm not sure what these are for
 local clientVariableScopes = {
-    globals = {}
+    globals = {
+    },
 }
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") then
-
-    local addedVariableScopes = {
+  --- @type ClientVariableScopes
+  local addedVariableScopes = {
         globals = {
             ignored = {
                 -- game state
@@ -104,7 +101,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Morrowind.esm") t
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tribunal.esm") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -144,7 +141,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tribunal.esm") th
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Bloodmoon.esm") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -186,7 +183,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Bloodmoon.esm") t
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -194,8 +191,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM"
                 "TR_MapPos", "TR_CellX", "TR_CellY", "TR_Test", "PC_NoLore", "T_Glob_cleanup_x", "T_Glob_cleanup_y", 
                 "T_Glob_cleanup_z", "T_Glob_cleanup_state", "T_Glob_DWelk_cleanup", "T_Glb_GetTeleportingDisabled", 
                 "T_Glob_PassTimeHours", "T_Glob_GetTeleportingDisabled", "T_Glob_Speech_Debug", "T_Glob_Speech_Sway", 
-                "T_Glob_Speech_Haggle", "T_Glob_Speech_Debate", 
-                
+                "T_Glob_Speech_Haggle", "T_Glob_Speech_Debate",
                 -- card game
                 "T_Glob_CardHortX", "T_Glob_CardHortY",    "T_Glob_CardHortZ", "T_Glob_CardHortReshapeX", "T_Glob_CardHortReshapeY",
                 "T_Glob_CardHortCol1Len", "T_Glob_CardHortCol2Len", "T_Glob_CardHortCol3Len", "T_Glob_CardHortCol4Len",
@@ -205,30 +201,24 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM"
                 "T_Glob_CardHortCol5Lock2", "T_Glob_CardHortCol6Lock2", "T_Glob_CardHortSaveLoad", "T_Glob_CardHortActiveLen",
                 "T_Glob_CardHortTop", "T_Glob_CardHortDummy", "T_Glob_CardHortState", "T_Glob_CardHortTracker", "T_Glob_CardHortRow",
                 "T_Glob_CardHortRot", "T_Glob_CardHortRank", "T_Glob_CardHortCol", "T_Glob_CardHortHouse"
-                
             },
             personal = {
                 -- player state
                 "T_Glob_PorphyricInfected", "T_Glob_WereInfected",
-                
                 -- Bank accounts
                 "T_Glob_Bank_All_CurrentBank", "T_Glob_Bank_Bri_AcctAmount", "T_Glob_Bank_Bri_LoanAmount",
                 "T_Glob_Bank_Bri_LoanDate", "T_Glob_Bank_Bri_LoanFail", "T_Glob_Bank_Hla_LoanFail", "T_Glob_Bank_Hla_AcctAmount",
                 "T_Glob_Bank_Hla_LoanAmount", "T_Glob_Bank_Hla_LoanDate",
-                
             },
             quest = {
                 -- reputation
                 "T_Glob_Rep_Sky_Pr", "T_Glob_Rep_Sky_Re"
             },
             kills = {
-            
             },
             factionRanks = {
-                
             },
             factionExpulsion = {
-                
             },
             worldwide = {
                 -- mechanisms
@@ -236,19 +226,17 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Tamriel_Data.ESM"
                 -- objects
                 "T_Glob_KingOrgCoffer_Uses",
                 -- news
-                "T_Glob_News_Bellman_Pick1", "T_Glob_News_Bellman_Pick2", "T_Glob_News_Bellman_Tracker1", "T_Glob_News_Bellman_Tracker2"                
+                "T_Glob_News_Bellman_Pick1", "T_Glob_News_Bellman_Pick2", "T_Glob_News_Bellman_Tracker1", "T_Glob_News_Bellman_Tracker2"
             },
             unknown = {
-                
             }
         }
     }
-    
     tableHelper.merge(clientVariableScopes, addedVariableScopes, true)
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -300,13 +288,10 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "TR_m3_TT_ProverbCounter", "TR_m3_TT_Lloris4Indoril", "TR_m3_TT_Lloris4Hlaalu", "TR_m3_VysAssanudCheck", "TR_m3_TT_LatestRumorATGlobal", 
                 "TR_m3_Kha_SY_convinced", "TR_m3_Kha_SY_final", "TR_m3_TT_RIP_garvs_heresy", "TR_m3_TT_RIP_refusecount", "TR_m4_TJ_Court_State", "TR_m2_NisirelConfronted",
                 "TR_m3_q_A3_Seen_Basement", "TR_m3_OE_elysanadiamondstole", "TR_m3_OE_KtD_Tur", "TR_m3_OE_KtD_Gul", "TR_m3_OE_KtD_Mur", "TR_m3_OE_KtD_Ema", "TR_m3_OE_StendarrIdolsOutlawed"
-                
             },
             kills = {
-
             },
             factionRanks = {
-                
             },
             factionExpulsion = {
                 -- faction expulsion forgiveness and timers
@@ -332,7 +317,6 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
                 "TR_Thirr_Conflict_Score", "TR_Thirr_Conflict_Heat", "TR_m3_TT_g_ritstart"
             },
             unknown = {
-                
             }
         }
     }
@@ -341,7 +325,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "TR_Mainland.ESM")
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Cyrodiil_Main.esm") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -353,23 +337,18 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Cyrodiil_Main.esm
                 "PC_Rent_Stirk_Sloads_Tale", "PC_Rent_Stirk_Safe_Harbor"
             },
             quest = {
-                
             },
             kills = {
-
             },
             factionRanks = {
-                
             },
             factionExpulsion = {
-
             },
             worldwide = {
                 -- mechanisms
                 "PC_i1_51_Gate_State"
             },
             unknown = {
-                
             }
         }
     }
@@ -378,7 +357,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Cyrodiil_Main.esm
 end
 
 if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") then
-
+  --- @type ClientVariableScopes
     local addedVariableScopes = {
         globals = {
             ignored = {
@@ -411,7 +390,6 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") th
                 "Sky_qRe_DSW01_Dagger_glb", "Sky_qRe_DSW01_Scimitar_glb", "Sky_qRe_DSW01_Saber_glb", 
                 "Sky_qRe_DSW02_Auth_glb", "Sky_qRe_KG5_SViir_glb", "Sky_qRe_KWFG04_Owner_glb", 
                 "Sky_qRE_KWTG07_Glb_QuestDone", "Sky_qRe_MAI04_Counter_glb", "Sky_qRe_NAR01_Investigate_glb"
-                
             },
             kills = {
                 -- main quest
@@ -450,7 +428,7 @@ if tableHelper.containsCaseInsensitiveString(clientDataFiles, "Sky_Main.esm") th
                 "Sky_qRe_DSE_ArenaFight_glb"
             },
             unknown = {
-                
+
             }
         }
     }
