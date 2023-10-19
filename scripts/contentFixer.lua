@@ -1,6 +1,8 @@
 tableHelper = require("tableHelper")
+
 require("utils")
 
+---@class contentFixer
 local contentFixer = {}
 
 local deadlyItems = { "keening", "sunder" }
@@ -14,32 +16,32 @@ fixesByCell["-2, -10"] = { disable = { 297463, 297464, 297465, 297466 }}
 -- Delete the census papers and unlock the doors
 fixesByCell["Seyda Neen, Census and Excise Office"] = { disable = { 172859 }, unlock = { 119513, 172860 }}
 
+---@param pid integer Player ID
+---@param cellDescription string Cell Name
 function contentFixer.FixCell(pid, cellDescription)
+    if fixesByCell[cellDescription] == nil then return end
 
-    if fixesByCell[cellDescription] ~= nil then
+    for action, refNumArray in pairs(fixesByCell[cellDescription]) do
 
-        for action, refNumArray in pairs(fixesByCell[cellDescription]) do
+        dreamweave.ClearObjectList()
+        dreamweave.SetObjectListPid(pid)
+        dreamweave.SetObjectListCell(cellDescription)
 
-            dreamweave.ClearObjectList()
-            dreamweave.SetObjectListPid(pid)
-            dreamweave.SetObjectListCell(cellDescription)
+        for arrayIndex, refNum in ipairs(refNumArray) do
+            dreamweave.SetObjectRefNum(refNum)
+            dreamweave.SetObjectMpNum(0)
+            dreamweave.SetObjectRefId("")
+            if action == "disable" then dreamweave.SetObjectState(false) end
+            if action == "unlock" then dreamweave.SetObjectLockLevel(0) end
+            dreamweave.AddObject()
+        end
 
-            for arrayIndex, refNum in ipairs(refNumArray) do
-                dreamweave.SetObjectRefNum(refNum)
-                dreamweave.SetObjectMpNum(0)
-                dreamweave.SetObjectRefId("")
-                if action == "disable" then dreamweave.SetObjectState(false) end
-                if action == "unlock" then dreamweave.SetObjectLockLevel(0) end
-                dreamweave.AddObject()
-            end
-
-            if action == "delete" then
-                dreamweave.SendObjectDelete()
-            elseif action == "disable" then
-                dreamweave.SendObjectState()
-            elseif action == "unlock" then
-                dreamweave.SendObjectLock()
-            end
+        if action == "delete" then
+            dreamweave.SendObjectDelete()
+        elseif action == "disable" then
+            dreamweave.SendObjectState()
+        elseif action == "unlock" then
+            dreamweave.SendObjectLock()
         end
     end
 end
@@ -47,14 +49,15 @@ end
 -- Unequip items that damage the player when worn
 --
 -- Note: Items with constant damage effects like Whitewalker and the Mantle of Woe
---       are already unequipped by default in the TES3MP client, so this only needs
+--       are already unequipped by default in the dreamweave client, so this only needs
 --       to account for scripted items that are missed there
 --
+---@param pid integer Player ID
 function contentFixer.UnequipDeadlyItems(pid)
 
     local itemsFound = 0
 
-    for arrayIndex, itemRefId in pairs(deadlyItems) do
+    for _, itemRefId in pairs(deadlyItems) do
         if tableHelper.containsKeyValue(Players[pid].data.equipment, "refId", itemRefId, true) then
             local itemSlot = tableHelper.getIndexByNestedKeyValue(Players[pid].data.equipment, "refId", itemRefId, true)
             Players[pid].data.equipment[itemSlot] = nil
@@ -68,6 +71,7 @@ function contentFixer.UnequipDeadlyItems(pid)
     end
 end
 
+---@param pid integer PlayerID
 function contentFixer.AdjustSharedCorprusState(pid)
 
     local corprusId = "corprus"
@@ -106,44 +110,47 @@ function contentFixer.AdjustSharedCorprusState(pid)
     end
 end
 
+---@param journal table
+---@return boolean madeAdjustment Has cell lost/gained corprus
 function contentFixer.AdjustWorldCorprusVariables(journal)
-
-    local madeAdjustment = false
-
     for _, journalItem in ipairs(journal) do
-
         if journalItem.quest == "a2_3_corpruscure" and journalItem.index >= 50 then
             WorldInstance.data.customVariables.corprusCured = true
-            madeAdjustment = true
+            return true
         elseif journalItem.quest == "a2_2_6thhouse" and journalItem.index >= 50 then
             WorldInstance.data.customVariables.corprusGained = true
-            madeAdjustment = true
+            return true 
         end
     end
 
-    return madeAdjustment
+    return false
 end
 
+---@param eventStatus boolean
+---@param pid integer Player ID
+---@param playerPacket table
 customEventHooks.registerHandler("OnPlayerJournal", function(eventStatus, pid, playerPacket)
-    if config.shareJournal == true then
-        local madeAdjustment = contentFixer.AdjustWorldCorprusVariables(playerPacket.journal)
+    if config.shareJournal == false then return end
+    local madeAdjustment = contentFixer.AdjustWorldCorprusVariables(playerPacket.journal)
 
-        if madeAdjustment == true then
-            for otherPid, otherPlayer in pairs(Players) do
-                if otherPid ~= pid then
-                    contentFixer.AdjustSharedCorprusState(otherPid)
-                end
-            end
+    if madeAdjustment == false then return end
+    for otherPid, otherPlayer in pairs(Players) do
+        if otherPid ~= pid then
+            contentFixer.AdjustSharedCorprusState(otherPid)
         end
     end
 end)
 
+
+---@param eventStatus string
+---@param pid integer Player ID
 customEventHooks.registerHandler("OnPlayerFinishLogin", function(eventStatus, pid)
     if config.shareJournal == true then
         contentFixer.AdjustSharedCorprusState(pid)
     end
 end)
 
+---@param eventStatus string
 customEventHooks.registerHandler("OnWorldReload", function(eventStatus)
     if config.shareJournal == true then
         contentFixer.AdjustWorldCorprusVariables(WorldInstance.data.journal)
