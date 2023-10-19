@@ -65,12 +65,12 @@ end
 ---@param cmd string Command Syntax
 ---@param names string Name
 function customCommandHooks.setNameRequirement(cmd, names)
-    if customCommandHooks.commands[cmd] ~= nil and type(cmd) ~= "string" then return end 
+    if customCommandHooks.commands[cmd] ~= nil or type(cmd) ~= "string" then return end 
     customCommandHooks.nameRequirement[cmd] = names
 end
 
 function customCommandHooks.addNameRequirement(cmd, name)
-    if customCommandHooks.commands[cmd] == nil and type(cmd) == "string" then return end
+    if customCommandHooks.commands[cmd] == nil or type(cmd) ~= "string" then return end
     
     if customCommandHooks.nameRequirement[cmd] == nil then
         customCommandHooks.nameRequirement[cmd] = {}
