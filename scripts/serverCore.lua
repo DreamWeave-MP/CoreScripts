@@ -17,7 +17,9 @@ require("color")
 require("config")
 require("time")
 
-vec3 = require("vectors")
+local vec = require("vectors")
+
+vec2, vec3 = vec.vec2, vec.vec3
 customEventHooks = require("customEventHooks")
 customCommandHooks = require("customCommandHooks")
 logicHandler = require("logicHandler")
