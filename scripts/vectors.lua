@@ -73,7 +73,7 @@ end
 
 function vec2.__mul(a, b)
     if type(a) == 'number' then
-        return vec2(a * b.x, a.z * b.z)
+        return vec2(a * b.x, a * b.z)
     elseif type(b) == 'number' then
         return vec2(a.x * b, a.z * b)
     end
