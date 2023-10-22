@@ -118,6 +118,10 @@ config.shareVideos = true
 -- Whether mobs and npcs in the game should be shared for all players when killed
 config.shareKills = true
 
+-- Enabling this option filters chat colors to prevent custom colored messages.
+-- When enabled, '#' in a message is escaped as '##'.
+config.filterChatColors = true
+
 -- Which clientside script records should be blanked out so they are not run
 -- Note: By default, the original character generation scripts are included
 --       because they're not suitable for multiplayer

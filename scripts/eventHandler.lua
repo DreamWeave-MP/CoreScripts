@@ -826,6 +826,10 @@ eventHandler.OnPlayerSendMessage = function(pid, message)
     if Players[pid] ~= nil and Players[pid]:IsLoggedIn() then
         dreamweave.LogMessage(enumerations.log.INFO, logicHandler.GetChatName(pid) .. ": " .. message)
 
+        if config.filterChatColors then 
+            message = message:gsub("#", "##")
+        end
+
         local eventStatus = customEventHooks.triggerValidators("OnPlayerSendMessage", {pid, message})
             
         if eventStatus.validDefaultHandler then
