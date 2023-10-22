@@ -400,6 +400,19 @@ function tableHelper.isEmpty(inputTable)
     return false
 end
 
+-- Retrieve a key associated with a specific value within a table.
+-- Note: This function is intended to handle situations where the loaded value may not align with the expected format due to the behavior of "cjson."
+function tableHelper.getEntryKeyByValue(inputTable, searchValue)
+    for key, value in pairs(inputTable) do
+        if key == searchValue then
+            return key
+        elseif tostring(key) == tostring(searchValue) then
+            return key
+        end
+    end
+    return nil
+end
+
 -- Check whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
