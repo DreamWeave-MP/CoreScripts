@@ -7,6 +7,8 @@ function vec3:__call(x, y, z)
     return setmetatable({x=x or 0,y=y or 0,z=z or 0}, getmetatable(self))
 end
 
+--- Get the magnitude of a vector
+---@return number
 function vec3:length()
     return math.sqrt(self.x^2 + self.y^2 + self.z^2)
 end
@@ -45,4 +47,17 @@ function vec3.__tostring(a)
     return "vec3(" .. a.x .. ", " .. a.y .. ', ' .. a.z .. ")"
 end
 
-return setmetatable(vec3, vec3)
+---@class vec2
+local vec2 = {}
+
+vec2.__index =  vec3
+
+function vec2:__call(x, z)
+    return setmetatable(vec3(x, 0, z), vec2)
+end
+
+function vec2.__tostring(a)
+    return "vec2(" .. a.x .. ", " .. a.z .. ")"
+end
+
+return {vec3 = setmetatable(vec3, vec3), vec2 = setmetatable(vec2, vec2)}
