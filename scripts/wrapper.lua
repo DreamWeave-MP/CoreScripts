@@ -6,7 +6,7 @@ local function tes3mpWrapper(tes3mp_function)
                              "A call to a tes3mp function was made.\n" ..
                              "\tThe tes3mp namespace has been deprecated by Dreamweave. For future compatibility, please migrate your scripts to the dreamweave namespace prior to your next server update.\n" ..
                              "\tUsually, the second level of the call stack will indicate what script called this deprecated function.")
-        print(debug.traceback())
+        debug.traceback()
         doOnce = false
       end
 
