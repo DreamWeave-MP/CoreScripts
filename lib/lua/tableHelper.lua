@@ -400,6 +400,21 @@ function tableHelper.isEmpty(inputTable)
     return false
 end
 
+--- Retrieve a key associated with a specific value within a table.
+---
+--- @param inputTable table  The table to search within.
+--- @param searchValue any  The value to search for within the table.
+--- @return any|false  The key associated with the searchValue if found, or false if not found.
+--- Note: This function is intended to handle situations where the loaded key may not align with the expected key due to the behavior of "cjson."
+function tableHelper.getEntryKeyByValue(inputTable, searchValue)
+    for key, value in pairs(inputTable) do
+        if key == searchValue or tostring(key) == tostring(searchValue) then
+            return key
+        end
+    end
+    return false
+end
+
 -- Check whether the table is an array with only consecutive numerical keys,
 -- i.e. without any gaps between keys
 -- Based on http://stackoverflow.com/a/6080274
