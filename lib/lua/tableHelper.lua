@@ -403,8 +403,8 @@ end
 --- Retrieve a key associated with a specific value within a table.
 ---
 --- @param inputTable table  The table to search within.
---- @param searchValue any  The value to search for within the table.
---- @return any|false  The key associated with the searchValue if found, or false if not found.
+--- @param searchValue string|number  The value to search for within the table.
+--- @return string|number|false  The key associated with the searchValue if found, or false if not found.
 --- Note: This function is intended to handle situations where the loaded key may not align with the expected key due to the behavior of "cjson."
 function tableHelper.getEntryKeyByValue(inputTable, searchValue)
     for key, value in pairs(inputTable) do
