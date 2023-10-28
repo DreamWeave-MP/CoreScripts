@@ -131,7 +131,7 @@ eventHandler.InitializeDefaultValidators = function()
                 dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. " is a preexisting object that is already "
                     .. "tracked as being deleted")
                 return customEventHooks.makeEventStatus(false, false)
-            elseif mpNum ~= 0 and LoadedCells[cellDescription].data.objectData[uniqueIndex] == nil then
+            elseif mpNum < 0 and LoadedCells[cellDescription].data.objectData[uniqueIndex] == nil then
                 dreamweave.LogAppend(enumerations.log.INFO, debugMessage .. " is a server-created object that is "
                     .. "no longer supposed to exist")
                 return customEventHooks.makeEventStatus(false, false)
